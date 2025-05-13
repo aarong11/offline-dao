@@ -496,6 +496,338 @@
 ,
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/app_container.schema.json",
+  "title": "Application Container",
+  "description": "Schema for modeling logical containers that store or organize structured entities in a software system",
+  "type": "object",
+  "required": [
+    "id",
+    "label",
+    "container_type",
+    "entity_type",
+    "created_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Canonical identifier, slug or UUID"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable name of the container"
+    },
+    "container_type": {
+      "type": "string",
+      "enum": [
+        "inbox",
+        "queue",
+        "stream",
+        "collection",
+        "folder",
+        "bucket",
+        "mailbox",
+        "graph",
+        "project",
+        "pipeline",
+        "board",
+        "namespace",
+        "volume",
+        "workspace",
+        "notebook",
+        "playlist",
+        "album",
+        "vault",
+        "clipboard",
+        "chat_room",
+        "conversation",
+        "ledger",
+        "timeseries",
+        "registry",
+        "document"
+      ],
+      "description": "Type of logical container"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Canonical $id of the schema it stores (e.g., message.schema.json)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the container's purpose"
+    },
+    "access_policy": {
+      "type": "string",
+      "description": "Simple string or reference to ACL/RBAC list"
+    },
+    "capacity": {
+      "type": "object",
+      "description": "Optional limit on number of items",
+      "properties": {
+        "max_items": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum number of items that can be stored"
+        },
+        "warning_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Threshold at which warnings are triggered"
+        },
+        "behavior_at_capacity": {
+          "type": "string",
+          "enum": [
+            "reject_new",
+            "evict_oldest",
+            "evict_by_priority",
+            "archive_oldest",
+            "compress"
+          ],
+          "description": "Behavior when capacity is reached"
+        }
+      }
+    },
+    "retention_policy": {
+      "type": "object",
+      "description": "Optional TTL, max versions, or strategy",
+      "properties": {
+        "ttl_days": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Time to live in days before items are removed or archived"
+        },
+        "max_versions": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum number of versions to keep per entity"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "delete",
+            "archive",
+            "compress",
+            "summarize",
+            "migrate"
+          ],
+          "description": "Strategy for handling expired items"
+        },
+        "selective_retention": {
+          "type": "object",
+          "description": "Rules for selective retention of items",
+          "properties": {
+            "field": {
+              "type": "string",
+              "description": "Field to evaluate for retention decision"
+            },
+            "condition": {
+              "type": "string",
+              "description": "Condition for retention (e.g., '> 10', 'contains:important')"
+            }
+          }
+        }
+      }
+    },
+    "storage_backing": {
+      "type": "string",
+      "description": "Optional link to a storage_medium or logical storage backend"
+    },
+    "ordering": {
+      "type": "string",
+      "enum": [
+        "fifo",
+        "lifo",
+        "sorted",
+        "priority",
+        "unordered",
+        "custom"
+      ],
+      "description": "Defines if entities are ordered and how"
+    },
+    "sort_key": {
+      "type": "string",
+      "description": "Field name to use for sorting when ordering is 'sorted'"
+    },
+    "indexing": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional list of keys/indexes to support efficient lookup (e.g., ['created_at', 'priority'])"
+    },
+    "partitioning": {
+      "type": "object",
+      "description": "Optional partitioning scheme for the container",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "hash",
+            "range",
+            "date",
+            "geographic",
+            "custom"
+          ],
+          "description": "Strategy for partitioning data"
+        },
+        "key": {
+          "type": "string",
+          "description": "Field used for partitioning"
+        },
+        "partition_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of partitions when using fixed partitioning"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional array of classifier tokens"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp when container was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp when container was last updated"
+    },
+    "statistics": {
+      "type": "object",
+      "description": "Runtime statistics for the container",
+      "properties": {
+        "item_count": {
+          "type": "integer",
+          "description": "Current number of items"
+        },
+        "total_size_bytes": {
+          "type": "integer",
+          "description": "Total size in bytes"
+        },
+        "average_item_size_bytes": {
+          "type": "number",
+          "description": "Average size per item in bytes"
+        },
+        "access_frequency": {
+          "type": "object",
+          "properties": {
+            "reads_per_day": {
+              "type": "number",
+              "description": "Average read operations per day"
+            },
+            "writes_per_day": {
+              "type": "number",
+              "description": "Average write operations per day"
+            }
+          }
+        }
+      }
+    },
+    "schema_enforcement": {
+      "type": "string",
+      "enum": [
+        "strict",
+        "lenient",
+        "none"
+      ],
+      "description": "Level of schema enforcement for items"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Open container for implementation-specific extensions"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "app.logs.system_events",
+      "label": "System Events Log",
+      "container_type": "stream",
+      "entity_type": "https://dao.example.org/schemas/log_entry.schema.json",
+      "description": "Stream container for system log entries with 30-day retention",
+      "access_policy": "system_operators_only",
+      "retention_policy": {
+        "ttl_days": 30,
+        "strategy": "archive"
+      },
+      "ordering": "fifo",
+      "indexing": [
+        "timestamp",
+        "severity",
+        "source"
+      ],
+      "tags": [
+        "logs",
+        "monitoring",
+        "system"
+      ],
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z",
+      "schema_enforcement": "strict"
+    },
+    {
+      "id": "app.content.knowledge_base",
+      "label": "Knowledge Base Documents",
+      "container_type": "collection",
+      "entity_type": "https://dao.example.org/schemas/document_block.schema.json",
+      "description": "Collection container for documentation blocks with categorization",
+      "access_policy": "public_read_contributors_write",
+      "indexing": [
+        "type",
+        "updated_at",
+        "category",
+        "author"
+      ],
+      "tags": [
+        "documentation",
+        "knowledge",
+        "reference"
+      ],
+      "created_at": "2025-01-15T00:00:00Z",
+      "updated_at": "2025-01-16T10:30:00Z",
+      "schema_enforcement": "lenient"
+    },
+    {
+      "id": "app.security.credentials",
+      "label": "Secure Credentials Vault",
+      "container_type": "vault",
+      "entity_type": "https://dao.example.org/schemas/secret.schema.json",
+      "description": "Encrypted container for sensitive credentials and secrets",
+      "access_policy": "security_admin_only",
+      "storage_backing": "ipfs://bafybeiczsscdsbs7ffqz55asqdf3smv6klcw3gofszvwlyarci47bgf354",
+      "retention_policy": {
+        "max_versions": 5,
+        "strategy": "delete"
+      },
+      "tags": [
+        "security",
+        "credentials",
+        "secrets"
+      ],
+      "created_at": "2025-01-10T00:00:00Z",
+      "updated_at": "2025-01-12T08:45:00Z",
+      "schema_enforcement": "strict",
+      "meta": {
+        "encryption": {
+          "algorithm": "AES-256-GCM",
+          "key_rotation_period_days": 90
+        }
+      }
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/app_container.schema.json",
+    "timestamp": "2025-05-13 16:53:48"
+  }
+}
+,
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dao.example.org/schemas/attachment.schema.json",
   "title": "DAO Attachment / Blob",
   "description": "References an external file or large payload stored off‑graph (IPFS, local file, S3, etc.). Can be linked from experiments, tasks, or deltas via content‑ID hash.",

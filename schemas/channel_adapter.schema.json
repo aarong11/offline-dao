@@ -48,6 +48,47 @@
         "type": "string",
         "description": "Markdown snippet describing how to install drivers, obtain API keys, etc."
       },
+      "crypto_profile": {
+        "type": "object",
+        "description": "Cryptographic capabilities and FIPS compliance information",
+        "properties": {
+          "crypto_profile_id": {
+            "type": "string",
+            "description": "Reference to a FIPS cryptographic profile (e.g., 'crypto.hsm-validated')",
+            "pattern": "^crypto\\.[a-z0-9_-]{3,64}$"
+          },
+          "encryption_algorithms": {
+            "type": "array",
+            "description": "Encryption algorithms supported by this adapter",
+            "items": {
+              "type": "string",
+              "enum": [
+                "AES-128-ECB", "AES-192-ECB", "AES-256-ECB", 
+                "AES-128-CBC", "AES-192-CBC", "AES-256-CBC", 
+                "AES-128-GCM", "AES-192-GCM", "AES-256-GCM", 
+                "AES-128-CCM", "AES-192-CCM", "AES-256-CCM", 
+                "ChaCha20", "ChaCha20-Poly1305", "3DES"
+              ]
+            }
+          },
+          "hash_algorithms": {
+            "type": "array",
+            "description": "Hash algorithms supported by this adapter",
+            "items": {
+              "type": "string",
+              "enum": [
+                "SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512",
+                "SHA3-224", "SHA3-256", "SHA3-384", "SHA3-512"
+              ]
+            }
+          },
+          "crypto_container": {
+            "type": "string",
+            "enum": ["TPM", "HSM", "TEE", "SecureEnclave", "Software", "SmartCard", "PKCS11", "CloudHSM"],
+            "description": "Type of cryptographic container used by this adapter"
+          }
+        }
+      },
       "meta": {
         "type": "object",
         "description": "Open field for adapter‑specific details (e.g., BLE MAC address, RPC endpoint).",
@@ -65,8 +106,13 @@
         "requires_hardware": false,
         "directionality": "bidirectional",
         "bandwidth_bps": 13,
-        "setup_instructions": "Needs iCloud app‑specific password stored in env `ICLOUD_PWD`."
+        "setup_instructions": "Needs iCloud app‑specific password stored in env `ICLOUD_PWD`.",
+        "crypto_profile": {
+          "crypto_profile_id": "crypto.secure-enclave",
+          "encryption_algorithms": ["AES-256-GCM"],
+          "hash_algorithms": ["SHA-256"],
+          "crypto_container": "SecureEnclave"
+        }
       }
     ]
   }
-  

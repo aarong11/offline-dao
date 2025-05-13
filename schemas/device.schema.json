@@ -32,6 +32,103 @@
         "type": "string",
         "description": "Optional human note on device purpose."
       },
+      "security_properties": {
+        "type": "object",
+        "description": "Cryptographic security features of the device",
+        "properties": {
+          "crypto_profile_id": {
+            "type": "string",
+            "description": "Reference to a FIPS cryptographic profile (e.g., 'crypto.hsm-validated')",
+            "pattern": "^crypto\\.[a-z0-9_-]{3,64}$"
+          },
+          "secure_boot": {
+            "type": "boolean",
+            "description": "Whether the device has secure boot enabled",
+            "default": false
+          },
+          "crypto_containers": {
+            "type": "array",
+            "description": "Cryptographic containers available on this device",
+            "items": {
+              "type": "object",
+              "required": ["type"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["TPM", "HSM", "TEE", "SecureEnclave", "Software", "SmartCard", "PKCS11", "CloudHSM"],
+                  "description": "Type of cryptographic container"
+                },
+                "vendor": {
+                  "type": "string",
+                  "description": "Vendor or manufacturer of the cryptographic module"
+                },
+                "model": {
+                  "type": "string",
+                  "description": "Model or product name of the cryptographic module"
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the cryptographic module (hardware or software)"
+                },
+                "tamper_resistant": {
+                  "type": "boolean",
+                  "description": "Whether the module has physical tamper-resistance features",
+                  "default": false
+                },
+                "certification_status": {
+                  "type": "string",
+                  "description": "FIPS certification status of the cryptographic module",
+                  "enum": ["none", "pending", "fips-140-2", "fips-140-3"]
+                }
+              }
+            }
+          },
+          "supported_primitives": {
+            "type": "object",
+            "description": "Cryptographic primitives supported by this device",
+            "properties": {
+              "hash_functions": {
+                "type": "array",
+                "description": "Hash functions available on this device",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512",
+                    "SHA3-224", "SHA3-256", "SHA3-384", "SHA3-512"
+                  ]
+                }
+              },
+              "symmetric_algorithms": {
+                "type": "array",
+                "description": "Symmetric algorithms available on this device",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "AES-128-ECB", "AES-192-ECB", "AES-256-ECB", 
+                    "AES-128-CBC", "AES-192-CBC", "AES-256-CBC", 
+                    "AES-128-GCM", "AES-192-GCM", "AES-256-GCM", 
+                    "AES-128-CCM", "AES-192-CCM", "AES-256-CCM", 
+                    "ChaCha20", "ChaCha20-Poly1305", "3DES"
+                  ]
+                }
+              },
+              "asymmetric_algorithms": {
+                "type": "array",
+                "description": "Asymmetric algorithms available on this device",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "RSA-2048", "RSA-3072", "RSA-4096", 
+                    "ECDSA-P256", "ECDSA-P384", "ECDSA-P521", 
+                    "EdDSA-Ed25519", "ECDH-P256", "ECDH-P384", "ECDH-P521",
+                    "X25519", "X448"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
       "custody_log": {
         "type": "array",
         "description": "Chronological list of custody events for tracking device possession, maintenance, and transfers",
@@ -123,7 +220,26 @@
         "device_id": "YmFzZTY0aGFzaA==",
         "nonce": "3b9ee0e5",
         "responsibility": "sentinel",
-        "activated_at": "2025-05-13T12:00:00Z"
+        "activated_at": "2025-05-13T12:00:00Z",
+        "security_properties": {
+          "crypto_profile_id": "crypto.secure-enclave",
+          "secure_boot": true,
+          "crypto_containers": [
+            {
+              "type": "SecureEnclave",
+              "vendor": "Apple",
+              "model": "A-series Secure Enclave",
+              "version": "2.0",
+              "tamper_resistant": true,
+              "certification_status": "fips-140-2"
+            }
+          ],
+          "supported_primitives": {
+            "hash_functions": ["SHA-256"],
+            "symmetric_algorithms": ["AES-256-GCM"],
+            "asymmetric_algorithms": ["ECDSA-P256", "ECDH-P256"]
+          }
+        }
       }
     ]
   }

@@ -68,6 +68,63 @@
         "minimum": 0,
         "description": "Expected variation in latency (Unit: ms, UCUM code for milliseconds)."
       },
+
+      "security_properties": {
+        "type": "object",
+        "description": "Security and cryptographic properties of the transport layer",
+        "properties": {
+          "crypto_profile_id": {
+            "type": "string",
+            "description": "Reference to a FIPS cryptographic profile (e.g., 'crypto.hsm-validated')",
+            "pattern": "^crypto\\.[a-z0-9_-]{3,64}$"
+          },
+          "confidentiality": {
+            "type": "boolean",
+            "description": "Whether data confidentiality is provided",
+            "default": false
+          },
+          "integrity": {
+            "type": "boolean",
+            "description": "Whether data integrity protection is provided",
+            "default": false
+          },
+          "authentication": {
+            "type": "boolean",
+            "description": "Whether peer authentication is provided",
+            "default": false
+          },
+          "encryption_algorithm": {
+            "type": "string",
+            "description": "Primary encryption algorithm used",
+            "enum": [
+              "AES-128-ECB", "AES-192-ECB", "AES-256-ECB", 
+              "AES-128-CBC", "AES-192-CBC", "AES-256-CBC", 
+              "AES-128-GCM", "AES-192-GCM", "AES-256-GCM", 
+              "AES-128-CCM", "AES-192-CCM", "AES-256-CCM", 
+              "ChaCha20", "ChaCha20-Poly1305", "3DES",
+              "None"
+            ]
+          },
+          "hash_algorithm": {
+            "type": "string",
+            "description": "Hash algorithm used for integrity",
+            "enum": [
+              "SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512",
+              "SHA3-224", "SHA3-256", "SHA3-384", "SHA3-512",
+              "None"
+            ]
+          },
+          "key_exchange": {
+            "type": "string",
+            "description": "Key exchange mechanism",
+            "enum": [
+              "ECDH-P256", "ECDH-P384", "ECDH-P521",
+              "X25519", "X448", "RSA-2048", "RSA-3072", "RSA-4096",
+              "Pre-shared", "None"
+            ]
+          }
+        }
+      },
       
       "fec": {
         "$ref": "#/definitions/FECConfig"
@@ -148,5 +205,30 @@
           }
         }
       }
-    }
+    },
+    "examples": [
+      {
+        "id": "tr.mctcp",
+        "type": "Transport",
+        "label": "MC-TCP reliable stream",
+        "kind": "reliable",
+        "version": "v1.0",
+        "max_payload_b": 1400,
+        "window": 4,
+        "timeout_s": 2.5,
+        "throughput": 9600,
+        "latency_ms": 250,
+        "jitter_ms": 50,
+        "security_properties": {
+          "crypto_profile_id": "crypto.hsm-validated",
+          "confidentiality": true,
+          "integrity": true,
+          "authentication": true,
+          "encryption_algorithm": "AES-256-GCM",
+          "hash_algorithm": "SHA-384",
+          "key_exchange": "ECDH-P384"
+        },
+        "tags": ["protocol:sliding-window", "feature:acks"]
+      }
+    ]
   }

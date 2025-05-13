@@ -48,6 +48,71 @@
         "enum": ["none", "mirrored", "raid5", "raid6", "geo-redundant", "block-replicated"],
         "description": "Redundancy scheme applied to this storage"
       },
+      "security_properties": {
+        "type": "object",
+        "description": "Cryptographic and security specifications for this storage medium",
+        "properties": {
+          "crypto_profile_id": {
+            "type": "string",
+            "description": "Reference to a FIPS cryptographic profile (e.g., 'crypto.hsm-validated')",
+            "pattern": "^crypto\\.[a-z0-9_-]{3,64}$"
+          },
+          "encryption": {
+            "type": "string",
+            "enum": ["none", "at_rest", "e2e", "hardware"],
+            "description": "Level or method of encryption"
+          },
+          "encryption_algorithm": {
+            "type": "string",
+            "description": "Primary encryption algorithm used for this storage medium",
+            "enum": [
+              "AES-128-ECB", "AES-192-ECB", "AES-256-ECB", 
+              "AES-128-CBC", "AES-192-CBC", "AES-256-CBC", 
+              "AES-128-GCM", "AES-192-GCM", "AES-256-GCM", 
+              "AES-128-CCM", "AES-192-CCM", "AES-256-CCM", 
+              "ChaCha20", "ChaCha20-Poly1305", "3DES",
+              "None"
+            ]
+          },
+          "key_length_bits": {
+            "type": "integer",
+            "description": "Length of the encryption key in bits"
+          },
+          "crypto_container": {
+            "type": "string",
+            "enum": ["TPM", "HSM", "TEE", "SecureEnclave", "Software", "SmartCard", "PKCS11", "CloudHSM", "None"],
+            "description": "Type of cryptographic container used for key management"
+          },
+          "key_rotation_period_days": {
+            "type": "integer",
+            "description": "Period for encryption key rotation in days",
+            "minimum": 0
+          },
+          "access_control_model": {
+            "type": "string",
+            "enum": ["discretionary", "mandatory", "role-based", "attribute-based", "none"],
+            "description": "Type of access control model implemented"
+          },
+          "compliance_certifications": {
+            "type": "array",
+            "description": "Compliance certifications for this storage medium",
+            "items": {
+              "type": "string",
+              "enum": [
+                "FIPS-140-2", "FIPS-140-3", "Common-Criteria", 
+                "ISO-15408", "NIST-800-53", "NIST-800-171", 
+                "HIPAA", "PCI-DSS", "GDPR", 
+                "SOC2", "FedRAMP"
+              ]
+            }
+          },
+          "certification_level": {
+            "type": "string",
+            "enum": ["EAL1", "EAL2", "EAL3", "EAL4", "EAL5", "EAL6", "EAL7", "None"],
+            "description": "Common Criteria Evaluation Assurance Level if applicable"
+          }
+        }
+      },
       "encryption": {
         "type": "string",
         "enum": ["none", "at_rest", "e2e", "hardware"],
@@ -361,6 +426,28 @@
             "items": { "type": "string" },
             "description": "Logical volume or partition IDs hosted by this medium"
           }
+        }
+      }
+    ],
+    "examples": [
+      {
+        "id": "sm.secure-hsm-storage",
+        "type": "StorageMedium",
+        "label": "FIPS 140-3 Validated HSM Storage",
+        "medium_category": "physical",
+        "physical_medium_type": "ssd",
+        "location": "dc.secure1",
+        "capacity_bytes": 1099511627776,
+        "redundancy": "mirrored",
+        "security_properties": {
+          "crypto_profile_id": "crypto.hsm-validated",
+          "encryption": "hardware",
+          "encryption_algorithm": "AES-256-GCM",
+          "key_length_bits": 256,
+          "crypto_container": "HSM",
+          "key_rotation_period_days": 90,
+          "access_control_model": "role-based",
+          "compliance_certifications": ["FIPS-140-3", "PCI-DSS"]
         }
       }
     ]

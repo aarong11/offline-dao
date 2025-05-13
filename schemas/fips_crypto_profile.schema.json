@@ -1,0 +1,444 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/fips_crypto_profile.schema.json",
+  "title": "FIPS Cryptographic Profile",
+  "description": "Schema for modeling cryptographic compliance, FIPS 140-2/140-3 validation, and cryptographic primitive usage across secure devices, containers, and data processing tools.",
+  "type": "object",
+  "required": ["id", "certification_status"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this cryptographic profile",
+      "pattern": "^crypto\\.[a-z0-9_-]{3,64}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable name of the cryptographic profile"
+    },
+    "certification_status": {
+      "type": "string",
+      "description": "FIPS certification status of the cryptographic module or implementation",
+      "enum": ["none", "pending", "fips-140-2", "fips-140-3"]
+    },
+    "certificate_id": {
+      "type": "string",
+      "description": "NIST Cryptographic Module Validation Program (CMVP) certificate number"
+    },
+    "certificate_url": {
+      "type": "string",
+      "description": "URL to the NIST CMVP certificate listing",
+      "format": "uri"
+    },
+    "validation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when FIPS validation was granted"
+    },
+    "primitive_usage": {
+      "type": "object",
+      "description": "Cryptographic primitives used by this profile",
+      "properties": {
+        "hash_functions": {
+          "type": "array",
+          "description": "Hash functions used in the cryptographic implementation",
+          "items": {
+            "type": "string",
+            "enum": [
+              "SHA-1", 
+              "SHA-224", 
+              "SHA-256", 
+              "SHA-384", 
+              "SHA-512", 
+              "SHA3-224", 
+              "SHA3-256", 
+              "SHA3-384", 
+              "SHA3-512"
+            ]
+          }
+        },
+        "symmetric_algorithms": {
+          "type": "array",
+          "description": "Symmetric encryption algorithms used",
+          "items": {
+            "type": "string",
+            "enum": [
+              "AES-128-ECB", 
+              "AES-192-ECB", 
+              "AES-256-ECB", 
+              "AES-128-CBC", 
+              "AES-192-CBC", 
+              "AES-256-CBC", 
+              "AES-128-GCM", 
+              "AES-192-GCM", 
+              "AES-256-GCM", 
+              "AES-128-CCM", 
+              "AES-192-CCM", 
+              "AES-256-CCM", 
+              "ChaCha20", 
+              "ChaCha20-Poly1305",
+              "3DES"
+            ]
+          }
+        },
+        "asymmetric_algorithms": {
+          "type": "array",
+          "description": "Asymmetric encryption and signature algorithms used",
+          "items": {
+            "type": "string",
+            "enum": [
+              "RSA-2048", 
+              "RSA-3072", 
+              "RSA-4096", 
+              "ECDSA-P256", 
+              "ECDSA-P384", 
+              "ECDSA-P521", 
+              "EdDSA-Ed25519", 
+              "ECDH-P256", 
+              "ECDH-P384", 
+              "ECDH-P521",
+              "X25519",
+              "X448"
+            ]
+          }
+        },
+        "rng_type": {
+          "type": "string",
+          "description": "Random number generator implementation",
+          "enum": [
+            "SP800-90A-HASH-DRBG", 
+            "SP800-90A-HMAC-DRBG", 
+            "SP800-90A-CTR-DRBG", 
+            "SP800-90B-NonDeterministic", 
+            "SP800-90C-Hybrid"
+          ]
+        },
+        "key_derivation_functions": {
+          "type": "array",
+          "description": "Key derivation functions used",
+          "items": {
+            "type": "string",
+            "enum": [
+              "HKDF", 
+              "PBKDF2", 
+              "scrypt", 
+              "Argon2id", 
+              "SP800-108-KDF", 
+              "SP800-56C-KDF"
+            ]
+          }
+        }
+      }
+    },
+    "crypto_container": {
+      "type": "object",
+      "description": "Information about the cryptographic module container",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["TPM", "HSM", "TEE", "SecureEnclave", "Software", "SmartCard", "PKCS11", "CloudHSM"],
+          "description": "Type of cryptographic container"
+        },
+        "vendor": {
+          "type": "string",
+          "description": "Vendor or manufacturer of the cryptographic module"
+        },
+        "model": {
+          "type": "string",
+          "description": "Model or product name of the cryptographic module"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the cryptographic module (hardware or software)"
+        },
+        "tamper_resistant": {
+          "type": "boolean",
+          "description": "Whether the module has physical tamper-resistance features",
+          "default": false
+        },
+        "side_channel_mitigations": {
+          "type": "array",
+          "description": "Mitigations in place for side-channel attacks",
+          "items": {
+            "type": "string",
+            "enum": [
+              "timing-resistant", 
+              "power-analysis-resistant", 
+              "em-shielding", 
+              "cache-isolation", 
+              "constant-time-implementation"
+            ]
+          }
+        },
+        "firmware_version": {
+          "type": "string",
+          "description": "Version of the firmware running on the cryptographic module"
+        },
+        "externally_auditable": {
+          "type": "boolean",
+          "description": "Whether the implementation can be externally audited",
+          "default": false
+        },
+        "external_audit_reports": {
+          "type": "array",
+          "description": "Links to external audit reports or certifications",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the audit report"
+              },
+              "auditor": {
+                "type": "string",
+                "description": "Organization that performed the audit"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "description": "Date the audit was completed"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Link to the audit report"
+              }
+            }
+          }
+        }
+      }
+    },
+    "signature_verification": {
+      "type": "object",
+      "description": "Configuration for signature verification",
+      "properties": {
+        "signature": {
+          "$ref": "common/signature.schema.json",
+          "description": "Cryptographic signature for verification"
+        },
+        "verification_policy": {
+          "type": "string",
+          "enum": ["required", "optional", "conditional"],
+          "description": "Policy for when signatures must be verified",
+          "default": "required"
+        },
+        "trusted_issuers": {
+          "type": "array",
+          "description": "List of trusted issuers for signature verification",
+          "items": {
+            "type": "string",
+            "description": "Issuer identifier or certificate subject"
+          }
+        }
+      }
+    },
+    "compliance_requirements": {
+      "type": "array",
+      "description": "Additional compliance frameworks that apply to this profile",
+      "items": {
+        "type": "object",
+        "required": ["framework", "status"],
+        "properties": {
+          "framework": {
+            "type": "string",
+            "description": "Compliance framework name",
+            "enum": [
+              "Common-Criteria", 
+              "ISO-15408", 
+              "NIST-800-53", 
+              "NIST-800-171", 
+              "HIPAA", 
+              "PCI-DSS", 
+              "GDPR", 
+              "SOC2", 
+              "FedRAMP"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["compliant", "not-compliant", "partial", "in-progress", "exempt"],
+            "description": "Current compliance status"
+          },
+          "last_assessment": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the last compliance assessment"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes about compliance with this framework"
+          }
+        }
+      }
+    },
+    "operational_constraints": {
+      "type": "object",
+      "description": "Operational constraints and requirements",
+      "properties": {
+        "approved_modes": {
+          "type": "array",
+          "description": "Approved operational modes",
+          "items": {
+            "type": "string"
+          }
+        },
+        "key_storage_policy": {
+          "type": "string",
+          "enum": ["hardware-only", "hybrid", "software-protected"],
+          "description": "Policy for key storage"
+        },
+        "key_transit_policy": {
+          "type": "string",
+          "enum": ["never-exposed", "encrypted-transit", "secure-channel", "plaintext-allowed"],
+          "description": "Policy for key transit between systems"
+        },
+        "runtime_integrity_checks": {
+          "type": "boolean",
+          "description": "Whether runtime integrity checks are performed",
+          "default": false
+        }
+      }
+    },
+    "use_cases": {
+      "type": "array", 
+      "description": "Example use cases for this FIPS crypto profile",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Short name for the use case"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of how the profile is used in this scenario"
+          },
+          "applied_to": {
+            "type": "array",
+            "description": "Entity types this profile can be applied to",
+            "items": {
+              "type": "string",
+              "enum": [
+                "computational_resource", 
+                "device", 
+                "training_dataset", 
+                "project_delta", 
+                "tool",
+                "storage_medium",
+                "transport",
+                "channel_adapter"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this crypto profile was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this crypto profile was last updated"
+    },
+    "tags": {
+      "type": "array",
+      "items": { 
+        "type": "string" 
+      },
+      "description": "Tags for categorization and filtering"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional implementation-specific metadata",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "crypto.hsm-validated",
+      "title": "FIPS 140-3 Validated Hardware Security Module Profile",
+      "certification_status": "fips-140-3",
+      "certificate_id": "4218",
+      "certificate_url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/4218",
+      "validation_date": "2023-07-15",
+      "primitive_usage": {
+        "hash_functions": ["SHA-256", "SHA-384", "SHA-512"],
+        "symmetric_algorithms": ["AES-256-GCM"],
+        "asymmetric_algorithms": ["ECDSA-P384", "RSA-3072"],
+        "rng_type": "SP800-90A-CTR-DRBG",
+        "key_derivation_functions": ["HKDF", "SP800-56C-KDF"]
+      },
+      "crypto_container": {
+        "type": "HSM",
+        "vendor": "Thales",
+        "model": "Luna Network HSM 7",
+        "version": "7.4.0",
+        "tamper_resistant": true,
+        "side_channel_mitigations": ["timing-resistant", "power-analysis-resistant"],
+        "externally_auditable": true
+      },
+      "signature_verification": {
+        "verification_policy": "required",
+        "trusted_issuers": ["CN=DAO Root CA, O=DAO Research Authority"]
+      },
+      "use_cases": [
+        {
+          "name": "Model Signing",
+          "description": "HSM-attested signing of trained AI models with tamper-evident packaging",
+          "applied_to": ["training_dataset", "computational_resource"]
+        },
+        {
+          "name": "Secure Boot",
+          "description": "Verification of system components during secure boot process",
+          "applied_to": ["device"]
+        }
+      ],
+      "created_at": "2023-09-01T00:00:00Z",
+      "updated_at": "2023-09-01T00:00:00Z",
+      "tags": ["hsm", "hardware", "fips-140-3", "model-signing"]
+    },
+    {
+      "id": "crypto.secure-enclave",
+      "title": "Mobile Secure Enclave Profile",
+      "certification_status": "fips-140-2",
+      "certificate_id": "3523",
+      "certificate_url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/3523",
+      "validation_date": "2020-05-10",
+      "primitive_usage": {
+        "hash_functions": ["SHA-256"],
+        "symmetric_algorithms": ["AES-256-GCM"],
+        "asymmetric_algorithms": ["ECDSA-P256", "ECDH-P256"],
+        "rng_type": "SP800-90A-CTR-DRBG",
+        "key_derivation_functions": ["PBKDF2"]
+      },
+      "crypto_container": {
+        "type": "SecureEnclave",
+        "vendor": "Apple",
+        "model": "A-series Secure Enclave",
+        "version": "2.0",
+        "tamper_resistant": true,
+        "side_channel_mitigations": ["timing-resistant"]
+      },
+      "use_cases": [
+        {
+          "name": "Verifiable Timestamps",
+          "description": "Cryptographically attested timestamps for data provenance",
+          "applied_to": ["project_delta"]
+        },
+        {
+          "name": "Portable Enclave",
+          "description": "Secure key storage and operations for mobile devices",
+          "applied_to": ["device", "tool"]
+        }
+      ],
+      "created_at": "2022-03-15T00:00:00Z",
+      "updated_at": "2022-03-15T00:00:00Z",
+      "tags": ["mobile", "secure-enclave", "fips-140-2"]
+    }
+  ]
+}
