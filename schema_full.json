@@ -2474,6 +2474,1690 @@
 ,
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/institution.schema.json",
+  "title": "Institution",
+  "description": "Schema for modeling institutions and companies across jurisdictions, legal systems, and economic roles",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "./graph_node.meta.schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "institution_type",
+        "legal_form",
+        "jurisdiction",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this institution"
+        },
+        "name": {
+          "type": "string",
+          "description": "Official name of the institution"
+        },
+        "aliases": {
+          "type": "array",
+          "description": "Alternative names, trading names, or abbreviations",
+          "items": {
+            "type": "string"
+          }
+        },
+        "institution_type": {
+          "type": "string",
+          "description": "Category of institution",
+          "enum": [
+            "private_company",
+            "non_profit",
+            "government_agency",
+            "university",
+            "foundation",
+            "dao",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the institution's purpose or activities"
+        },
+        "legal_metadata": {
+          "type": "object",
+          "description": "Legal and registration information",
+          "properties": {
+            "legal_form": {
+              "type": "string",
+              "description": "Legal structure (e.g., LLC, GmbH, Foundation)",
+              "examples": [
+                "LLC",
+                "GmbH",
+                "AG",
+                "Inc",
+                "Ltd",
+                "Foundation",
+                "501(c)(3)"
+              ]
+            },
+            "jurisdiction": {
+              "type": "object",
+              "description": "Legal jurisdiction where the institution is registered",
+              "required": [
+                "country_code"
+              ],
+              "properties": {
+                "country_code": {
+                  "type": "string",
+                  "description": "ISO 3166-1 alpha-2 country code",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "subdivision": {
+                  "type": "string",
+                  "description": "State, province, or other subdivision"
+                }
+              }
+            },
+            "registration_id": {
+              "type": "string",
+              "description": "Official registration/identification number"
+            },
+            "incorporated_at": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of incorporation or establishment"
+            },
+            "dissolved_at": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of dissolution (if applicable)"
+            },
+            "status": {
+              "type": "string",
+              "description": "Current operational status",
+              "enum": [
+                "active",
+                "dormant",
+                "dissolved",
+                "in_formation",
+                "bankrupt",
+                "restructuring"
+              ]
+            },
+            "regulated_by": {
+              "type": "array",
+              "description": "Regulatory bodies that oversee this institution",
+              "items": {
+                "type": "string",
+                "examples": [
+                  "US-SEC",
+                  "FCA",
+                  "CNIL",
+                  "MAS",
+                  "FINMA"
+                ]
+              }
+            }
+          }
+        },
+        "compliance": {
+          "type": "object",
+          "description": "Compliance and governance information",
+          "properties": {
+            "compliance_certifications": {
+              "type": "array",
+              "description": "Compliance standards and certifications",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "certification": {
+                    "type": "string",
+                    "examples": [
+                      "GDPR",
+                      "SOC2",
+                      "ISO/IEC 27001",
+                      "PCI-DSS"
+                    ]
+                  },
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "issued_by": {
+                    "type": "string"
+                  },
+                  "certification_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "certification"
+                ]
+              }
+            },
+            "governance_model": {
+              "type": "string",
+              "description": "Primary governance mechanism",
+              "enum": [
+                "board_directed",
+                "member_voted",
+                "smart_contract",
+                "government_controlled",
+                "cooperative",
+                "single_owner"
+              ]
+            },
+            "economic_activity": {
+              "type": "array",
+              "description": "Primary economic activities",
+              "items": {
+                "type": "string",
+                "examples": [
+                  "mining",
+                  "finance",
+                  "research",
+                  "technology",
+                  "education",
+                  "manufacturing"
+                ]
+              }
+            },
+            "industry_classification": {
+              "type": "object",
+              "description": "Standard industry classifications",
+              "properties": {
+                "code_type": {
+                  "type": "string",
+                  "description": "Classification system used",
+                  "enum": [
+                    "NAICS",
+                    "NACE",
+                    "SIC",
+                    "ISIC",
+                    "GICS"
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Classification code"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the industry classification"
+                }
+              }
+            }
+          }
+        },
+        "relationships": {
+          "type": "object",
+          "description": "Organizational relationships",
+          "properties": {
+            "affiliated_entities": {
+              "type": "array",
+              "description": "Related organizations including subsidiaries, parent orgs, contractors",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {
+                    "type": "string",
+                    "description": "Reference to another institution"
+                  },
+                  "relationship_type": {
+                    "type": "string",
+                    "enum": [
+                      "parent",
+                      "subsidiary",
+                      "affiliate",
+                      "contractor",
+                      "partner",
+                      "investor"
+                    ]
+                  },
+                  "ownership_percentage": {
+                    "type": "number",
+                    "description": "Ownership stake percentage (0-100)",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "entity_id",
+                  "relationship_type"
+                ]
+              }
+            },
+            "operational_scope": {
+              "type": "string",
+              "description": "Geographical scope of operations",
+              "enum": [
+                "local",
+                "national",
+                "multinational",
+                "digital_only",
+                "global"
+              ]
+            },
+            "operating_regions": {
+              "type": "array",
+              "description": "Specific regions of operation",
+              "items": {
+                "type": "string",
+                "examples": [
+                  "EU",
+                  "APAC",
+                  "North America",
+                  "Global"
+                ]
+              }
+            }
+          }
+        },
+        "cryptographic_identity": {
+          "type": "object",
+          "description": "Cryptographic signing and identity information",
+          "properties": {
+            "signature": {
+              "$ref": "./common/signature.schema.json"
+            },
+            "authorized_representative_id": {
+              "type": "string",
+              "description": "Link to contributor authorized to sign on behalf of institution"
+            },
+            "contract_reference": {
+              "type": "string",
+              "format": "uri",
+              "description": "URI to signed legal terms or contract"
+            },
+            "public_keys": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key_id": {
+                    "type": "string"
+                  },
+                  "key_type": {
+                    "type": "string",
+                    "enum": [
+                      "ed25519",
+                      "secp256k1",
+                      "rsa",
+                      "pgp"
+                    ]
+                  },
+                  "key_value": {
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "enum": [
+                      "signing",
+                      "encryption",
+                      "authentication",
+                      "general"
+                    ]
+                  }
+                },
+                "required": [
+                  "key_id",
+                  "key_type",
+                  "key_value"
+                ]
+              }
+            }
+          }
+        },
+        "contact_info": {
+          "type": "object",
+          "description": "Contact information",
+          "properties": {
+            "address": {
+              "type": "object",
+              "properties": {
+                "street_address": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "postal_code": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                }
+              }
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "website": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "founded_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the institution was founded (may differ from incorporation date)"
+        },
+        "funding_sources": {
+          "type": "array",
+          "description": "References to funding entries",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dataset_references": {
+          "type": "array",
+          "description": "References to datasets owned or managed by this institution",
+          "items": {
+            "type": "string"
+          }
+        },
+        "device_manufacturing": {
+          "type": "array",
+          "description": "References to devices manufactured by this institution",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "description": "User-defined tags for categorization",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata or extension points",
+          "additionalProperties": true
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "inst-1234",
+      "name": "Acme Corporation",
+      "aliases": [
+        "Acme Corp.",
+        "ACME"
+      ],
+      "institution_type": "private_company",
+      "description": "Technology and manufacturing conglomerate",
+      "legal_metadata": {
+        "legal_form": "Inc",
+        "jurisdiction": {
+          "country_code": "US",
+          "subdivision": "Delaware"
+        },
+        "registration_id": "DE-12345678",
+        "incorporated_at": "1998-03-15",
+        "status": "active",
+        "regulated_by": [
+          "US-SEC",
+          "US-FDA"
+        ]
+      },
+      "compliance": {
+        "compliance_certifications": [
+          {
+            "certification": "ISO/IEC 27001",
+            "issued_at": "2022-05-10",
+            "expires_at": "2025-05-09",
+            "issued_by": "ISO Certification Authority",
+            "certification_id": "ISO-27001-AC-123456"
+          },
+          {
+            "certification": "SOC2",
+            "issued_at": "2023-01-15",
+            "expires_at": "2024-01-14"
+          }
+        ],
+        "governance_model": "board_directed",
+        "economic_activity": [
+          "technology",
+          "manufacturing",
+          "research"
+        ],
+        "industry_classification": {
+          "code_type": "NAICS",
+          "code": "334220",
+          "description": "Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing"
+        }
+      },
+      "relationships": {
+        "affiliated_entities": [
+          {
+            "entity_id": "inst-2345",
+            "relationship_type": "subsidiary",
+            "ownership_percentage": 100,
+            "description": "Fully owned R&D subsidiary"
+          },
+          {
+            "entity_id": "inst-3456",
+            "relationship_type": "contractor",
+            "description": "Manufacturing partner"
+          }
+        ],
+        "operational_scope": "multinational",
+        "operating_regions": [
+          "North America",
+          "EU",
+          "APAC"
+        ]
+      },
+      "cryptographic_identity": {
+        "authorized_representative_id": "contributor-5678",
+        "contract_reference": "https://dao.example.org/contracts/acme-2023.pdf",
+        "public_keys": [
+          {
+            "key_id": "acme-primary-2023",
+            "key_type": "ed25519",
+            "key_value": "Cs8kXPn532nxiRQ72MpWkdYhpZdZ7bA3TaC2JZkiCig=",
+            "purpose": "signing"
+          }
+        ]
+      },
+      "contact_info": {
+        "address": {
+          "street_address": "123 Innovation Drive",
+          "city": "Palo Alto",
+          "state": "CA",
+          "postal_code": "94301",
+          "country": "US"
+        },
+        "email": "contact@acmecorp.example",
+        "website": "https://acmecorp.example"
+      },
+      "founded_at": "1997-11-12",
+      "funding_sources": [
+        "funding-789",
+        "funding-790"
+      ],
+      "tags": [
+        "technology",
+        "manufacturing",
+        "publicly-traded"
+      ]
+    },
+    {
+      "id": "inst-5678",
+      "name": "Global Research Foundation",
+      "institution_type": "foundation",
+      "description": "Non-profit organization dedicated to scientific research and education",
+      "legal_metadata": {
+        "legal_form": "501(c)(3)",
+        "jurisdiction": {
+          "country_code": "US",
+          "subdivision": "New York"
+        },
+        "registration_id": "NY-87654321",
+        "incorporated_at": "2005-07-22",
+        "status": "active"
+      },
+      "compliance": {
+        "governance_model": "board_directed",
+        "economic_activity": [
+          "research",
+          "education",
+          "grants"
+        ],
+        "industry_classification": {
+          "code_type": "NAICS",
+          "code": "541715",
+          "description": "Research and Development in the Physical, Engineering, and Life Sciences"
+        }
+      },
+      "relationships": {
+        "operational_scope": "global",
+        "operating_regions": [
+          "Global"
+        ]
+      },
+      "cryptographic_identity": {
+        "authorized_representative_id": "contributor-9012"
+      },
+      "contact_info": {
+        "address": {
+          "street_address": "456 Science Avenue",
+          "city": "New York",
+          "state": "NY",
+          "postal_code": "10001",
+          "country": "US"
+        },
+        "email": "info@globalresearch.example",
+        "website": "https://globalresearch.example"
+      },
+      "founded_at": "2005-06-30",
+      "dataset_references": [
+        "dataset-123",
+        "dataset-456"
+      ],
+      "tags": [
+        "non-profit",
+        "research",
+        "grants"
+      ]
+    },
+    {
+      "id": "inst-9012",
+      "name": "CryptoDAO Collective",
+      "institution_type": "dao",
+      "description": "Decentralized autonomous organization focused on blockchain development",
+      "legal_metadata": {
+        "legal_form": "DAO LLC",
+        "jurisdiction": {
+          "country_code": "CH",
+          "subdivision": "Zug"
+        },
+        "registration_id": "ZG-2023-456789",
+        "incorporated_at": "2023-01-10",
+        "status": "active"
+      },
+      "compliance": {
+        "compliance_certifications": [],
+        "governance_model": "smart_contract",
+        "economic_activity": [
+          "technology",
+          "finance",
+          "software"
+        ],
+        "industry_classification": {
+          "code_type": "NAICS",
+          "code": "541512",
+          "description": "Computer Systems Design Services"
+        }
+      },
+      "relationships": {
+        "operational_scope": "digital_only"
+      },
+      "cryptographic_identity": {
+        "contract_reference": "https://etherscan.io/address/0xabcdef1234567890",
+        "public_keys": [
+          {
+            "key_id": "dao-treasury-key",
+            "key_type": "secp256k1",
+            "key_value": "0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3",
+            "purpose": "signing"
+          }
+        ]
+      },
+      "contact_info": {
+        "email": "governance@cryptodao.example",
+        "website": "https://cryptodao.example"
+      },
+      "founded_at": "2022-12-01",
+      "funding_sources": [
+        "funding-567"
+      ],
+      "device_manufacturing": [],
+      "tags": [
+        "blockchain",
+        "dao",
+        "defi"
+      ]
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/institution.schema.json",
+    "timestamp": "2025-05-13 15:22:28"
+  }
+}
+,
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/legal_instrument_base.schema.json",
+  "title": "Legal Instrument Base",
+  "description": "Base schema for modeling legal instruments including contracts, licenses, statutes, regulations and agreements",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "./graph_node.meta.schema.json"
+    }
+  ],
+  "required": [
+    "id",
+    "type",
+    "instrument_type",
+    "title",
+    "jurisdiction",
+    "effective_date",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^li\\.[a-z0-9_-]{3,64}$",
+      "description": "Unique identifier prefixed with 'li.'"
+    },
+    "type": {
+      "const": "LegalInstrument"
+    },
+    "instrument_type": {
+      "type": "string",
+      "description": "Type of legal instrument",
+      "enum": [
+        "contract",
+        "license",
+        "statute",
+        "regulation",
+        "policy",
+        "treaty",
+        "constitutional",
+        "judicial_decision",
+        "executive_order",
+        "dao_governance",
+        "terms_of_use",
+        "nda",
+        "other"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Official title or name of the legal instrument"
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Alternative names, abbreviations, or common references",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief summary of the instrument's purpose and scope"
+    },
+    "jurisdiction": {
+      "type": "array",
+      "description": "Legal jurisdictions where the instrument applies",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "country_code"
+        ],
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "subdivision": {
+            "type": "string",
+            "description": "State, province, or other subdivision"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional jurisdiction context"
+          }
+        }
+      }
+    },
+    "governing_law": {
+      "type": "string",
+      "description": "Reference to applicable legal system",
+      "pattern": "^ls\\.[a-z0-9_-]{3,64}$"
+    },
+    "versioning": {
+      "type": "object",
+      "description": "Version tracking information",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Version identifier (e.g., '1.0', '2023-01')"
+        },
+        "previous_version": {
+          "type": "string",
+          "description": "Reference to previous version of this instrument"
+        },
+        "revision_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of this version"
+        },
+        "revision_notes": {
+          "type": "string",
+          "description": "Notes about changes from previous version"
+        }
+      }
+    },
+    "temporal_scope": {
+      "type": "object",
+      "required": [
+        "effective_date"
+      ],
+      "properties": {
+        "effective_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the instrument takes effect"
+        },
+        "expiration_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the instrument expires, if applicable"
+        },
+        "termination_conditions": {
+          "type": "string",
+          "description": "Conditions under which the instrument would terminate"
+        }
+      }
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the instrument takes effect"
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the instrument expires, if applicable"
+    },
+    "parties": {
+      "type": "array",
+      "description": "Parties to the legal instrument (individuals or organizations)",
+      "items": {
+        "type": "object",
+        "required": [
+          "party_id",
+          "role"
+        ],
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "description": "Reference to a contributor or institution"
+          },
+          "party_type": {
+            "type": "string",
+            "enum": [
+              "contributor",
+              "institution"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "description": "Role of this party in the instrument",
+            "examples": [
+              "licensor",
+              "licensee",
+              "service_provider",
+              "client",
+              "regulator",
+              "data_controller",
+              "data_processor"
+            ]
+          },
+          "acceptance": {
+            "type": "object",
+            "description": "Evidence of party's consent or acceptance",
+            "properties": {
+              "signature": {
+                "$ref": "./common/signature.schema.json"
+              },
+              "accepted_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this party accepted the instrument"
+              },
+              "acceptance_method": {
+                "type": "string",
+                "description": "Method of acceptance",
+                "enum": [
+                  "cryptographic_signature",
+                  "physical_signature",
+                  "click_through",
+                  "implied_consent",
+                  "legislative_process"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "description": "Substantive provisions of the instrument",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier for this clause (e.g., 'sec-1.2', 'article-5')"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title or heading of the clause"
+          },
+          "text": {
+            "type": "string",
+            "description": "Full text of the clause"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of provision",
+            "enum": [
+              "obligation",
+              "right",
+              "restriction",
+              "definition",
+              "procedure",
+              "remedy",
+              "liability",
+              "termination",
+              "other"
+            ]
+          },
+          "applies_to": {
+            "type": "array",
+            "description": "Resources or subjects this clause specifically governs",
+            "items": {
+              "type": "object",
+              "properties": {
+                "resource_id": {
+                  "type": "string",
+                  "description": "ID of dataset, project, or other resource"
+                },
+                "resource_type": {
+                  "type": "string",
+                  "description": "Type of resource referenced",
+                  "enum": [
+                    "dataset",
+                    "project",
+                    "code",
+                    "model",
+                    "device",
+                    "api",
+                    "system",
+                    "other"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "description": "How the instrument is enforced",
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "description": "Primary enforcement mechanism",
+          "enum": [
+            "court",
+            "arbitration",
+            "smart_contract",
+            "dao_governance",
+            "regulatory_agency",
+            "self_enforcing",
+            "social_norm"
+          ]
+        },
+        "venue": {
+          "type": "string",
+          "description": "Location or forum for enforcement or dispute resolution"
+        },
+        "remedy_types": {
+          "type": "array",
+          "description": "Available remedies for non-compliance",
+          "items": {
+            "type": "string",
+            "examples": [
+              "damages",
+              "specific_performance",
+              "injunction",
+              "suspension",
+              "termination",
+              "penalty"
+            ]
+          }
+        },
+        "enforcement_agent": {
+          "type": "string",
+          "description": "Entity responsible for enforcement"
+        }
+      }
+    },
+    "resources_governed": {
+      "type": "array",
+      "description": "Resources this instrument governs or applies to",
+      "items": {
+        "type": "object",
+        "required": [
+          "resource_id",
+          "resource_type"
+        ],
+        "properties": {
+          "resource_id": {
+            "type": "string",
+            "description": "ID of resource (dataset, project, etc.)"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "Type of resource",
+            "enum": [
+              "dataset",
+              "project",
+              "code",
+              "model",
+              "device",
+              "api",
+              "system",
+              "other"
+            ]
+          },
+          "relationship": {
+            "type": "string",
+            "description": "How this instrument relates to the resource",
+            "enum": [
+              "governs",
+              "licenses",
+              "restricts",
+              "creates",
+              "terminates",
+              "modifies"
+            ]
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "Legal references or citations to other instruments",
+      "items": {
+        "type": "object",
+        "properties": {
+          "referenced_instrument": {
+            "type": "string",
+            "description": "ID of referenced instrument if in the system"
+          },
+          "external_reference": {
+            "type": "string",
+            "description": "Citation or reference to external source"
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "supersedes",
+              "implements",
+              "amends",
+              "cites",
+              "incorporates",
+              "contrasts_with"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to referenced document if available"
+          }
+        }
+      }
+    },
+    "official_sources": {
+      "type": "array",
+      "description": "Official publication or filing sources",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_name": {
+            "type": "string",
+            "description": "Name of official source"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to official source"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Official identifier or citation"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "Current status of the instrument",
+      "enum": [
+        "draft",
+        "active",
+        "superseded",
+        "expired",
+        "revoked",
+        "amended",
+        "in_force",
+        "repealed",
+        "proposed"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "description": "User-defined tags for categorization",
+      "items": {
+        "type": "string"
+      }
+    },
+    "signature": {
+      "$ref": "./common/signature.schema.json",
+      "description": "Cryptographic signature authenticating this instrument definition"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata or extension points",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "li.uk-gdpr-2018",
+      "type": "LegalInstrument",
+      "instrument_type": "statute",
+      "title": "UK General Data Protection Regulation",
+      "aliases": [
+        "UK GDPR",
+        "DPA 2018"
+      ],
+      "description": "UK implementation of GDPR post-Brexit defining rules for processing and protecting personal data",
+      "jurisdiction": [
+        {
+          "country_code": "GB",
+          "notes": "Applies to all of the United Kingdom"
+        }
+      ],
+      "governing_law": "ls.uk-common-law",
+      "versioning": {
+        "version": "2021-01",
+        "revision_date": "2021-01-01",
+        "revision_notes": "Post-Brexit adaptation of EU GDPR into UK law"
+      },
+      "effective_date": "2021-01-01",
+      "parties": [
+        {
+          "party_id": "inst-ico",
+          "party_type": "institution",
+          "role": "regulator",
+          "acceptance": {
+            "acceptance_method": "legislative_process"
+          }
+        }
+      ],
+      "clauses": [
+        {
+          "id": "article-5",
+          "title": "Principles relating to processing of personal data",
+          "text": "Personal data shall be processed lawfully, fairly and in a transparent manner in relation to the data subject ('lawfulness, fairness and transparency')...",
+          "type": "obligation"
+        },
+        {
+          "id": "article-6",
+          "title": "Lawfulness of processing",
+          "text": "Processing shall be lawful only if and to the extent that at least one of the following applies...",
+          "type": "obligation"
+        },
+        {
+          "id": "article-83",
+          "title": "Administrative fines",
+          "text": "Infringements of this Regulation can lead to administrative fines up to £17.5 million, or in the case of an undertaking, up to 4% of the total worldwide annual turnover of the preceding financial year, whichever is higher.",
+          "type": "liability"
+        }
+      ],
+      "enforcement": {
+        "mechanism": "regulatory_agency",
+        "venue": "United Kingdom",
+        "remedy_types": [
+          "damages",
+          "administrative_fines",
+          "processing_suspension"
+        ],
+        "enforcement_agent": "Information Commissioner's Office"
+      },
+      "references": [
+        {
+          "external_reference": "EU GDPR (Regulation 2016/679)",
+          "relationship": "derives_from",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        },
+        {
+          "external_reference": "Data Protection Act 2018",
+          "relationship": "implements",
+          "url": "https://www.legislation.gov.uk/ukpga/2018/12/contents"
+        }
+      ],
+      "official_sources": [
+        {
+          "source_name": "legislation.gov.uk",
+          "url": "https://www.legislation.gov.uk/ukpga/2018/12/contents",
+          "identifier": "2018 c. 12"
+        }
+      ],
+      "status": "in_force",
+      "tags": [
+        "data_protection",
+        "privacy",
+        "uk_law",
+        "gdpr"
+      ]
+    },
+    {
+      "id": "li.contributor-nda-dataset-123",
+      "type": "LegalInstrument",
+      "instrument_type": "nda",
+      "title": "Confidentiality Agreement - Healthcare Dataset Analysis Project",
+      "description": "Non-disclosure agreement covering access to sensitive healthcare dataset for research purposes",
+      "jurisdiction": [
+        {
+          "country_code": "US",
+          "subdivision": "California"
+        }
+      ],
+      "governing_law": "ls.us-california",
+      "versioning": {
+        "version": "1.0"
+      },
+      "effective_date": "2023-06-15",
+      "expiration_date": "2025-06-14",
+      "parties": [
+        {
+          "party_id": "inst-1234",
+          "party_type": "institution",
+          "role": "disclosing_party",
+          "acceptance": {
+            "signature": {
+              "value": "c3VwZXJzZWNyZXRzaWduYXR1cmV2YWx1ZQ==",
+              "algorithm": "ed25519",
+              "public_key": "acme-primary-2023",
+              "timestamp": "2023-06-15T10:00:00Z"
+            },
+            "accepted_at": "2023-06-15T10:00:00Z",
+            "acceptance_method": "cryptographic_signature"
+          }
+        },
+        {
+          "party_id": "contributor-5678",
+          "party_type": "contributor",
+          "role": "receiving_party",
+          "acceptance": {
+            "signature": {
+              "value": "YW5vdGhlcnNlY3JldHNpZ25hdHVyZXZhbHVl",
+              "algorithm": "ed25519",
+              "public_key": "contributor-key-2023",
+              "timestamp": "2023-06-15T11:30:00Z"
+            },
+            "accepted_at": "2023-06-15T11:30:00Z",
+            "acceptance_method": "cryptographic_signature"
+          }
+        }
+      ],
+      "clauses": [
+        {
+          "id": "sec-1",
+          "title": "Definition of Confidential Information",
+          "text": "\"Confidential Information\" means any and all technical and non-technical information related to the Dataset (defined below) including patient data, processing methodologies, algorithms, and research findings...",
+          "type": "definition"
+        },
+        {
+          "id": "sec-2",
+          "title": "Non-disclosure Obligations",
+          "text": "Receiving Party agrees to not disclose, publish, or disseminate Confidential Information to anyone other than those of its employees, contractors, and agents with a need to know...",
+          "type": "obligation",
+          "applies_to": [
+            {
+              "resource_id": "dataset-123",
+              "resource_type": "dataset"
+            }
+          ]
+        },
+        {
+          "id": "sec-3",
+          "title": "Term and Termination",
+          "text": "This Agreement shall remain in effect for a period of two (2) years from the Effective Date, unless terminated earlier...",
+          "type": "termination"
+        }
+      ],
+      "enforcement": {
+        "mechanism": "court",
+        "venue": "Superior Court of California, County of San Francisco",
+        "remedy_types": [
+          "injunction",
+          "damages"
+        ]
+      },
+      "resources_governed": [
+        {
+          "resource_id": "dataset-123",
+          "resource_type": "dataset",
+          "relationship": "governs"
+        }
+      ],
+      "status": "active",
+      "tags": [
+        "nda",
+        "healthcare",
+        "research",
+        "confidential"
+      ]
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/legal_instrument_base.schema.json",
+    "timestamp": "2025-05-13 15:42:23"
+  }
+}
+,
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/legal_system.schema.json",
+  "title": "Legal System",
+  "description": "Schema for modeling legal systems, jurisdictions, and their characteristics across different regions and legal traditions",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "./graph_node.meta.schema.json"
+    }
+  ],
+  "required": [
+    "id",
+    "type",
+    "label",
+    "legal_family",
+    "jurisdiction_scope",
+    "sources_of_law",
+    "primary_language"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ls\\.[a-z0-9_-]{3,64}$",
+      "description": "Unique slug prefixed with 'ls.' (e.g., ls.common-law)"
+    },
+    "type": {
+      "const": "LegalSystem"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable name of the legal system"
+    },
+    "legal_family": {
+      "type": "string",
+      "enum": [
+        "common",
+        "civil",
+        "religious",
+        "customary",
+        "mixed"
+      ],
+      "description": "Primary legal family or tradition"
+    },
+    "jurisdiction_scope": {
+      "type": "array",
+      "description": "Geographic scope defined by ISO 3166 country codes and sub-regions",
+      "items": {
+        "type": "object",
+        "required": [
+          "region_code"
+        ],
+        "properties": {
+          "region_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code or recognized sub-region code"
+          },
+          "subdivision": {
+            "type": "string",
+            "description": "Specific state, province, or other subdivision if applicable"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional context about jurisdiction application"
+          }
+        }
+      }
+    },
+    "sources_of_law": {
+      "type": "array",
+      "description": "Recognized sources of legal authority in this system",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "examples": [
+          "statute",
+          "precedent",
+          "constitution",
+          "custom",
+          "religious_text",
+          "treaty",
+          "administrative_rule"
+        ]
+      }
+    },
+    "primary_language": {
+      "type": "string",
+      "description": "ISO 639-1/2 language code for the primary legal language",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+    },
+    "other_languages": {
+      "type": "array",
+      "description": "Other official languages in which legal proceedings may be conducted",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+      }
+    },
+    "interpretation_style": {
+      "type": "string",
+      "description": "Predominant approach to legal interpretation (e.g., 'Textualism', 'Living Constitution')"
+    },
+    "compliance_requirements": {
+      "type": "array",
+      "description": "Major categories of legal obligations in this system",
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "description"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of legal obligation",
+            "examples": [
+              "data_protection",
+              "licensing",
+              "labor",
+              "taxation",
+              "environmental"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of compliance requirement"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Reference to specific law, regulation, or treaty"
+          }
+        }
+      }
+    },
+    "governing_bodies": {
+      "type": "array",
+      "description": "Major courts, agencies, or councils responsible for enforcement and adjudication",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the governing body"
+          },
+          "role": {
+            "type": "string",
+            "description": "Function or jurisdiction of this body",
+            "examples": [
+              "supreme_court",
+              "constitutional_court",
+              "regulatory_agency",
+              "administrative_tribunal"
+            ]
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "description": "Official website URL"
+          }
+        }
+      }
+    },
+    "binding_instruments": {
+      "type": "array",
+      "description": "Key treaties, agreements, or foundational documents",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the binding instrument"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Reference URL to the instrument"
+          },
+          "effective_date": {
+            "type": "string",
+            "format": "date",
+            "description": "When the instrument came into effect"
+          }
+        }
+      }
+    },
+    "signature": {
+      "$ref": "./common/signature.schema.json",
+      "description": "Optional cryptographic signature to verify integrity and authority of legal system definition"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata for edge cases and extensibility",
+      "additionalProperties": true
+    }
+  },
+  "examples": [
+    {
+      "id": "ls.uk-common-law",
+      "type": "LegalSystem",
+      "label": "United Kingdom Common Law",
+      "legal_family": "common",
+      "jurisdiction_scope": [
+        {
+          "region_code": "GB",
+          "notes": "England and Wales follow common law; Scotland has a mixed system"
+        }
+      ],
+      "sources_of_law": [
+        "statute",
+        "precedent",
+        "custom",
+        "parliamentary_sovereignty"
+      ],
+      "primary_language": "en-GB",
+      "interpretation_style": "Purposive approach with increasing textualism",
+      "compliance_requirements": [
+        {
+          "category": "data_protection",
+          "description": "UK GDPR and Data Protection Act 2018 compliance for personal data processing",
+          "reference": "Data Protection Act 2018"
+        },
+        {
+          "category": "corporate_governance",
+          "description": "Companies Act 2006 compliance for corporate entities",
+          "reference": "Companies Act 2006"
+        }
+      ],
+      "governing_bodies": [
+        {
+          "name": "UK Supreme Court",
+          "role": "supreme_court",
+          "website": "https://www.supremecourt.uk"
+        },
+        {
+          "name": "Court of Appeal",
+          "role": "appellate_court"
+        },
+        {
+          "name": "Information Commissioner's Office",
+          "role": "regulatory_agency",
+          "website": "https://ico.org.uk"
+        }
+      ],
+      "binding_instruments": [
+        {
+          "name": "Magna Carta",
+          "effective_date": "1215-06-15"
+        },
+        {
+          "name": "Human Rights Act 1998",
+          "effective_date": "1998-11-09",
+          "url": "https://www.legislation.gov.uk/ukpga/1998/42/contents"
+        }
+      ]
+    },
+    {
+      "id": "ls.japan-civil-law",
+      "type": "LegalSystem",
+      "label": "Japanese Civil Law System",
+      "legal_family": "civil",
+      "jurisdiction_scope": [
+        {
+          "region_code": "JP"
+        }
+      ],
+      "sources_of_law": [
+        "constitution",
+        "statute",
+        "cabinet_orders",
+        "administrative_rule"
+      ],
+      "primary_language": "ja",
+      "interpretation_style": "Code-based systematic interpretation",
+      "compliance_requirements": [
+        {
+          "category": "data_protection",
+          "description": "Act on the Protection of Personal Information",
+          "reference": "Act No. 57 of 2003"
+        },
+        {
+          "category": "corporate_governance",
+          "description": "Companies Act of Japan",
+          "reference": "Act No. 86 of 2005"
+        }
+      ],
+      "governing_bodies": [
+        {
+          "name": "Supreme Court of Japan",
+          "role": "supreme_court",
+          "website": "https://www.courts.go.jp/english/"
+        },
+        {
+          "name": "Personal Information Protection Commission",
+          "role": "regulatory_agency",
+          "website": "https://www.ppc.go.jp/en/"
+        }
+      ],
+      "binding_instruments": [
+        {
+          "name": "Constitution of Japan",
+          "effective_date": "1947-05-03"
+        },
+        {
+          "name": "Civil Code of Japan",
+          "effective_date": "1896-04-27"
+        }
+      ]
+    },
+    {
+      "id": "ls.dao-governance",
+      "type": "LegalSystem",
+      "label": "DAO Decentralized Governance",
+      "legal_family": "mixed",
+      "jurisdiction_scope": [
+        {
+          "region_code": "ZZ",
+          "notes": "Digital jurisdiction without strict geographic boundaries"
+        }
+      ],
+      "sources_of_law": [
+        "smart_contract",
+        "community_vote",
+        "protocol_code",
+        "consensus_mechanism"
+      ],
+      "primary_language": "en",
+      "interpretation_style": "Code is law with community arbitration",
+      "compliance_requirements": [
+        {
+          "category": "consensus_adherence",
+          "description": "Compliance with consensus rules and protocol governance"
+        },
+        {
+          "category": "token_governance",
+          "description": "Respecting token-based voting outcomes"
+        }
+      ],
+      "governing_bodies": [
+        {
+          "name": "Core Development Team",
+          "role": "technical_governance"
+        },
+        {
+          "name": "Arbitration Council",
+          "role": "dispute_resolution"
+        },
+        {
+          "name": "Token Holders Assembly",
+          "role": "legislative"
+        }
+      ],
+      "binding_instruments": [
+        {
+          "name": "Genesis Smart Contract",
+          "url": "https://etherscan.io/address/0x1234567890abcdef1234567890abcdef12345678"
+        },
+        {
+          "name": "DAO Constitution v1.0",
+          "url": "https://dao.example.org/constitution.pdf"
+        }
+      ],
+      "meta": {
+        "consensus_mechanism": "Proof of Stake",
+        "governance_token": "DAOtoken",
+        "off_chain_component": "Arweave-based proposal system"
+      }
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/legal_system.schema.json",
+    "timestamp": "2025-05-13 15:27:21"
+  }
+}
+,
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dao.example.org/schemas/measurement.schema.json",
   "title": "Physical Measurement",
   "description": "Atomic numeric observation with unit, context and provenance. Compatible with UCUM and QUDT codes.",
@@ -3869,6 +5553,25 @@
       ]
     },
     {
+      "file": "common/cognition/base_cognitive_state.schema.json",
+      "title": "Base Cognitive State",
+      "purpose": "Abstract base schema for all cognitive state records with common fields",
+      "governs": "node:BaseCognitiveState",
+      "linksTo": [
+        "common/signature.schema.json"
+      ]
+    },
+    {
+      "file": "common/cognition/memory_context.schema.json",
+      "title": "Memory Context",
+      "purpose": "Schema for capturing contextual information about memories to support AI-assisted recall",
+      "governs": "node:MemoryContext",
+      "linksTo": [
+        "emotional_state.schema.json",
+        "psychological_state.schema.json"
+      ]
+    },
+    {
       "file": "resource.schema.json",
       "title": "Resource",
       "purpose": "Schema for modeling physical, renewable, and abstract resources with supply chain provenance, sustainability metrics, and lifecycle characteristics",
@@ -3908,11 +5611,44 @@
         "resource.schema.json",
         "measurements/data_measurement.schema.json"
       ]
+    },
+    {
+      "file": "institution.schema.json",
+      "title": "Institution",
+      "purpose": "Models institutions and companies across jurisdictions, legal systems, and economic roles",
+      "governs": "node:Institution",
+      "linksTo": [
+        "common/signature.schema.json",
+        "contributors/contributor_base.schema.json",
+        "funding_entry.schema.json",
+        "training_dataset.schema.json",
+        "device.schema.json"
+      ]
+    },
+    {
+      "file": "legal_system.schema.json",
+      "title": "Legal System",
+      "purpose": "Models legal systems, jurisdictions, and their characteristics across different regions and legal traditions",
+      "governs": "node:LegalSystem",
+      "linksTo": [
+        "common/signature.schema.json"
+      ]
+    },
+    {
+      "file": "legal_instrument_base.schema.json",
+      "title": "Legal Instrument Base",
+      "purpose": "Base schema for modeling legal instruments including contracts, licenses, statutes, regulations and agreements",
+      "governs": "node:LegalInstrument",
+      "linksTo": [
+        "graph_node.meta.schema.json",
+        "common/signature.schema.json",
+        "legal_system.schema.json"
+      ]
     }
   ],
   "__meta": {
     "file": "/Users/a/Documents/schemas/metaschema.json",
-    "timestamp": "2025-05-13 13:44:47"
+    "timestamp": "2025-05-13 15:49:37"
   }
 }
 ,

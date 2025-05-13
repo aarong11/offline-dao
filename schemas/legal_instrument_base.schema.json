@@ -1,0 +1,522 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/legal_instrument_base.schema.json",
+  "title": "Legal Instrument Base",
+  "description": "Base schema for modeling legal instruments including contracts, licenses, statutes, regulations and agreements",
+  "type": "object",
+  "allOf": [{ "$ref": "./graph_node.meta.schema.json" }],
+  "required": [
+    "id",
+    "type",
+    "instrument_type",
+    "title",
+    "jurisdiction",
+    "effective_date",
+    "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^li\\.[a-z0-9_-]{3,64}$",
+      "description": "Unique identifier prefixed with 'li.'"
+    },
+    "type": {
+      "const": "LegalInstrument"
+    },
+    "instrument_type": {
+      "type": "string",
+      "description": "Type of legal instrument",
+      "enum": [
+        "contract",
+        "license",
+        "statute",
+        "regulation",
+        "policy",
+        "treaty",
+        "constitutional",
+        "judicial_decision",
+        "executive_order",
+        "dao_governance",
+        "terms_of_use",
+        "nda",
+        "other"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Official title or name of the legal instrument"
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Alternative names, abbreviations, or common references",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief summary of the instrument's purpose and scope"
+    },
+    "jurisdiction": {
+      "type": "array",
+      "description": "Legal jurisdictions where the instrument applies",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["country_code"],
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "subdivision": {
+            "type": "string",
+            "description": "State, province, or other subdivision"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional jurisdiction context"
+          }
+        }
+      }
+    },
+    "governing_law": {
+      "type": "string",
+      "description": "Reference to applicable legal system",
+      "pattern": "^ls\\.[a-z0-9_-]{3,64}$"
+    },
+    "versioning": {
+      "type": "object",
+      "description": "Version tracking information",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Version identifier (e.g., '1.0', '2023-01')"
+        },
+        "previous_version": {
+          "type": "string",
+          "description": "Reference to previous version of this instrument"
+        },
+        "revision_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of this version"
+        },
+        "revision_notes": {
+          "type": "string",
+          "description": "Notes about changes from previous version"
+        }
+      }
+    },
+    "temporal_scope": {
+      "type": "object",
+      "required": ["effective_date"],
+      "properties": {
+        "effective_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the instrument takes effect"
+        },
+        "expiration_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the instrument expires, if applicable"
+        },
+        "termination_conditions": {
+          "type": "string",
+          "description": "Conditions under which the instrument would terminate"
+        }
+      }
+    },
+    "effective_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the instrument takes effect"
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when the instrument expires, if applicable"
+    },
+    "parties": {
+      "type": "array",
+      "description": "Parties to the legal instrument (individuals or organizations)",
+      "items": {
+        "type": "object",
+        "required": ["party_id", "role"],
+        "properties": {
+          "party_id": {
+            "type": "string",
+            "description": "Reference to a contributor or institution"
+          },
+          "party_type": {
+            "type": "string",
+            "enum": ["contributor", "institution"]
+          },
+          "role": {
+            "type": "string",
+            "description": "Role of this party in the instrument",
+            "examples": ["licensor", "licensee", "service_provider", "client", "regulator", "data_controller", "data_processor"]
+          },
+          "acceptance": {
+            "type": "object",
+            "description": "Evidence of party's consent or acceptance",
+            "properties": {
+              "signature": {
+                "$ref": "./common/signature.schema.json"
+              },
+              "accepted_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this party accepted the instrument"
+              },
+              "acceptance_method": {
+                "type": "string",
+                "description": "Method of acceptance",
+                "enum": ["cryptographic_signature", "physical_signature", "click_through", "implied_consent", "legislative_process"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "clauses": {
+      "type": "array",
+      "description": "Substantive provisions of the instrument",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "text"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier for this clause (e.g., 'sec-1.2', 'article-5')"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title or heading of the clause"
+          },
+          "text": {
+            "type": "string",
+            "description": "Full text of the clause"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of provision",
+            "enum": ["obligation", "right", "restriction", "definition", "procedure", "remedy", "liability", "termination", "other"]
+          },
+          "applies_to": {
+            "type": "array",
+            "description": "Resources or subjects this clause specifically governs",
+            "items": {
+              "type": "object",
+              "properties": {
+                "resource_id": {
+                  "type": "string",
+                  "description": "ID of dataset, project, or other resource"
+                },
+                "resource_type": {
+                  "type": "string",
+                  "description": "Type of resource referenced",
+                  "enum": ["dataset", "project", "code", "model", "device", "api", "system", "other"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "description": "How the instrument is enforced",
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "description": "Primary enforcement mechanism",
+          "enum": ["court", "arbitration", "smart_contract", "dao_governance", "regulatory_agency", "self_enforcing", "social_norm"]
+        },
+        "venue": {
+          "type": "string",
+          "description": "Location or forum for enforcement or dispute resolution"
+        },
+        "remedy_types": {
+          "type": "array",
+          "description": "Available remedies for non-compliance",
+          "items": {
+            "type": "string",
+            "examples": ["damages", "specific_performance", "injunction", "suspension", "termination", "penalty"]
+          }
+        },
+        "enforcement_agent": {
+          "type": "string",
+          "description": "Entity responsible for enforcement"
+        }
+      }
+    },
+    "resources_governed": {
+      "type": "array",
+      "description": "Resources this instrument governs or applies to",
+      "items": {
+        "type": "object",
+        "required": ["resource_id", "resource_type"],
+        "properties": {
+          "resource_id": {
+            "type": "string",
+            "description": "ID of resource (dataset, project, etc.)"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "Type of resource",
+            "enum": ["dataset", "project", "code", "model", "device", "api", "system", "other"]
+          },
+          "relationship": {
+            "type": "string",
+            "description": "How this instrument relates to the resource",
+            "enum": ["governs", "licenses", "restricts", "creates", "terminates", "modifies"]
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "Legal references or citations to other instruments",
+      "items": {
+        "type": "object",
+        "properties": {
+          "referenced_instrument": {
+            "type": "string",
+            "description": "ID of referenced instrument if in the system"
+          },
+          "external_reference": {
+            "type": "string",
+            "description": "Citation or reference to external source"
+          },
+          "relationship": {
+            "type": "string",
+            "enum": ["supersedes", "implements", "amends", "cites", "incorporates", "contrasts_with"]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to referenced document if available"
+          }
+        }
+      }
+    },
+    "official_sources": {
+      "type": "array",
+      "description": "Official publication or filing sources",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_name": {
+            "type": "string",
+            "description": "Name of official source"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to official source"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Official identifier or citation"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "Current status of the instrument",
+      "enum": ["draft", "active", "superseded", "expired", "revoked", "amended", "in_force", "repealed", "proposed"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "User-defined tags for categorization",
+      "items": {
+        "type": "string"
+      }
+    },
+    "signature": {
+      "$ref": "./common/signature.schema.json",
+      "description": "Cryptographic signature authenticating this instrument definition"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata or extension points",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "li.uk-gdpr-2018",
+      "type": "LegalInstrument",
+      "instrument_type": "statute",
+      "title": "UK General Data Protection Regulation",
+      "aliases": ["UK GDPR", "DPA 2018"],
+      "description": "UK implementation of GDPR post-Brexit defining rules for processing and protecting personal data",
+      "jurisdiction": [
+        {
+          "country_code": "GB",
+          "notes": "Applies to all of the United Kingdom"
+        }
+      ],
+      "governing_law": "ls.uk-common-law",
+      "versioning": {
+        "version": "2021-01",
+        "revision_date": "2021-01-01",
+        "revision_notes": "Post-Brexit adaptation of EU GDPR into UK law"
+      },
+      "effective_date": "2021-01-01",
+      "parties": [
+        {
+          "party_id": "inst-ico",
+          "party_type": "institution",
+          "role": "regulator",
+          "acceptance": {
+            "acceptance_method": "legislative_process"
+          }
+        }
+      ],
+      "clauses": [
+        {
+          "id": "article-5",
+          "title": "Principles relating to processing of personal data",
+          "text": "Personal data shall be processed lawfully, fairly and in a transparent manner in relation to the data subject ('lawfulness, fairness and transparency')...",
+          "type": "obligation"
+        },
+        {
+          "id": "article-6",
+          "title": "Lawfulness of processing",
+          "text": "Processing shall be lawful only if and to the extent that at least one of the following applies...",
+          "type": "obligation"
+        },
+        {
+          "id": "article-83",
+          "title": "Administrative fines",
+          "text": "Infringements of this Regulation can lead to administrative fines up to £17.5 million, or in the case of an undertaking, up to 4% of the total worldwide annual turnover of the preceding financial year, whichever is higher.",
+          "type": "liability"
+        }
+      ],
+      "enforcement": {
+        "mechanism": "regulatory_agency",
+        "venue": "United Kingdom",
+        "remedy_types": ["damages", "administrative_fines", "processing_suspension"],
+        "enforcement_agent": "Information Commissioner's Office"
+      },
+      "references": [
+        {
+          "external_reference": "EU GDPR (Regulation 2016/679)",
+          "relationship": "derives_from",
+          "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj"
+        },
+        {
+          "external_reference": "Data Protection Act 2018",
+          "relationship": "implements",
+          "url": "https://www.legislation.gov.uk/ukpga/2018/12/contents"
+        }
+      ],
+      "official_sources": [
+        {
+          "source_name": "legislation.gov.uk",
+          "url": "https://www.legislation.gov.uk/ukpga/2018/12/contents",
+          "identifier": "2018 c. 12"
+        }
+      ],
+      "status": "in_force",
+      "tags": ["data_protection", "privacy", "uk_law", "gdpr"]
+    },
+    {
+      "id": "li.contributor-nda-dataset-123",
+      "type": "LegalInstrument",
+      "instrument_type": "nda",
+      "title": "Confidentiality Agreement - Healthcare Dataset Analysis Project",
+      "description": "Non-disclosure agreement covering access to sensitive healthcare dataset for research purposes",
+      "jurisdiction": [
+        {
+          "country_code": "US",
+          "subdivision": "California"
+        }
+      ],
+      "governing_law": "ls.us-california",
+      "versioning": {
+        "version": "1.0"
+      },
+      "effective_date": "2023-06-15",
+      "expiration_date": "2025-06-14",
+      "parties": [
+        {
+          "party_id": "inst-1234",
+          "party_type": "institution",
+          "role": "disclosing_party",
+          "acceptance": {
+            "signature": {
+              "value": "c3VwZXJzZWNyZXRzaWduYXR1cmV2YWx1ZQ==",
+              "algorithm": "ed25519",
+              "public_key": "acme-primary-2023",
+              "timestamp": "2023-06-15T10:00:00Z"
+            },
+            "accepted_at": "2023-06-15T10:00:00Z",
+            "acceptance_method": "cryptographic_signature"
+          }
+        },
+        {
+          "party_id": "contributor-5678",
+          "party_type": "contributor",
+          "role": "receiving_party",
+          "acceptance": {
+            "signature": {
+              "value": "YW5vdGhlcnNlY3JldHNpZ25hdHVyZXZhbHVl",
+              "algorithm": "ed25519",
+              "public_key": "contributor-key-2023",
+              "timestamp": "2023-06-15T11:30:00Z"
+            },
+            "accepted_at": "2023-06-15T11:30:00Z",
+            "acceptance_method": "cryptographic_signature"
+          }
+        }
+      ],
+      "clauses": [
+        {
+          "id": "sec-1",
+          "title": "Definition of Confidential Information",
+          "text": "\"Confidential Information\" means any and all technical and non-technical information related to the Dataset (defined below) including patient data, processing methodologies, algorithms, and research findings...",
+          "type": "definition"
+        },
+        {
+          "id": "sec-2",
+          "title": "Non-disclosure Obligations",
+          "text": "Receiving Party agrees to not disclose, publish, or disseminate Confidential Information to anyone other than those of its employees, contractors, and agents with a need to know...",
+          "type": "obligation",
+          "applies_to": [
+            {
+              "resource_id": "dataset-123",
+              "resource_type": "dataset"
+            }
+          ]
+        },
+        {
+          "id": "sec-3",
+          "title": "Term and Termination",
+          "text": "This Agreement shall remain in effect for a period of two (2) years from the Effective Date, unless terminated earlier...",
+          "type": "termination"
+        }
+      ],
+      "enforcement": {
+        "mechanism": "court",
+        "venue": "Superior Court of California, County of San Francisco",
+        "remedy_types": ["injunction", "damages"]
+      },
+      "resources_governed": [
+        {
+          "resource_id": "dataset-123",
+          "resource_type": "dataset",
+          "relationship": "governs"
+        }
+      ],
+      "status": "active",
+      "tags": ["nda", "healthcare", "research", "confidential"]
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/legal_system.schema.json",
+  "title": "Legal System",
+  "description": "Schema for modeling legal systems, jurisdictions, and their characteristics across different regions and legal traditions",
+  "type": "object",
+  "allOf": [{ "$ref": "./graph_node.meta.schema.json" }],
+  "required": ["id", "type", "label", "legal_family", "jurisdiction_scope", "sources_of_law", "primary_language"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ls\\.[a-z0-9_-]{3,64}$",
+      "description": "Unique slug prefixed with 'ls.' (e.g., ls.common-law)"
+    },
+    "type": {
+      "const": "LegalSystem"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable name of the legal system"
+    },
+    "legal_family": {
+      "type": "string",
+      "enum": ["common", "civil", "religious", "customary", "mixed"],
+      "description": "Primary legal family or tradition"
+    },
+    "jurisdiction_scope": {
+      "type": "array",
+      "description": "Geographic scope defined by ISO 3166 country codes and sub-regions",
+      "items": {
+        "type": "object",
+        "required": ["region_code"],
+        "properties": {
+          "region_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code or recognized sub-region code"
+          },
+          "subdivision": {
+            "type": "string",
+            "description": "Specific state, province, or other subdivision if applicable"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional context about jurisdiction application"
+          }
+        }
+      }
+    },
+    "sources_of_law": {
+      "type": "array",
+      "description": "Recognized sources of legal authority in this system",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "examples": ["statute", "precedent", "constitution", "custom", "religious_text", "treaty", "administrative_rule"]
+      }
+    },
+    "primary_language": {
+      "type": "string",
+      "description": "ISO 639-1/2 language code for the primary legal language",
+      "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+    },
+    "other_languages": {
+      "type": "array",
+      "description": "Other official languages in which legal proceedings may be conducted",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$"
+      }
+    },
+    "interpretation_style": {
+      "type": "string",
+      "description": "Predominant approach to legal interpretation (e.g., 'Textualism', 'Living Constitution')"
+    },
+    "compliance_requirements": {
+      "type": "array",
+      "description": "Major categories of legal obligations in this system",
+      "items": {
+        "type": "object",
+        "required": ["category", "description"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of legal obligation",
+            "examples": ["data_protection", "licensing", "labor", "taxation", "environmental"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of compliance requirement"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Reference to specific law, regulation, or treaty"
+          }
+        }
+      }
+    },
+    "governing_bodies": {
+      "type": "array",
+      "description": "Major courts, agencies, or councils responsible for enforcement and adjudication",
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the governing body"
+          },
+          "role": {
+            "type": "string",
+            "description": "Function or jurisdiction of this body",
+            "examples": ["supreme_court", "constitutional_court", "regulatory_agency", "administrative_tribunal"]
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "description": "Official website URL"
+          }
+        }
+      }
+    },
+    "binding_instruments": {
+      "type": "array",
+      "description": "Key treaties, agreements, or foundational documents",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the binding instrument"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Reference URL to the instrument"
+          },
+          "effective_date": {
+            "type": "string",
+            "format": "date",
+            "description": "When the instrument came into effect"
+          }
+        }
+      }
+    },
+    "signature": {
+      "$ref": "./common/signature.schema.json",
+      "description": "Optional cryptographic signature to verify integrity and authority of legal system definition"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata for edge cases and extensibility",
+      "additionalProperties": true
+    }
+  },
+  "examples": [
+    {
+      "id": "ls.uk-common-law",
+      "type": "LegalSystem",
+      "label": "United Kingdom Common Law",
+      "legal_family": "common",
+      "jurisdiction_scope": [
+        {
+          "region_code": "GB",
+          "notes": "England and Wales follow common law; Scotland has a mixed system"
+        }
+      ],
+      "sources_of_law": ["statute", "precedent", "custom", "parliamentary_sovereignty"],
+      "primary_language": "en-GB",
+      "interpretation_style": "Purposive approach with increasing textualism",
+      "compliance_requirements": [
+        {
+          "category": "data_protection",
+          "description": "UK GDPR and Data Protection Act 2018 compliance for personal data processing",
+          "reference": "Data Protection Act 2018"
+        },
+        {
+          "category": "corporate_governance",
+          "description": "Companies Act 2006 compliance for corporate entities",
+          "reference": "Companies Act 2006"
+        }
+      ],
+      "governing_bodies": [
+        {
+          "name": "UK Supreme Court",
+          "role": "supreme_court",
+          "website": "https://www.supremecourt.uk"
+        },
+        {
+          "name": "Court of Appeal",
+          "role": "appellate_court"
+        },
+        {
+          "name": "Information Commissioner's Office",
+          "role": "regulatory_agency",
+          "website": "https://ico.org.uk"
+        }
+      ],
+      "binding_instruments": [
+        {
+          "name": "Magna Carta",
+          "effective_date": "1215-06-15"
+        },
+        {
+          "name": "Human Rights Act 1998",
+          "effective_date": "1998-11-09",
+          "url": "https://www.legislation.gov.uk/ukpga/1998/42/contents"
+        }
+      ]
+    },
+    {
+      "id": "ls.japan-civil-law",
+      "type": "LegalSystem",
+      "label": "Japanese Civil Law System",
+      "legal_family": "civil",
+      "jurisdiction_scope": [
+        {
+          "region_code": "JP"
+        }
+      ],
+      "sources_of_law": ["constitution", "statute", "cabinet_orders", "administrative_rule"],
+      "primary_language": "ja",
+      "interpretation_style": "Code-based systematic interpretation",
+      "compliance_requirements": [
+        {
+          "category": "data_protection",
+          "description": "Act on the Protection of Personal Information",
+          "reference": "Act No. 57 of 2003"
+        },
+        {
+          "category": "corporate_governance",
+          "description": "Companies Act of Japan",
+          "reference": "Act No. 86 of 2005"
+        }
+      ],
+      "governing_bodies": [
+        {
+          "name": "Supreme Court of Japan",
+          "role": "supreme_court",
+          "website": "https://www.courts.go.jp/english/"
+        },
+        {
+          "name": "Personal Information Protection Commission",
+          "role": "regulatory_agency",
+          "website": "https://www.ppc.go.jp/en/"
+        }
+      ],
+      "binding_instruments": [
+        {
+          "name": "Constitution of Japan",
+          "effective_date": "1947-05-03"
+        },
+        {
+          "name": "Civil Code of Japan",
+          "effective_date": "1896-04-27"
+        }
+      ]
+    },
+    {
+      "id": "ls.dao-governance",
+      "type": "LegalSystem",
+      "label": "DAO Decentralized Governance",
+      "legal_family": "mixed",
+      "jurisdiction_scope": [
+        {
+          "region_code": "ZZ",
+          "notes": "Digital jurisdiction without strict geographic boundaries"
+        }
+      ],
+      "sources_of_law": ["smart_contract", "community_vote", "protocol_code", "consensus_mechanism"],
+      "primary_language": "en",
+      "interpretation_style": "Code is law with community arbitration",
+      "compliance_requirements": [
+        {
+          "category": "consensus_adherence",
+          "description": "Compliance with consensus rules and protocol governance"
+        },
+        {
+          "category": "token_governance",
+          "description": "Respecting token-based voting outcomes"
+        }
+      ],
+      "governing_bodies": [
+        {
+          "name": "Core Development Team",
+          "role": "technical_governance"
+        },
+        {
+          "name": "Arbitration Council",
+          "role": "dispute_resolution"
+        },
+        {
+          "name": "Token Holders Assembly",
+          "role": "legislative"
+        }
+      ],
+      "binding_instruments": [
+        {
+          "name": "Genesis Smart Contract",
+          "url": "https://etherscan.io/address/0x1234567890abcdef1234567890abcdef12345678"
+        },
+        {
+          "name": "DAO Constitution v1.0",
+          "url": "https://dao.example.org/constitution.pdf"
+        }
+      ],
+      "meta": {
+        "consensus_mechanism": "Proof of Stake",
+        "governance_token": "DAOtoken",
+        "off_chain_component": "Arweave-based proposal system"
+      }
+    }
+  ]
+}

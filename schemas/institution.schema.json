@@ -1,0 +1,529 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/institution.schema.json",
+  "title": "Institution",
+  "description": "Schema for modeling institutions and companies across jurisdictions, legal systems, and economic roles",
+  "type": "object",
+  "allOf": [
+    { "$ref": "./graph_node.meta.schema.json" },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "institution_type",
+        "legal_form",
+        "jurisdiction",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this institution"
+        },
+        "name": {
+          "type": "string",
+          "description": "Official name of the institution"
+        },
+        "aliases": {
+          "type": "array",
+          "description": "Alternative names, trading names, or abbreviations",
+          "items": {
+            "type": "string"
+          }
+        },
+        "institution_type": {
+          "type": "string",
+          "description": "Category of institution",
+          "enum": [
+            "private_company",
+            "non_profit",
+            "government_agency",
+            "university",
+            "foundation",
+            "dao",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the institution's purpose or activities"
+        },
+        
+        "legal_metadata": {
+          "type": "object",
+          "description": "Legal and registration information",
+          "properties": {
+            "legal_form": {
+              "type": "string",
+              "description": "Legal structure (e.g., LLC, GmbH, Foundation)",
+              "examples": ["LLC", "GmbH", "AG", "Inc", "Ltd", "Foundation", "501(c)(3)"]
+            },
+            "jurisdiction": {
+              "type": "object",
+              "description": "Legal jurisdiction where the institution is registered",
+              "required": ["country_code"],
+              "properties": {
+                "country_code": {
+                  "type": "string",
+                  "description": "ISO 3166-1 alpha-2 country code",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "subdivision": {
+                  "type": "string",
+                  "description": "State, province, or other subdivision"
+                }
+              }
+            },
+            "registration_id": {
+              "type": "string",
+              "description": "Official registration/identification number"
+            },
+            "incorporated_at": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of incorporation or establishment"
+            },
+            "dissolved_at": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of dissolution (if applicable)"
+            },
+            "status": {
+              "type": "string",
+              "description": "Current operational status",
+              "enum": ["active", "dormant", "dissolved", "in_formation", "bankrupt", "restructuring"]
+            },
+            "regulated_by": {
+              "type": "array",
+              "description": "Regulatory bodies that oversee this institution",
+              "items": {
+                "type": "string",
+                "examples": ["US-SEC", "FCA", "CNIL", "MAS", "FINMA"]
+              }
+            }
+          }
+        },
+        
+        "compliance": {
+          "type": "object",
+          "description": "Compliance and governance information",
+          "properties": {
+            "compliance_certifications": {
+              "type": "array",
+              "description": "Compliance standards and certifications",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "certification": {
+                    "type": "string",
+                    "examples": ["GDPR", "SOC2", "ISO/IEC 27001", "PCI-DSS"]
+                  },
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "issued_by": {
+                    "type": "string"
+                  },
+                  "certification_id": {
+                    "type": "string"
+                  }
+                },
+                "required": ["certification"]
+              }
+            },
+            "governance_model": {
+              "type": "string",
+              "description": "Primary governance mechanism",
+              "enum": ["board_directed", "member_voted", "smart_contract", "government_controlled", "cooperative", "single_owner"]
+            },
+            "economic_activity": {
+              "type": "array",
+              "description": "Primary economic activities",
+              "items": {
+                "type": "string",
+                "examples": ["mining", "finance", "research", "technology", "education", "manufacturing"]
+              }
+            },
+            "industry_classification": {
+              "type": "object",
+              "description": "Standard industry classifications",
+              "properties": {
+                "code_type": {
+                  "type": "string",
+                  "description": "Classification system used",
+                  "enum": ["NAICS", "NACE", "SIC", "ISIC", "GICS"]
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Classification code"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the industry classification"
+                }
+              }
+            }
+          }
+        },
+        
+        "relationships": {
+          "type": "object",
+          "description": "Organizational relationships",
+          "properties": {
+            "affiliated_entities": {
+              "type": "array",
+              "description": "Related organizations including subsidiaries, parent orgs, contractors",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {
+                    "type": "string",
+                    "description": "Reference to another institution"
+                  },
+                  "relationship_type": {
+                    "type": "string",
+                    "enum": ["parent", "subsidiary", "affiliate", "contractor", "partner", "investor"]
+                  },
+                  "ownership_percentage": {
+                    "type": "number",
+                    "description": "Ownership stake percentage (0-100)",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": ["entity_id", "relationship_type"]
+              }
+            },
+            "operational_scope": {
+              "type": "string",
+              "description": "Geographical scope of operations",
+              "enum": ["local", "national", "multinational", "digital_only", "global"]
+            },
+            "operating_regions": {
+              "type": "array",
+              "description": "Specific regions of operation",
+              "items": {
+                "type": "string",
+                "examples": ["EU", "APAC", "North America", "Global"]
+              }
+            }
+          }
+        },
+        
+        "cryptographic_identity": {
+          "type": "object",
+          "description": "Cryptographic signing and identity information",
+          "properties": {
+            "signature": {
+              "$ref": "./common/signature.schema.json"
+            },
+            "authorized_representative_id": {
+              "type": "string",
+              "description": "Link to contributor authorized to sign on behalf of institution"
+            },
+            "contract_reference": {
+              "type": "string",
+              "format": "uri",
+              "description": "URI to signed legal terms or contract"
+            },
+            "public_keys": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key_id": {
+                    "type": "string"
+                  },
+                  "key_type": {
+                    "type": "string",
+                    "enum": ["ed25519", "secp256k1", "rsa", "pgp"]
+                  },
+                  "key_value": {
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "enum": ["signing", "encryption", "authentication", "general"]
+                  }
+                },
+                "required": ["key_id", "key_type", "key_value"]
+              }
+            }
+          }
+        },
+        
+        "contact_info": {
+          "type": "object",
+          "description": "Contact information",
+          "properties": {
+            "address": {
+              "type": "object",
+              "properties": {
+                "street_address": {
+                  "type": "string"
+                },
+                "city": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "postal_code": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                }
+              }
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "website": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        
+        "founded_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the institution was founded (may differ from incorporation date)"
+        },
+        
+        "funding_sources": {
+          "type": "array",
+          "description": "References to funding entries",
+          "items": {
+            "type": "string"
+          }
+        },
+        
+        "dataset_references": {
+          "type": "array",
+          "description": "References to datasets owned or managed by this institution",
+          "items": {
+            "type": "string"
+          }
+        },
+        
+        "device_manufacturing": {
+          "type": "array",
+          "description": "References to devices manufactured by this institution",
+          "items": {
+            "type": "string"
+          }
+        },
+        
+        "tags": {
+          "type": "array",
+          "description": "User-defined tags for categorization",
+          "items": {
+            "type": "string"
+          }
+        },
+        
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata or extension points",
+          "additionalProperties": true
+        }
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "inst-1234",
+      "name": "Acme Corporation",
+      "aliases": ["Acme Corp.", "ACME"],
+      "institution_type": "private_company",
+      "description": "Technology and manufacturing conglomerate",
+      "legal_metadata": {
+        "legal_form": "Inc",
+        "jurisdiction": {
+          "country_code": "US",
+          "subdivision": "Delaware"
+        },
+        "registration_id": "DE-12345678",
+        "incorporated_at": "1998-03-15",
+        "status": "active",
+        "regulated_by": ["US-SEC", "US-FDA"]
+      },
+      "compliance": {
+        "compliance_certifications": [
+          {
+            "certification": "ISO/IEC 27001",
+            "issued_at": "2022-05-10",
+            "expires_at": "2025-05-09",
+            "issued_by": "ISO Certification Authority",
+            "certification_id": "ISO-27001-AC-123456"
+          },
+          {
+            "certification": "SOC2",
+            "issued_at": "2023-01-15",
+            "expires_at": "2024-01-14"
+          }
+        ],
+        "governance_model": "board_directed",
+        "economic_activity": ["technology", "manufacturing", "research"],
+        "industry_classification": {
+          "code_type": "NAICS",
+          "code": "334220",
+          "description": "Radio and Television Broadcasting and Wireless Communications Equipment Manufacturing"
+        }
+      },
+      "relationships": {
+        "affiliated_entities": [
+          {
+            "entity_id": "inst-2345",
+            "relationship_type": "subsidiary",
+            "ownership_percentage": 100,
+            "description": "Fully owned R&D subsidiary"
+          },
+          {
+            "entity_id": "inst-3456",
+            "relationship_type": "contractor",
+            "description": "Manufacturing partner"
+          }
+        ],
+        "operational_scope": "multinational",
+        "operating_regions": ["North America", "EU", "APAC"]
+      },
+      "cryptographic_identity": {
+        "authorized_representative_id": "contributor-5678",
+        "contract_reference": "https://dao.example.org/contracts/acme-2023.pdf",
+        "public_keys": [
+          {
+            "key_id": "acme-primary-2023",
+            "key_type": "ed25519",
+            "key_value": "Cs8kXPn532nxiRQ72MpWkdYhpZdZ7bA3TaC2JZkiCig=",
+            "purpose": "signing"
+          }
+        ]
+      },
+      "contact_info": {
+        "address": {
+          "street_address": "123 Innovation Drive",
+          "city": "Palo Alto",
+          "state": "CA",
+          "postal_code": "94301",
+          "country": "US"
+        },
+        "email": "contact@acmecorp.example",
+        "website": "https://acmecorp.example"
+      },
+      "founded_at": "1997-11-12",
+      "funding_sources": ["funding-789", "funding-790"],
+      "tags": ["technology", "manufacturing", "publicly-traded"]
+    },
+    {
+      "id": "inst-5678",
+      "name": "Global Research Foundation",
+      "institution_type": "foundation",
+      "description": "Non-profit organization dedicated to scientific research and education",
+      "legal_metadata": {
+        "legal_form": "501(c)(3)",
+        "jurisdiction": {
+          "country_code": "US",
+          "subdivision": "New York"
+        },
+        "registration_id": "NY-87654321",
+        "incorporated_at": "2005-07-22",
+        "status": "active"
+      },
+      "compliance": {
+        "governance_model": "board_directed",
+        "economic_activity": ["research", "education", "grants"],
+        "industry_classification": {
+          "code_type": "NAICS",
+          "code": "541715",
+          "description": "Research and Development in the Physical, Engineering, and Life Sciences"
+        }
+      },
+      "relationships": {
+        "operational_scope": "global",
+        "operating_regions": ["Global"]
+      },
+      "cryptographic_identity": {
+        "authorized_representative_id": "contributor-9012"
+      },
+      "contact_info": {
+        "address": {
+          "street_address": "456 Science Avenue",
+          "city": "New York",
+          "state": "NY",
+          "postal_code": "10001",
+          "country": "US"
+        },
+        "email": "info@globalresearch.example",
+        "website": "https://globalresearch.example"
+      },
+      "founded_at": "2005-06-30",
+      "dataset_references": ["dataset-123", "dataset-456"],
+      "tags": ["non-profit", "research", "grants"]
+    },
+    {
+      "id": "inst-9012",
+      "name": "CryptoDAO Collective",
+      "institution_type": "dao",
+      "description": "Decentralized autonomous organization focused on blockchain development",
+      "legal_metadata": {
+        "legal_form": "DAO LLC",
+        "jurisdiction": {
+          "country_code": "CH",
+          "subdivision": "Zug"
+        },
+        "registration_id": "ZG-2023-456789",
+        "incorporated_at": "2023-01-10",
+        "status": "active"
+      },
+      "compliance": {
+        "compliance_certifications": [],
+        "governance_model": "smart_contract",
+        "economic_activity": ["technology", "finance", "software"],
+        "industry_classification": {
+          "code_type": "NAICS",
+          "code": "541512",
+          "description": "Computer Systems Design Services"
+        }
+      },
+      "relationships": {
+        "operational_scope": "digital_only"
+      },
+      "cryptographic_identity": {
+        "contract_reference": "https://etherscan.io/address/0xabcdef1234567890",
+        "public_keys": [
+          {
+            "key_id": "dao-treasury-key",
+            "key_type": "secp256k1",
+            "key_value": "0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3",
+            "purpose": "signing"
+          }
+        ]
+      },
+      "contact_info": {
+        "email": "governance@cryptodao.example",
+        "website": "https://cryptodao.example"
+      },
+      "founded_at": "2022-12-01",
+      "funding_sources": ["funding-567"],
+      "device_manufacturing": [],
+      "tags": ["blockchain", "dao", "defi"]
+    }
+  ]
+}
