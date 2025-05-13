@@ -1,0 +1,146 @@
+{
+  "$schema": "https://dao.example.org/schemas/resource.schema.json",
+  "id": "res.sensor-module-a12",
+  "type": "Resource",
+  "name": "Sensor Module A12",
+  "resource_category": "finished_good",
+  "resource_type": "electronic_component",
+  "description": "High-precision environmental sensor module with temperature, humidity and air quality monitoring capabilities",
+  "unit_of_measure": "pc",
+  "custody_log": [
+    {
+      "event_type": "creation",
+      "actor_id": "cont.manufacturer-xyz",
+      "timestamp": "2025-03-15T09:30:00Z",
+      "location": "Factory B, Shanghai",
+      "notes": "Initial production batch #2025-03-B42",
+      "signature": {
+        "value": "aGFzaF9zaWduYXR1cmVfaGVyZQ==",
+        "algorithm": "ed25519",
+        "public_key": "cHVibGljX2tleV9oZXJl",
+        "timestamp": "2025-03-15T09:35:22Z"
+      }
+    },
+    {
+      "event_type": "inspection",
+      "actor_id": "dev.quality-station-05",
+      "timestamp": "2025-03-15T10:45:00Z",
+      "location": "Factory B, Shanghai",
+      "notes": "Quality control verification - passed all tests",
+      "previous_hash": "sha256:ac09b76a37aa8119a05f1f8df22d81b3615cc9cf4ec8c4413a1fb18fb316abc7",
+      "signature": {
+        "value": "aW5zcGVjdGlvbl9zaWduYXR1cmVfaGVyZQ==",
+        "algorithm": "ed25519",
+        "public_key": "cHVibGljX2tleV9oZXJlXzI=",
+        "timestamp": "2025-03-15T10:47:12Z"
+      }
+    },
+    {
+      "event_type": "transfer",
+      "actor_id": "cont.logistics-partner",
+      "timestamp": "2025-03-17T08:20:00Z",
+      "location": "Factory B Shipping Dock, Shanghai",
+      "notes": "Transferred to logistics partner for international shipping",
+      "previous_hash": "sha256:7d9fe7309f18e292b69b46bdcad7f2657ef68c01249941b7e7513d54d082d324",
+      "signature": {
+        "value": "dHJhbnNmZXJfc2lnbmF0dXJlX2hlcmU=",
+        "algorithm": "ed25519",
+        "public_key": "cHVibGljX2tleV9oZXJlXzM=",
+        "timestamp": "2025-03-17T08:22:53Z"
+      }
+    },
+    {
+      "event_type": "receipt",
+      "actor_id": "cont.dao-warehouse",
+      "timestamp": "2025-03-25T14:10:00Z",
+      "location": "DAO Central Warehouse, Berlin",
+      "notes": "Received in warehouse, added to inventory tracking system",
+      "previous_hash": "sha256:f40a3c9bfb0453c67c1ac07b11ef4c63521afff1b6203d3673309342268574cb",
+      "signature": {
+        "value": "cmVjZWlwdF9zaWduYXR1cmVfaGVyZQ==",
+        "algorithm": "ed25519",
+        "public_key": "cHVibGljX2tleV9oZXJlXzQ=",
+        "timestamp": "2025-03-25T14:15:32Z"
+      },
+      "metadata": {
+        "shipping_id": "SHP-20250317-04832",
+        "customs_clearance": "CCL-DE-78342",
+        "received_by": "Warehouse Agent ID: WAR-042"
+      }
+    },
+    {
+      "event_type": "transfer",
+      "actor_id": "cont.field-technician-27",
+      "timestamp": "2025-04-10T09:45:00Z",
+      "location": "DAO Central Warehouse, Berlin",
+      "notes": "Assigned to field technician for deployment in environmental monitoring project",
+      "previous_hash": "sha256:b51edf7ca213d815c8342ecceab9cd7a9a1b59217aceac450b73718d08781ffc",
+      "signature": {
+        "value": "ZmllbGRfdHJhbnNmZXJfc2lnbmF0dXJlX2hlcmU=",
+        "algorithm": "ed25519",
+        "public_key": "cHVibGljX2tleV9oZXJlXzU=",
+        "timestamp": "2025-04-10T09:47:42Z"
+      }
+    }
+  ],
+  "supply_chain": {
+    "origin": {
+      "geographic_source": [
+        {
+          "region": "Shanghai, China",
+          "percentage": 100,
+          "coordinates": {
+            "latitude": 31.2304,
+            "longitude": 121.4737
+          }
+        }
+      ]
+    },
+    "transformation_stages": [
+      {
+        "stage": "Component Assembly",
+        "process": "SMT with automated pick and place",
+        "location": "Shanghai Electronics Manufacturing Facility",
+        "timestamp": "2025-03-14T16:30:00Z",
+        "verification": {
+          "value": "YXNzZW1ibHlfdmVyaWZpY2F0aW9u",
+          "algorithm": "ed25519",
+          "public_key": "YXNzZW1ibHlfcHVibGljX2tleQ=="
+        }
+      },
+      {
+        "stage": "Calibration",
+        "process": "Automated calibration of sensors against reference standards",
+        "location": "Shanghai Electronics Testing Facility",
+        "timestamp": "2025-03-15T08:15:00Z",
+        "verification": {
+          "value": "Y2FsaWJyYXRpb25fdmVyaWZpY2F0aW9u",
+          "algorithm": "ed25519",
+          "public_key": "Y2FsaWJyYXRpb25fcHVibGljX2tleQ=="
+        }
+      }
+    ]
+  },
+  "physical_properties": {
+    "measurements": [
+      {
+        "quantity_kind": "Mass",
+        "value": 42.5,
+        "unit": "g"
+      },
+      {
+        "quantity_kind": "Power",
+        "value": 0.85,
+        "unit": "W"
+      }
+    ]
+  },
+  "tags": [
+    "sensor",
+    "environmental",
+    "temperature",
+    "humidity",
+    "air-quality",
+    "iot"
+  ]
+}

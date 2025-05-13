@@ -1,0 +1,134 @@
+{
+  "$schema": "https://dao.example.org/schemas/device.schema.json",
+  "device_id": "YmFzZTY0aGFzaF9vZl9kZXZpY2VfaWQ=",
+  "nonce": "7fb952a1",
+  "responsibility": "field_sensor_node",
+  "activated_at": "2025-01-20T10:00:00Z",
+  "note": "Environmental monitoring station deployed in forest reserve area",
+  "custody_log": [
+    {
+      "event_type": "creation",
+      "actor_id": "cont.hardware-lab-05",
+      "timestamp": "2025-01-15T14:30:00Z",
+      "location": "DAO Hardware Lab, Berlin",
+      "notes": "Device assembled and configured for environmental monitoring deployment",
+      "signature": {
+        "value": "Y3JlYXRpb25fc2lnbmF0dXJlX2RldmljZQ==",
+        "algorithm": "ed25519",
+        "public_key": "aGFyZHdhcmVfbGFiX2tleQ==",
+        "timestamp": "2025-01-15T14:35:12Z"
+      }
+    },
+    {
+      "event_type": "inspection",
+      "actor_id": "dev.test-station-03",
+      "timestamp": "2025-01-16T09:15:00Z",
+      "location": "DAO Testing Facility, Berlin",
+      "notes": "Full system validation, calibration, and weatherproofing tests completed",
+      "previous_hash": "sha256:d8e2f782a4c45ec72a3e6d7718f757592cfe7ec1839fc8471d1fed8e5c5a134c",
+      "signature": {
+        "value": "aW5zcGVjdGlvbl9zaWduYXR1cmVfZGV2aWNl",
+        "algorithm": "ed25519",
+        "public_key": "dGVzdGluZ19mYWNpbGl0eV9rZXk=",
+        "timestamp": "2025-01-16T11:42:57Z"
+      },
+      "metadata": {
+        "test_suite_id": "ENV-SENSOR-FULL-01",
+        "tests_passed": 42,
+        "tests_total": 42,
+        "calibration_certificate": "CAL-ENV-20250116-073"
+      }
+    },
+    {
+      "event_type": "transfer",
+      "actor_id": "cont.field-researcher-12",
+      "timestamp": "2025-01-18T08:30:00Z",
+      "location": "DAO Equipment Depot, Berlin",
+      "notes": "Device assigned to field research team for Schwarzwald deployment",
+      "previous_hash": "sha256:e2a3b1d93c7e416e887d5952ac7d6fcefb1b01a37748bd23baaae8c07c356e12",
+      "signature": {
+        "value": "dHJhbnNmZXJfc2lnbmF0dXJlX2RldmljZQ==",
+        "algorithm": "ed25519",
+        "public_key": "ZmllbGRfdGVhbV9rZXk=",
+        "timestamp": "2025-01-18T08:35:33Z"
+      }
+    },
+    {
+      "event_type": "transformation",
+      "actor_id": "cont.field-researcher-12",
+      "timestamp": "2025-01-20T09:45:00Z",
+      "location": "Black Forest Research Station",
+      "notes": "Final on-site configuration and deployment on monitoring tower",
+      "previous_hash": "sha256:f9c12a4b7d2e3a1c5d8e9f6b2a1c3e5d7f9a2b4c6e8d0f2a4b6c8e0d2f4a6c8e",
+      "signature": {
+        "value": "ZGVwbG95bWVudF9zaWduYXR1cmVfZGV2aWNl",
+        "algorithm": "ed25519",
+        "public_key": "ZmllbGRfdGVhbV9rZXk=",
+        "timestamp": "2025-01-20T10:00:00Z"
+      },
+      "metadata": {
+        "gps_coordinates": "48.2682° N, 8.1712° E",
+        "elevation_m": 842,
+        "deployment_id": "ENV-BF-2025-04",
+        "power_source": "solar_panel_with_battery_backup",
+        "network_connection": "lora_wan_mesh"
+      }
+    },
+    {
+      "event_type": "maintenance",
+      "actor_id": "cont.field-technician-08",
+      "timestamp": "2025-04-15T13:20:00Z",
+      "location": "Black Forest Research Station",
+      "notes": "Quarterly maintenance check and battery replacement",
+      "previous_hash": "sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+      "signature": {
+        "value": "bWFpbnRlbmFuY2Vfc2lnbmF0dXJlX2RldmljZQ==",
+        "algorithm": "ed25519",
+        "public_key": "ZmllbGRfdGVjaG5pY2lhbl9rZXk=",
+        "timestamp": "2025-04-15T14:05:21Z"
+      },
+      "metadata": {
+        "maintenance_id": "MAINT-20250415-ENV-04",
+        "components_replaced": ["backup_battery", "air_filter"],
+        "firmware_updated": true,
+        "firmware_version": "env-sense-v2.3.4"
+      }
+    }
+  ],
+  "device_specifications": {
+    "manufacturer": "DAO Hardware Lab",
+    "model": "EnvSense Pro 3",
+    "serial_number": "ESPR3-2025-0042",
+    "hardware_version": "3.1.2",
+    "firmware_version": "env-sense-v2.3.4",
+    "components": [
+      {
+        "component_type": "sensor_module",
+        "description": "Air quality and particle detection array",
+        "manufacturer": "SenseTech",
+        "resource_id": "res.sensor-module-a12"
+      },
+      {
+        "component_type": "processing_unit",
+        "description": "Low-power embedded compute module",
+        "manufacturer": "EcoCompute",
+        "resource_id": "res.eco-compute-embedded"
+      },
+      {
+        "component_type": "communication_module",
+        "description": "LoRaWAN transceiver with mesh capability",
+        "manufacturer": "ConnectWide",
+        "resource_id": "res.lora-mesh-transceiver"
+      }
+    ]
+  },
+  "operational_resources": [
+    {
+      "resource_id": "res.solar-energy",
+      "consumption_rate": 0.35,
+      "rate_unit": "kW.h/d",
+      "variable": true,
+      "peak_consumption": 0.8
+    }
+  ]
+}

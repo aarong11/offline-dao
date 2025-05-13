@@ -1,0 +1,136 @@
+{
+  "$schema": "https://dao.example.org/schemas/storage_medium.schema.json",
+  "id": "stor.nvme-research-array-03",
+  "type": "StorageMedium",
+  "label": "Research Array NVMe Drive 03",
+  "medium_category": "physical",
+  "physical_medium_type": "nvme",
+  "location": "dc.ber1.cab12.u17",
+  "device_id": "SN:8374-NVME-2025-Q1-003",
+  "manufacturer": "QuantumStore",
+  "model": "DT980 Pro 4TB",
+  "firmware_version": "QS.3.2.415",
+  "capacity_bytes": 4000000000000,
+  "used_bytes": 1875000000000,
+  "redundancy": "raid6",
+  "encryption": "at_rest",
+  "energy_profile": "moderate",
+  "custody_log": [
+    {
+      "event_type": "receipt",
+      "actor_id": "cont.inventory-manager-05",
+      "timestamp": "2025-02-10T14:22:15Z",
+      "location": "DAO Central Storage Facility, Berlin",
+      "notes": "Initial receipt of new NVMe drive from QuantumStore",
+      "signature": {
+        "value": "cmVjZWlwdF9zaWduYXR1cmVfZHJpdmU=",
+        "algorithm": "ed25519",
+        "public_key": "c3RvcmFnZV9mYWNpbGl0eV9rZXk=",
+        "timestamp": "2025-02-10T14:25:00Z"
+      }
+    },
+    {
+      "event_type": "inspection",
+      "actor_id": "dev.storage-test-bench-01",
+      "timestamp": "2025-02-10T16:10:45Z",
+      "location": "DAO Testing Lab, Berlin",
+      "notes": "Validation and performance testing completed - all tests passed",
+      "previous_hash": "sha256:1cf8f5bc62c5910c8a5c79d789a6fe8dbdfc53cd84f9e75a7bbef0a731f35538",
+      "signature": {
+        "value": "dGVzdGluZ19zaWduYXR1cmVfZHJpdmU=",
+        "algorithm": "ed25519",
+        "public_key": "dGVzdGluZ19sYWJfa2V5",
+        "timestamp": "2025-02-10T17:05:22Z"
+      },
+      "metadata": {
+        "test_suite_id": "NVMe-PRF-2025",
+        "version": "3.4.2",
+        "read_speed_mbps": 7250,
+        "write_speed_mbps": 5300
+      }
+    },
+    {
+      "event_type": "transfer",
+      "actor_id": "cont.data-center-tech-12",
+      "timestamp": "2025-02-12T09:30:00Z",
+      "location": "DAO Storage Facility, Berlin",
+      "notes": "Transfer to Data Center rack installation team",
+      "previous_hash": "sha256:8c594c0d9467a9c9f138471bb4f5155de872e4127ef0b587b43c2161f9661cfb",
+      "signature": {
+        "value": "dHJhbnNmZXJfc2lnbmF0dXJlX2RyaXZl",
+        "algorithm": "ed25519",
+        "public_key": "ZGF0YV9jZW50ZXJfdGVjaF9rZXk=",
+        "timestamp": "2025-02-12T09:32:18Z"
+      }
+    },
+    {
+      "event_type": "transformation",
+      "actor_id": "dev.dc-rack-installer-02",
+      "timestamp": "2025-02-12T14:15:30Z",
+      "location": "dc.ber1.cab12.u17",
+      "notes": "Installed in server array, formatted with ZFS and added to research storage pool",
+      "previous_hash": "sha256:a1b76cd5712d9a23154bb08d785642c7ddf7611d2ea324ea4b32a7372bce9f0c",
+      "signature": {
+        "value": "aW5zdGFsbGF0aW9uX3NpZ25hdHVyZV9kcml2ZQ==",
+        "algorithm": "ed25519",
+        "public_key": "cmFja19pbnN0YWxsZXJfa2V5",
+        "timestamp": "2025-02-12T14:45:12Z"
+      },
+      "metadata": {
+        "raid_array_id": "RAID6-RES-07",
+        "storage_pool_name": "research_ml_training_pool",
+        "filesystem": "zfs"
+      }
+    },
+    {
+      "event_type": "maintenance",
+      "actor_id": "dev.storage-monitor-system",
+      "timestamp": "2025-05-01T03:15:00Z",
+      "location": "dc.ber1.cab12.u17",
+      "notes": "Automated firmware update to address performance optimization",
+      "previous_hash": "sha256:e4c982d0b42c6162741e9713d22ad97df465fd1d4701b4d8e2efab1818825bac",
+      "signature": {
+        "value": "ZmlybXdhcmVfdXBkYXRlX3NpZ25hdHVyZQ==",
+        "algorithm": "ed25519",
+        "public_key": "c3RvcmFnZV9tb25pdG9yX2tleQ==",
+        "timestamp": "2025-05-01T03:30:42Z"
+      },
+      "metadata": {
+        "previous_firmware": "QS.3.2.410",
+        "updated_firmware": "QS.3.2.415",
+        "update_status": "successful",
+        "maintenance_id": "MAINT-20250501-NVMe-07"
+      }
+    }
+  ],
+  "expected_lifespan_years": 5.5,
+  "manufacturing_date": "2025-01-15",
+  "weight_g": 42,
+  "form_factor": "M.2",
+  "power_consumption_idle_w": 0.35,
+  "power_consumption_active_w": 8.5,
+  "read_speed_mbps": 7250,
+  "write_speed_mbps": 5300,
+  "contains_dataset_ids": [
+    "ds.ml-training-dataset-2025-04",
+    "ds.sensor-telemetry-q1-2025"
+  ],
+  "component_resources": [
+    {
+      "resource_id": "res.nand-flash-tlc",
+      "quantity": 4096,
+      "unit": "GBy",
+      "component": "nand_flash",
+      "recoverable": true,
+      "recovery_efficiency": 78
+    },
+    {
+      "resource_id": "res.controller-chip-nvme",
+      "quantity": 1,
+      "unit": "pc",
+      "component": "controller",
+      "recoverable": true, 
+      "recovery_efficiency": 95
+    }
+  ]
+}

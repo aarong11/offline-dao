@@ -1,0 +1,17 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/contributors/dao_contributor.schema.json",
+    "title": "DAO Contributor",
+    "description": "Schema for organizations that contribute to projects",
+    "allOf": [
+      { "$ref": "./contributor_base.schema.json" },
+      {
+        "type": "object",
+        "properties": {
+          "mission": { "type": "string" },
+          "linked_projects": { "type": "array", "items": { "type": "string" } },
+          "governance_model": { "type": "string" }
+        }
+      }
+    ]
+  }

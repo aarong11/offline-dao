@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurements/spatial_measurement.schema.json",
+  "title": "Spatial Measurement",
+  "description": "Schema for length, area, volume and other spatial property measurements.",
+  "allOf": [
+    { "$ref": "base_measurement.schema.json" },
+    {
+      "properties": {
+        "quantity_kind": {
+          "enum": ["Length", "Area", "Volume", "Distance", "Width", "Height", "Depth"]
+        },
+        "unit": {
+          "oneOf": [
+            {
+              "title": "Length Units",
+              "enum": ["m", "km", "cm", "mm", "um", "nm", "[in_i]", "[ft_i]", "[mi_i]"]
+            },
+            {
+              "title": "Area Units",
+              "enum": ["m2", "km2", "ha", "[sft_i]", "[mi_i]2"]
+            },
+            {
+              "title": "Volume Units",
+              "enum": ["m3", "l", "ml", "[gal_us]", "[foz_us]"]
+            }
+          ]
+        },
+        "reference_point": {
+          "type": "string",
+          "description": "Optional reference point for relative measurements."
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "quantity_kind": "Length",
+      "value": 1.85,
+      "unit": "m",
+      "uncertainty": 0.01,
+      "feature_of_interest": "dev.antenna-001",
+      "timestamp": "2025-05-13T11:59:27Z"
+    },
+    {
+      "quantity_kind": "Volume",
+      "value": 2.5,
+      "unit": "l",
+      "feature_of_interest": "storage.water-tank-001"
+    }
+  ]
+}

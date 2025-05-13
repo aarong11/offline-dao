@@ -1,0 +1,366 @@
+{
+  "project_name": "DAO Offline-First Toolkit",
+  "overview": {
+    "description": "A decentralized autonomous organization (DAO) toolkit designed for resilient operation in environments with limited, unstable, or surveilled connectivity. It enables collaborators to coordinate tasks, share project updates, and communicate through unconventional channels when traditional internet might be unavailable or compromised.",
+    "use_cases": [
+      "Disaster Response: Coordinate when traditional infrastructure is down",
+      "Field Research: Sync data between remote locations with limited connectivity",
+      "Privacy-Sensitive Collaboration: Work together without revealing personal details",
+      "Censorship-Resistant Coordination: Communicate through side-channels when main channels are blocked",
+      "Secure Government Operations: FIPS-compliant tooling for sensitive government applications"
+    ],
+    "key_features": [
+      "Alternative Communication Channels: leverages numerous non-traditional transmission mediums (side-channels)",
+      "Offline-First Project Coordination: cryptographically signed update files for asynchronous sharing",
+      "Security and Privacy Features: pseudonymous identities, FIPS compliance, hardware security module support",
+      "Transport Layer Abstraction: uniform API regardless of underlying channel with reliable and datagram services"
+    ],
+    "system_architecture": {
+      "layers": [
+        "Application Layer (DAO Core)",
+        "DAO Serializer & Crypto",
+        "Transport Layer (MC-TCP/MC-UDP)",
+        "Channel Adapters",
+        "Transmission Mediums (physical carriers)"
+      ]
+    }
+  },
+  "requirements": {
+    "technical_dependencies": [
+      {
+        "name": "Python 3.x",
+        "purpose": "Core programming language"
+      },
+      {
+        "name": "OpenSSL 3.x",
+        "purpose": "For FIPS compliance and cryptographic operations"
+      },
+      {
+        "name": "Hardware Security Module (optional)",
+        "purpose": "For PKCS#11 support and enhanced security"
+      }
+    ],
+    "environmental_variables": [
+      {
+        "name": "DAO_FIPS_ONLY",
+        "purpose": "When set to 1, enforces strict FIPS mode",
+        "required": false
+      },
+      {
+        "name": "DAO_CRYPTO_BACKEND",
+        "purpose": "Selects crypto backend ('software' or 'pkcs11')",
+        "required": false,
+        "default": "software"
+      },
+      {
+        "name": "DAO_PKCS11_TOKEN_LABEL",
+        "purpose": "PKCS#11 token label for hardware crypto",
+        "required": "Only when using pkcs11 backend"
+      },
+      {
+        "name": "DAO_PKCS11_KEY_LABEL",
+        "purpose": "PKCS#11 key label for hardware crypto",
+        "required": "Only when using pkcs11 backend"
+      },
+      {
+        "name": "DAO_PKCS11_PIN",
+        "purpose": "PIN for PKCS#11 token access",
+        "required": "Only when using pkcs11 backend"
+      },
+      {
+        "name": "DAO_PKCS11_LIB_PATH",
+        "purpose": "Path to PKCS#11 library",
+        "required": "Only when using pkcs11 backend"
+      }
+    ]
+  },
+  "file_structure": {
+    "core_files": [
+      {
+        "path": "dao.py",
+        "purpose": "Main CLI entrypoint and command handler for DAO operations",
+        "description": "Implements the command-line interface for creating and managing projects, tasks, contributors, and project deltas. Handles user interactions, data persistence, and cryptographic signing of updates.",
+        "key_functions": [
+          "create_project(): Creates a new project with title, summary, and tags",
+          "add_task(): Adds a task to a project with dependencies and resources",
+          "visualize_dependencies(): Creates dependency graphs for project tasks",
+          "generate_project_delta(): Creates signed delta files for offline sync",
+          "import_project_delta(): Imports and validates signed deltas",
+          "create_identity(): Creates pseudonymous contributor identities with skills and resources"
+        ],
+        "relationships": ["Uses dao_cli/crypto for signing operations", "Uses schemas for data validation"]
+      },
+      {
+        "path": "about.md",
+        "purpose": "Comprehensive project documentation",
+        "description": "Provides overview, key features, system architecture description, data model details, and usage examples for the DAO toolkit."
+      },
+      {
+        "path": "FIPS.md",
+        "purpose": "Documentation for FIPS compliance setup",
+        "description": "Guide for setting up OpenSSL with FIPS provider, configuring hardware security modules, and verifying FIPS mode operation for government/security applications."
+      }
+    ],
+    "dao_cli": {
+      "crypto": [
+        {
+          "path": "dao_cli/crypto/__init__.py",
+          "purpose": "Crypto module selector",
+          "description": "Selects and initializes the appropriate crypto backend based on environment variables and user preferences",
+          "key_functions": ["get_adapter(): Returns the configured crypto adapter instance"]
+        },
+        {
+          "path": "dao_cli/crypto/adapter_base.py",
+          "purpose": "Abstract base class for cryptographic adapters",
+          "description": "Defines the interface that all crypto implementations must provide",
+          "key_functions": [
+            "sign(payload): Abstract method to sign a JSON payload",
+            "verify(payload, signature, pubkey): Abstract method to verify a signature",
+            "public_key_b64(): Abstract method to get the base64 public key"
+          ]
+        },
+        {
+          "path": "dao_cli/crypto/adapter_pycacrypto.py",
+          "purpose": "Software-based crypto implementation using pyca/cryptography",
+          "description": "Implements Ed25519 signatures using Python's cryptography library",
+          "key_functions": [
+            "_load_or_create(key_path): Loads or generates Ed25519 key pair",
+            "sign(payload): Signs data with Ed25519 private key",
+            "verify(payload, signature, pubkey): Verifies Ed25519 signatures"
+          ]
+        },
+        {
+          "path": "dao_cli/crypto/adapter_pkcs11.py",
+          "purpose": "Hardware security module crypto implementation",
+          "description": "Implements crypto operations using hardware security modules via PKCS#11",
+          "key_functions": [
+            "_generate_keypair(session): Creates new key pair on hardware token",
+            "sign(payload): Signs using hardware-stored key",
+            "verify(payload, signature, pubkey): Verifies using hardware key"
+          ]
+        },
+        {
+          "path": "dao_cli/crypto/constants.py",
+          "purpose": "Constants for crypto modules",
+          "description": "Defines environment variable names, backend types, and default paths"
+        }
+      ],
+      "channels": [
+        {
+          "path": "dao_cli/channels/backchannel_encode.py",
+          "purpose": "Unified 'micro-channel' packet abstraction for low-bandwidth carriers",
+          "description": "Provides a common API for diverse transmission mediums like AirTag renames, Wi-Fi SSIDs, BLE device names, etc. Each channel is implemented as a plugin class.",
+          "key_classes": [
+            "MicroChannel: Abstract base class for all carriers",
+            "AirTagRenameChannel: Channel using Apple AirTag name updates",
+            "WifiSSIDChannel: Channel using Wi-Fi access point SSID broadcasts"
+          ],
+          "key_functions": ["open_channel(kind): Factory function to create channel instances"]
+        }
+      ],
+      "transport": [
+        {
+          "path": "dao_cli/transport/__init__.py",
+          "purpose": "Transport layer exports",
+          "description": "Exports the public API for the transport layer"
+        },
+        {
+          "path": "dao_cli/transport/constants.py",
+          "purpose": "Constants for transport protocols",
+          "description": "Defines header flags, sizes, timeouts, and other constants"
+        },
+        {
+          "path": "dao_cli/transport/base.py",
+          "purpose": "Abstract base class for transport protocols",
+          "description": "Defines the common interface for TCP-like and UDP-like transports",
+          "key_classes": [
+            "Transport: Abstract base class with send/recv interface",
+            "TransportError: Base exception class",
+            "ConnectionError: Exception for connection issues",
+            "FragmentationError: Exception for fragmentation problems"
+          ]
+        },
+        {
+          "path": "dao_cli/transport/header.py",
+          "purpose": "Packet header encoding/decoding",
+          "description": "Provides utilities for creating and parsing packet headers",
+          "key_classes": [
+            "PacketHeader: Data class for header fields with encoding/decoding methods"
+          ]
+        },
+        {
+          "path": "dao_cli/transport/tcp.py",
+          "purpose": "TCP-like reliable transport implementation",
+          "description": "Provides reliable, ordered data transmission over micro-channels using three-way handshake, acknowledgments, and retransmissions",
+          "key_classes": [
+            "TcpTransport: Main TCP-like transport implementation",
+            "RetransmitHandler: Manages packet retransmission logic and timeouts"
+          ],
+          "key_functions": [
+            "send(): Reliable data transmission with connection handling",
+            "recv(): Receives data with acknowledgments",
+            "_establish_connection(): Three-way handshake implementation",
+            "_close_connection(): Connection teardown with FIN/ACK"
+          ]
+        },
+        {
+          "path": "dao_cli/transport/udp.py",
+          "purpose": "UDP-like datagram transport implementation",
+          "description": "Provides best-effort, connectionless datagram delivery with optional fragmentation",
+          "key_classes": ["UdpTransport: Main UDP-like transport implementation"],
+          "key_functions": [
+            "send(): Best-effort transmission with optional fragmentation",
+            "recv(): Receives datagrams with fragment reassembly",
+            "_send_fragmented_packets(): Splits large payloads into fragments",
+            "_handle_fragment(): Reassembles received fragments"
+          ]
+        },
+        {
+          "path": "dao_cli/transport/tests",
+          "purpose": "Unit tests for transport layer",
+          "description": "Contains tests for header encoding/decoding, UDP basic functionality, and TCP advanced features"
+        }
+      ]
+    },
+    "schemas": [
+      {
+        "path": "schemas/project.schema.json",
+        "purpose": "JSON Schema for projects",
+        "description": "Defines the structure and validation rules for project data"
+      },
+      {
+        "path": "schemas/task.schema.json",
+        "purpose": "JSON Schema for tasks",
+        "description": "Defines the structure and validation rules for task data"
+      },
+      {
+        "path": "schemas/contributor.schema.json",
+        "purpose": "JSON Schema for contributors",
+        "description": "Defines the structure and validation rules for contributor profiles"
+      },
+      {
+        "path": "schemas/transmission_medium.schema.json",
+        "purpose": "JSON Schema for transmission mediums",
+        "description": "Defines the structure and validation rules for communication carriers"
+      },
+      {
+        "path": "schemas/channel_adapte.schema.json",
+        "purpose": "JSON Schema for channel adapters",
+        "description": "Defines the structure and validation rules for software adapters that interface with specific transmission mediums"
+      },
+      {
+        "path": "schemas/packet_header.schema.json",
+        "purpose": "JSON Schema for packet headers",
+        "description": "Defines the structure and validation rules for transport layer packet headers"
+      }
+    ],
+    "docs": [
+      {
+        "path": "docs/channels.txt",
+        "purpose": "Documentation for micro-channel architecture",
+        "description": "Explains where the transport layer fits, packet header format, and implementation details for MC-TCP and MC-UDP"
+      },
+      {
+        "path": "docs/mempool.txt",
+        "purpose": "Documentation for blockchain mempool channel",
+        "description": "Details how to use blockchain memory pools as covert channels for DAO data transmission"
+      },
+      {
+        "path": "docs/experimental_channels.txt",
+        "purpose": "Documentation for experimental transport protocols",
+        "description": "Describes advanced transport mechanisms like Fountain-coded Datagram, μDTN Bundle Protocol, BloomSync, CR-FEC, and Hash-Chain Gossip"
+      },
+      {
+        "path": "docs/experimental_channels2.txt",
+        "purpose": "Catalog of unconventional transmission mediums",
+        "description": "Lists over 25 unconventional methods for data transmission including thermal patterns, ultrasonic audio, and smart device signals"
+      },
+      {
+        "path": "docs/findmy.txt",
+        "purpose": "Documentation for Apple FindMy network usage",
+        "description": "Details how to leverage Apple's FindMy network for offline data transmission"
+      }
+    ],
+    "data_files": [
+      {
+        "path": "contracts_graph_edges.json",
+        "purpose": "Contract relationship data",
+        "description": "Defines edges in the contract relationship graph"
+      },
+      {
+        "path": "contracts_graph_nodes.json",
+        "purpose": "Contract entity data",
+        "description": "Defines nodes in the contract relationship graph"
+      },
+      {
+        "path": "transmission_medium_nodes.json",
+        "purpose": "Transmission medium definitions",
+        "description": "Catalog of available communication carriers and their properties"
+      },
+      {
+        "path": "fact.json",
+        "purpose": "Known fact storage",
+        "description": "Repository of verified facts used by the DAO"
+      }
+    ]
+  },
+  "system_operation": {
+    "data_flow": {
+      "description": "Data flows from the Application Layer through cryptographic signing, transport layer (either reliable MC-TCP or best-effort MC-UDP), channel adapters, and finally to physical transmission mediums",
+      "steps": [
+        "User initiates project delta export in dao.py",
+        "Data is serialized and cryptographically signed",
+        "Transport layer fragments data if necessary and adds headers",
+        "Channel adapter encodes data for specific medium",
+        "Physical medium carries data (AirTag, Wi-Fi SSID, etc.)",
+        "Receiver's channel adapter detects and decodes data",
+        "Transport layer reassembles fragments and verifies integrity",
+        "Crypto adapter verifies signatures",
+        "Application layer applies the project delta"
+      ]
+    },
+    "communication_channels": {
+      "description": "The system supports various non-traditional side-channels:",
+      "channels": [
+        "Blockchain Mempool: Zero-fee transactions with OP_RETURN fields",
+        "Consumer Device Metadata: AirTag renames, Wi-Fi SSID beacons, BLE device names",
+        "Experimental Channels: Thermal patterns, ultrasonic audio, smart device signals"
+      ]
+    }
+  },
+  "integration_examples": {
+    "exporting_project_updates": {
+      "description": "Generate and send project update via alternative channel",
+      "steps": [
+        "Run dao.py and select option 18",
+        "Enter project ID when prompted",
+        "Run 'dao export-delta --project-id <ID> --channel airtag' to send via AirTag"
+      ]
+    },
+    "setting_up_mempool_channel": {
+      "description": "Configure blockchain mempool listening",
+      "steps": [
+        "Run 'dao listen --channel mempool-bitcoin --transport udp' to start listening"
+      ]
+    }
+  },
+  "security_features": {
+    "pseudonymous_identities": {
+      "description": "Contributors operate under anon-IDs with optional verified linking"
+    },
+    "fips_compliance": {
+      "description": "Supports federal security standards with validated cryptography"
+    },
+    "device_management": {
+      "description": "Secure association of physical devices with contributor identities"
+    },
+    "hardware_security": {
+      "description": "Optional integration with PKCS#11 HSMs for enhanced key protection"
+    }
+  },
+  "metadata": {
+    "version": "0.1",
+    "created_at": "2023-08-15T00:00:00Z",
+    "ai_usage_notes": "This is a comprehensive project reference document intended for AI agent consumption. It contains structured information about the project's architecture, components, and file relationships to facilitate understanding and assist with code modifications or feature implementations."
+  }
+}

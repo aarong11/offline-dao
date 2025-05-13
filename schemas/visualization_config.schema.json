@@ -1,0 +1,720 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/visualization_config.schema.json",
+  "title": "Visualization Configuration",
+  "description": "Schema for configuring measurement visualizations, dashboards, and visual alerts based on telemetry data.",
+  "type": "object",
+  "required": ["id", "title", "panels"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this visualization configuration",
+      "pattern": "^vc\\.[a-z0-9_-]{3,64}$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable title for this visualization or dashboard"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the dashboard purpose and contents"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "ID of contributor who created this visualization"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this visualization was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this visualization was last modified"
+    },
+    "time_range": {
+      "type": "object",
+      "description": "Default time range for the visualization",
+      "properties": {
+        "start": {
+          "type": "string",
+          "description": "Start time (absolute or relative)",
+          "examples": ["2025-05-13T00:00:00Z", "now-24h", "now-7d"]
+        },
+        "end": {
+          "type": "string",
+          "description": "End time (absolute or relative)",
+          "examples": ["2025-05-13T23:59:59Z", "now"]
+        },
+        "auto_refresh_s": {
+          "type": "integer",
+          "description": "Auto-refresh interval in seconds (Unit: s, UCUM code for seconds)",
+          "minimum": 0
+        }
+      },
+      "required": ["start", "end"]
+    },
+    "layout": {
+      "type": "object",
+      "description": "Layout configuration for the dashboard",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["grid", "flexible", "fixed", "auto"],
+          "default": "grid",
+          "description": "Layout management strategy"
+        },
+        "columns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24,
+          "default": 12,
+          "description": "Number of columns in the grid layout"
+        },
+        "row_height_px": {
+          "type": "integer",
+          "minimum": 10,
+          "description": "Height of a single row in pixels"
+        },
+        "padding_px": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Padding between panels in pixels"
+        },
+        "background_color": {
+          "type": "string",
+          "description": "Background color in hex format or named color",
+          "examples": ["#f0f0f0", "white"]
+        }
+      }
+    },
+    "panels": {
+      "type": "array",
+      "description": "Array of visualization panels in the dashboard",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "title", "data_source"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this panel"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["time_series", "gauge", "table", "stat", "heatmap", "alert_list", "text", "map"],
+            "description": "Type of visualization panel"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title displayed on the panel"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional descriptive text for the panel"
+          },
+          "data_source": {
+            "type": "object",
+            "description": "Configuration of the data source for this panel",
+            "required": ["type"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["measurement_query", "telemetry_stream", "monitoring_rule"],
+                "description": "Type of data source"
+              },
+              "query": {
+                "type": "object",
+                "description": "Query configuration to select measurements",
+                "properties": {
+                  "quantity_kinds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "QUDT quantity kinds to include"
+                  },
+                  "features_of_interest": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Features to filter by"
+                  },
+                  "devices": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Devices to filter by"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Tags to filter by"
+                  },
+                  "aggregation": {
+                    "type": "string",
+                    "enum": ["none", "mean", "min", "max", "sum", "count", "median", "percentile"],
+                    "default": "none",
+                    "description": "Aggregation to apply to measurements"
+                  },
+                  "percentile": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Percentile value if aggregation is 'percentile'"
+                  },
+                  "group_by": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Fields to group measurements by"
+                  },
+                  "time_bucket_s": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Time bucket size for aggregation (Unit: s, UCUM code for seconds)"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Maximum number of data points to return"
+                  },
+                  "order_by": {
+                    "type": "string",
+                    "enum": ["time_asc", "time_desc", "value_asc", "value_desc"],
+                    "default": "time_asc",
+                    "description": "How to order the results"
+                  },
+                  "function": {
+                    "type": "string",
+                    "description": "Math function to apply to values (e.g., 'rate', 'derivative', 'integral')"
+                  },
+                  "raw_query": {
+                    "type": "string",
+                    "description": "Custom query string in implementation-specific format"
+                  }
+                }
+              },
+              "stream_id": {
+                "type": "string",
+                "description": "ID of telemetry stream to visualize (if type is 'telemetry_stream')"
+              },
+              "rule_id": {
+                "type": "string",
+                "description": "ID of monitoring rule to visualize (if type is 'monitoring_rule')"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "type": { "const": "measurement_query" }
+                  }
+                },
+                "then": {
+                  "required": ["query"]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "type": { "const": "telemetry_stream" }
+                  }
+                },
+                "then": {
+                  "required": ["stream_id"]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "type": { "const": "monitoring_rule" }
+                  }
+                },
+                "then": {
+                  "required": ["rule_id"]
+                }
+              }
+            ]
+          },
+          "position": {
+            "type": "object",
+            "description": "Position and size of the panel in the dashboard",
+            "properties": {
+              "x": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Grid column position (0-indexed)"
+              },
+              "y": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Grid row position (0-indexed)"
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Panel width in grid columns"
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Panel height in grid rows"
+              }
+            }
+          },
+          "options": {
+            "type": "object",
+            "description": "Panel-specific visualization options",
+            "properties": {
+              "unit": {
+                "type": "string",
+                "description": "Display unit for values"
+              },
+              "decimals": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Number of decimal places to display"
+              },
+              "min": {
+                "type": "number",
+                "description": "Minimum value for the scale"
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum value for the scale"
+              },
+              "thresholds": {
+                "type": "array",
+                "description": "Threshold levels for color-coding values",
+                "items": {
+                  "type": "object",
+                  "required": ["value", "color"],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "description": "Threshold value"
+                    },
+                    "color": {
+                      "type": "string",
+                      "description": "Color for values above this threshold"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "Optional label for this threshold"
+                    }
+                  }
+                }
+              },
+              "color_scheme": {
+                "type": "string",
+                "description": "Color scheme for the visualization",
+                "examples": ["spectrum", "bluered", "greens"]
+              },
+              "legend": {
+                "type": "object",
+                "properties": {
+                  "show": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether to display the legend"
+                  },
+                  "position": {
+                    "type": "string",
+                    "enum": ["bottom", "right"],
+                    "default": "bottom",
+                    "description": "Where to place the legend"
+                  }
+                }
+              },
+              "axes": {
+                "type": "object",
+                "properties": {
+                  "x_axis": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "X-axis label"
+                      },
+                      "show": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Whether to show the x-axis"
+                      }
+                    }
+                  },
+                  "y_axis": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Y-axis label"
+                      },
+                      "show": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Whether to show the y-axis"
+                      },
+                      "log_scale": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Whether to use logarithmic scale"
+                      }
+                    }
+                  }
+                }
+              },
+              "tooltip": {
+                "type": "object",
+                "properties": {
+                  "show": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether to show tooltips"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": ["single", "multi", "all"],
+                    "default": "single",
+                    "description": "Tooltip display mode"
+                  }
+                }
+              },
+              "point_size": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Size of data points in pixel radius"
+              },
+              "line_width": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Width of lines in pixels"
+              },
+              "stacked": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether to stack multiple series"
+              },
+              "fill_opacity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Opacity for area fills (0-1)"
+              },
+              "show_bars": {
+                "type": "boolean",
+                "default": false,
+                "description": "Show bar representation for time series"
+              },
+              "show_lines": {
+                "type": "boolean",
+                "default": true,
+                "description": "Show line representation for time series"
+              },
+              "show_points": {
+                "type": "boolean",
+                "default": false,
+                "description": "Show point markers for time series"
+              }
+            }
+          },
+          "alert_config": {
+            "type": "object",
+            "description": "Alert configuration linked to this visualization",
+            "properties": {
+              "rule_id": {
+                "type": "string",
+                "description": "ID of monitoring rule to link to this panel"
+              },
+              "show_alerts": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to show active alerts in this panel"
+              },
+              "threshold_line": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to display threshold lines from alert rules"
+              },
+              "alert_annotations": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to show markers when alerts were triggered"
+              }
+            }
+          },
+          "transformations": {
+            "type": "array",
+            "description": "Transformations to apply to the data before visualization",
+            "items": {
+              "type": "object",
+              "required": ["type"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["filter", "rename", "aggregate", "join", "math"],
+                  "description": "Type of transformation"
+                },
+                "options": {
+                  "type": "object",
+                  "description": "Transformation-specific options",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "variables": {
+      "type": "array",
+      "description": "Dashboard-level variables that can be used in queries and display",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Variable name (referenced as ${name})"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Human-readable label for the variable"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["query", "custom", "constant", "interval", "textbox"],
+            "description": "Type of variable"
+          },
+          "default": {
+            "description": "Default value for the variable",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" },
+              { "type": "boolean" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          },
+          "options": {
+            "type": "array",
+            "description": "Possible values for the variable (for custom type)",
+            "items": {
+              "type": "object",
+              "required": ["value", "label"],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value to use in queries"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Human-readable label to display"
+                }
+              }
+            }
+          },
+          "query": {
+            "type": "string",
+            "description": "Query to get variable values (for query type)"
+          },
+          "multi": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether multiple values can be selected"
+          },
+          "include_all": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include an 'All' option"
+          }
+        }
+      }
+    },
+    "refresh_rate_s": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How frequently the entire dashboard should refresh (Unit: s, UCUM code for seconds)"
+    },
+    "auto_fit": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to automatically fit visualizations to screen size"
+    },
+    "shared_tooltips": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether tooltips should be synchronized across panels"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata for the dashboard",
+      "additionalProperties": true
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Tags for dashboard categorization and search"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "vc.server-monitoring",
+      "title": "Server Monitoring Dashboard",
+      "description": "Real-time monitoring of server health metrics",
+      "created_by": "anon.ops-manager",
+      "created_at": "2025-05-13T12:00:00Z",
+      "time_range": {
+        "start": "now-1h",
+        "end": "now",
+        "auto_refresh_s": 60
+      },
+      "layout": {
+        "type": "grid",
+        "columns": 12
+      },
+      "panels": [
+        {
+          "id": "panel-1",
+          "type": "time_series",
+          "title": "CPU Temperature",
+          "data_source": {
+            "type": "measurement_query",
+            "query": {
+              "quantity_kinds": ["Temperature"],
+              "features_of_interest": ["dev.server-001.cpu", "dev.server-002.cpu"],
+              "time_bucket_s": 30
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 8
+          },
+          "options": {
+            "unit": "Cel",
+            "decimals": 1,
+            "thresholds": [
+              {
+                "value": 70,
+                "color": "yellow",
+                "label": "Warning"
+              },
+              {
+                "value": 85,
+                "color": "red",
+                "label": "Critical"
+              }
+            ]
+          },
+          "alert_config": {
+            "rule_id": "mr.high-temperature-alert",
+            "show_alerts": true,
+            "threshold_line": true
+          }
+        },
+        {
+          "id": "panel-2",
+          "type": "gauge",
+          "title": "Server Power Consumption",
+          "data_source": {
+            "type": "measurement_query",
+            "query": {
+              "quantity_kinds": ["Power"],
+              "features_of_interest": ["dev.server-001.psu"],
+              "aggregation": "mean"
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 4
+          },
+          "options": {
+            "unit": "W",
+            "min": 0,
+            "max": 500,
+            "thresholds": [
+              {
+                "value": 300,
+                "color": "yellow"
+              },
+              {
+                "value": 400,
+                "color": "red"
+              }
+            ]
+          }
+        },
+        {
+          "id": "panel-3",
+          "type": "table",
+          "title": "Recent Alerts",
+          "data_source": {
+            "type": "monitoring_rule",
+            "rule_id": "mr.high-temperature-alert"
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "variables": [
+        {
+          "name": "server",
+          "display_name": "Server",
+          "type": "custom",
+          "default": "dev.server-001",
+          "options": [
+            {
+              "value": "dev.server-001",
+              "label": "Server 1"
+            },
+            {
+              "value": "dev.server-002",
+              "label": "Server 2"
+            }
+          ],
+          "multi": true,
+          "include_all": true
+        },
+        {
+          "name": "refresh",
+          "display_name": "Refresh Rate",
+          "type": "interval",
+          "default": "30s",
+          "options": [
+            {
+              "value": "10s",
+              "label": "10s"
+            },
+            {
+              "value": "30s",
+              "label": "30s"
+            },
+            {
+              "value": "1m",
+              "label": "1m"
+            }
+          ]
+        }
+      ],
+      "refresh_rate_s": 30,
+      "shared_tooltips": true,
+      "tags": ["operations", "server", "monitoring"]
+    }
+  ]
+}

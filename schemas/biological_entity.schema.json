@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/biological_entity.schema.json",
+  "title": "Biological Entity",
+  "description": "Base schema for all biological entities including animals, plants, and other organisms.",
+  "type": "object",
+  "required": ["id", "taxonomy", "classification"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this biological entity"
+    },
+    "taxonomy": {
+      "type": "object",
+      "description": "Taxonomic classification information",
+      "required": ["scientific_name"],
+      "properties": {
+        "scientific_name": {
+          "type": "string",
+          "description": "Binomial or trinomial scientific name (e.g., 'Canis lupus', 'Quercus alba')"
+        },
+        "common_name": {
+          "type": "string",
+          "description": "Common or vernacular name"
+        },
+        "kingdom": {
+          "type": "string",
+          "description": "Kingdom classification (e.g., 'Animalia', 'Plantae')"
+        },
+        "phylum": {
+          "type": "string",
+          "description": "Phylum or division"
+        },
+        "class": {
+          "type": "string",
+          "description": "Class classification"
+        },
+        "order": {
+          "type": "string",
+          "description": "Order classification"
+        },
+        "family": {
+          "type": "string",
+          "description": "Family classification"
+        },
+        "genus": {
+          "type": "string",
+          "description": "Genus classification"
+        },
+        "species": {
+          "type": "string",
+          "description": "Species classification"
+        },
+        "subspecies": {
+          "type": "string",
+          "description": "Subspecies classification if applicable"
+        }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "description": "Additional classification information",
+      "properties": {
+        "entity_type": {
+          "type": "string",
+          "enum": ["animal", "plant", "fungus", "bacterium", "protist", "virus", "other"],
+          "description": "The broad biological category"
+        },
+        "conservation_status": {
+          "type": "string",
+          "enum": ["extinct", "extinct_in_wild", "critically_endangered", "endangered", "vulnerable", "near_threatened", "conservation_dependent", "least_concern", "data_deficient", "not_evaluated", "not_applicable"],
+          "description": "IUCN Red List or equivalent conservation status"
+        },
+        "is_domesticated": {
+          "type": "boolean",
+          "description": "Whether the entity is domesticated"
+        },
+        "is_genetically_modified": {
+          "type": "boolean",
+          "description": "Whether the entity is genetically modified or engineered"
+        },
+        "ecological_role": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ecological roles (e.g., 'producer', 'consumer', 'decomposer', 'keystone species')"
+        }
+      }
+    },
+    "observed_attributes": {
+      "type": "object",
+      "description": "Observable characteristics and state",
+      "properties": {
+        "growth_stage": {
+          "type": "string",
+          "description": "Current developmental or life stage"
+        },
+        "health_status": {
+          "type": "string",
+          "description": "Current health condition"
+        },
+        "age": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["hours", "days", "weeks", "months", "years"]
+            },
+            "estimated": {
+              "type": "boolean"
+            }
+          }
+        },
+        "first_observed": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when entity was first observed"
+        },
+        "last_observed": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Most recent observation timestamp"
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "description": "Current or last known location",
+      "properties": {
+        "coordinates": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "elevation": {
+              "type": "number"
+            }
+          }
+        },
+        "habitat": {
+          "type": "string",
+          "description": "Habitat type or description"
+        },
+        "region": {
+          "type": "string",
+          "description": "Geographic region identifier"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Origin and tracking information",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Source or origin of the entity"
+        },
+        "collected_by": {
+          "type": "string",
+          "description": "ID reference to the contributor who collected or first documented this entity"
+        },
+        "tracked_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "IDs of contributors or systems tracking this entity"
+        },
+        "identification_method": {
+          "type": "string",
+          "description": "Method used to identify the biological entity"
+        }
+      }
+    },
+    "measurements": {
+      "type": "array",
+      "description": "Associated physical measurements",
+      "items": {
+        "$ref": "measurement.schema.json"
+      }
+    },
+    "observations": {
+      "type": "array",
+      "description": "Temporal series of observation events",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observer": {
+            "type": "string",
+            "description": "ID reference to contributor who made this observation"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location reference at time of observation"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "measurements": {
+            "type": "array",
+            "items": {
+              "$ref": "measurement.schema.json"
+            }
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "required": ["timestamp", "observer"]
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Array of identification tags or markers",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "description": "Identifier for physical tag, band, or marker"
+          },
+          "tag_type": {
+            "type": "string",
+            "description": "Type of tag (e.g., 'rfid', 'band', 'collar', 'dye_mark')"
+          },
+          "applied_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "applied_by": {
+            "type": "string",
+            "description": "ID reference to contributor who applied the tag"
+          }
+        },
+        "required": ["tag_id", "tag_type"]
+      }
+    },
+    "project_id": {
+      "type": "string",
+      "description": "Associated project identifier"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional metadata and extension points",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

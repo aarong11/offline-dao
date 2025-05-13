@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/emotional_state.schema.json",
+  "title": "Emotional State",
+  "description": "Schema for tracking a person's emotional intensity over time with cryptographic verification",
+  "allOf": [
+    { "$ref": "./common/cognition/base_cognitive_state.schema.json" },
+    {
+      "type": "object",
+      "required": ["type", "emotions"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "EmotionalState",
+          "description": "Type discriminator for this schema"
+        },
+        "emotions": {
+          "type": "array",
+          "description": "List of emotions being experienced",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "intensity"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the emotion",
+                "examples": ["anxiety", "motivation", "joy", "sadness", "anger", "fear", "surprise", "trust"]
+              },
+              "intensity": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10,
+                "description": "Subjective intensity rating of the emotion (1-10)"
+              },
+              "notes": {
+                "type": "string",
+                "description": "Optional context or details about this emotion"
+              },
+              "triggers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Optional factors that triggered this emotion"
+              }
+            }
+          }
+        },
+        "valence": {
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 5,
+          "description": "Overall emotional valence from very negative (-5) to very positive (+5)"
+        },
+        "arousal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Overall emotional intensity or arousal (1-10)"
+        },
+        "related_psychological_state_cid": {
+          "type": "string",
+          "description": "Optional CID reference to a related psychological state record",
+          "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "type": "EmotionalState",
+      "human_id": "h.jane_researcher",
+      "timestamp": "2023-11-15T14:45:12Z",
+      "epoch": "After receiving project feedback",
+      "emotions": [
+        {
+          "name": "anxiety",
+          "intensity": 7,
+          "notes": "Related to upcoming presentation",
+          "triggers": ["deadline", "public speaking"]
+        },
+        {
+          "name": "motivation",
+          "intensity": 8,
+          "notes": "Excited about positive feedback"
+        }
+      ],
+      "valence": 2,
+      "arousal": 8,
+      "notes": "Mixed feelings about the project progress",
+      "previous_state_cid": "sha256:b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3",
+      "related_psychological_state_cid": "sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+      "signature": {
+        "value": "base64-signature-here",
+        "algorithm": "ed25519",
+        "public_key": "base64-public-key-here",
+        "timestamp": "2023-11-15T14:45:12Z"
+      }
+    }
+  ]
+}

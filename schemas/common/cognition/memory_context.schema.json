@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/common/cognition/memory_context.schema.json",
+  "title": "Memory Context",
+  "description": "Schema for capturing contextual information about memories to support AI-assisted recall",
+  "type": "object",
+  "properties": {
+    "emotional_context": {
+      "type": "object",
+      "properties": {
+        "emotional_state_cid": {
+          "type": "string",
+          "pattern": "^(sha256|sha3):[a-f0-9]{64}$",
+          "description": "CID reference to associated emotional state"
+        },
+        "valence": {
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 5,
+          "description": "Emotional tone from very negative (-5) to very positive (+5)"
+        },
+        "intensity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Intensity of emotions associated with this memory (1-10)"
+        }
+      }
+    },
+    "psychological_context": {
+      "type": "object",
+      "properties": {
+        "psychological_state_cid": {
+          "type": "string",
+          "pattern": "^(sha256|sha3):[a-f0-9]{64}$",
+          "description": "CID reference to associated psychological state"
+        },
+        "stress_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Stress level at time of memory formation (1-10)"
+        },
+        "cognitive_load": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Cognitive load at time of memory formation (1-10)"
+        }
+      }
+    },
+    "temporal_context": {
+      "type": "object",
+      "properties": {
+        "event_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the remembered event occurred (may differ from record timestamp)"
+        },
+        "duration": {
+          "type": "string",
+          "description": "Duration of the remembered event (ISO 8601 duration format)"
+        },
+        "recurrence": {
+          "type": "string",
+          "enum": ["one_time", "recurring", "habitual", "ongoing"],
+          "description": "Whether this memory represents a single or recurring event"
+        }
+      }
+    },
+    "spatial_context": {
+      "type": "object",
+      "properties": {
+        "location_type": {
+          "type": "string",
+          "description": "Type of location (home, work, etc.)"
+        },
+        "region": {
+          "type": "string",
+          "description": "General region or area (not precise coordinates)"
+        }
+      }
+    },
+    "perceptual_context": {
+      "type": "object",
+      "description": "Sensory information associated with the memory",
+      "properties": {
+        "visual": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Visual elements associated with the memory"
+        },
+        "auditory": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Sounds associated with the memory"
+        },
+        "other_sensory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["sense", "description"],
+            "properties": {
+              "sense": {
+                "type": "string",
+                "enum": ["taste", "smell", "touch", "proprioception", "other"],
+                "description": "Type of sensory information"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the sensory information"
+              }
+            }
+          },
+          "description": "Other sensory information associated with the memory"
+        }
+      }
+    },
+    "social_context": {
+      "type": "object",
+      "description": "Social information associated with the memory",
+      "properties": {
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "People present or mentioned (use pseudonyms or roles)"
+        },
+        "social_setting": {
+          "type": "string",
+          "enum": ["alone", "one_on_one", "small_group", "large_group", "public", "online", "other"],
+          "description": "Social setting of the memory"
+        }
+      }
+    },
+    "semantic_cues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords or concepts that might trigger this memory"
+    }
+  }
+}

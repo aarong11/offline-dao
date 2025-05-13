@@ -1,0 +1,48 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/epoch_log_entry.schema.json",
+    "title": "Epoch Log Entry",
+    "description": "Human‑observable time marker stored locally and embedded in every project delta, providing a tamper‑evident, offline‑friendly ordering signal (e.g., ‘first frost’, ‘moon over trees’).",
+    "type": "object",
+    "required": ["marker", "signed_by", "timestamp"],
+    "additionalProperties": false,
+    "properties": {
+      "marker": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Short natural‑language description of the real‑world event or observation."
+      },
+      "location": {
+        "type": "string",
+        "description": "Optional fuzzy or privacy‑preserving location hint (‘Greenbelt near river’)."
+      },
+      "signed_by": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": "List of pseudonym IDs that attest to this marker."
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "UTC timestamp when the entry was recorded (RFC 3339)."
+      },
+      "signature": {
+        "type": "string",
+        "description": "Detached Ed25519 signature over the canonical JSON representation (all fields except ‘signature’ itself)."
+      },
+      "public_key": {
+        "type": "string",
+        "description": "Base64‑encoded public key corresponding to the signature, enabling offline verification."
+      },
+      "meta": {
+        "type": "object",
+        "description": "Free‑form extension object for application‑specific keys (e.g., weather data, image hash).",
+        "additionalProperties": true
+      }
+    }
+  }
+  

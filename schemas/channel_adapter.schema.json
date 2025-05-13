@@ -1,0 +1,72 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/channel_adapter.schema.json",
+    "title": "Channel Adapter Schema",
+    "description": "Defines a concrete software adapter that speaks to a specific Transmission Medium (e.g., AirTag rename, Wi‑Fi SSID beacon, Bitcoin mempool).  The adapter exposes the uniform async interface `write(bytes)` / `read()`.  This schema captures its static capabilities so routing code can pick the right adapter at runtime.",
+    "type": "object",
+    "required": ["id", "type", "medium_id", "max_bytes", "library"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Canonical slug; prefix `ch.` recommended (e.g., `ch.airtag-rename`).",
+        "pattern": "^[a-z0-9_.-]+$"
+      },
+      "type": {
+        "const": "ChannelAdapter",
+        "description": "Fixed discriminator so graph loaders can quickly determine object class."
+      },
+      "medium_id": {
+        "type": "string",
+        "description": "`id` of the `TransmissionMedium` this adapter rides on (e.g., `tm.airtag-rename`)."
+      },
+      "max_bytes": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Hard ceiling (after encryption + header) that `write()` accepts per call."
+      },
+      "library": {
+        "type": "string",
+        "description": "Primary Python package or system tool the adapter uses (e.g., `pyicloud`, `bluez`, `bitcoinlib`)."
+      },
+      "requires_hardware": {
+        "type": "boolean",
+        "default": false,
+        "description": "True if special hardware (USB dongle, SDR, YubiKey) is mandatory."
+      },
+      "directionality": {
+        "type": "string",
+        "enum": ["tx-only", "rx-only", "bidirectional"],
+        "default": "bidirectional",
+        "description": "Whether adapter can both write and read or is limited to one direction."
+      },
+      "bandwidth_bps": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Typical sustained throughput in bytes per second (best‑effort estimate)."
+      },
+      "setup_instructions": {
+        "type": "string",
+        "description": "Markdown snippet describing how to install drivers, obtain API keys, etc."
+      },
+      "meta": {
+        "type": "object",
+        "description": "Open field for adapter‑specific details (e.g., BLE MAC address, RPC endpoint).",
+        "additionalProperties": true
+      }
+    },
+    "additionalProperties": false,
+    "examples": [
+      {
+        "id": "ch.airtag-rename",
+        "type": "ChannelAdapter",
+        "medium_id": "tm.airtag-rename",
+        "max_bytes": 26,
+        "library": "pyicloud",
+        "requires_hardware": false,
+        "directionality": "bidirectional",
+        "bandwidth_bps": 13,
+        "setup_instructions": "Needs iCloud app‑specific password stored in env `ICLOUD_PWD`."
+      }
+    ]
+  }
+  

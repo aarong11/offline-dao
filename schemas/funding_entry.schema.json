@@ -1,0 +1,55 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/funding_entry.schema.json",
+    "title": "DAO Funding Entry Schema",
+    "description": "A single record of funds allocated to a DAO Project (grant, donation, bounty pool, etc.).",
+    "type": "object",
+    "required": ["id", "amount", "source", "timestamp"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "UUID v4 for this funding entry."
+      },
+      "amount": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "description": "Amount of currency units provided. Exact unit comes from project context or `currency` in meta."
+      },
+      "source": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Name or identifier of the funder (org, person, wallet address)."
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "ISO‑8601 UTC timestamp when funds became available."
+      },
+      "tags": {
+        "type": "array",
+        "description": "Free‑form classification tags (e.g., matching, grant, quadratic).",
+        "items": { "type": "string" },
+        "uniqueItems": true,
+        "default": []
+      },
+      "milestone": {
+        "type": "string",
+        "description": "Milestone or deliverable this funding is tied to, if any."
+      },
+      "conditions": {
+        "type": "string",
+        "description": "Human‑readable payout conditions (escrow, audit, etc.)."
+      },
+      "timeline": {
+        "type": "string",
+        "description": "Expected timeline / vesting schedule text."
+      },
+      "meta": {
+        "type": "object",
+        "description": "Open slot for currency code, transaction hash, escrow address, etc.",
+        "additionalProperties": true,
+        "default": {}
+      }
+    }
+}
+  

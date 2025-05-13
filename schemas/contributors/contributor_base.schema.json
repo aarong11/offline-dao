@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/contributors/contributor_base.schema.json",
+  "title": "Contributor Base",
+  "description": "Abstract base schema for all contributors to the DAO ecosystem.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this contributor"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Public-facing name or alias"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Type of contributor",
+      "enum": ["human", "ai_agent", "hybrid", "dao", "other"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the contributor was registered"
+    },
+    "public_key": {
+      "type": "string",
+      "description": "Base64-encoded public key used for signing or identification"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional freeform metadata or provenance information"
+    }
+  },
+  "required": ["id", "entity_type"]
+}

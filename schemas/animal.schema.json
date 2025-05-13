@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/animal.schema.json",
+  "title": "Animal",
+  "description": "Schema for animal biological entities, extending the base biological entity schema",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "biological_entity.schema.json"
+    },
+    {
+      "properties": {
+        "classification": {
+          "properties": {
+            "entity_type": {
+              "const": "animal",
+              "description": "Must be 'animal' for this schema"
+            }
+          }
+        },
+        "mobility": {
+          "type": "object",
+          "description": "Movement characteristics of the animal",
+          "properties": {
+            "locomotion_type": {
+              "type": "array",
+              "description": "Primary means of locomotion",
+              "items": {
+                "type": "string",
+                "enum": ["flying", "swimming", "walking", "running", "crawling", "jumping", "burrowing", "climbing", "sessile", "other"]
+              }
+            },
+            "home_range": {
+              "type": "object",
+              "description": "Typical area the animal traverses",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": ["m²", "km²", "ha", "acres"]
+                }
+              }
+            },
+            "migration_pattern": {
+              "type": "string",
+              "description": "Migration behavior if applicable"
+            },
+            "activity_period": {
+              "type": "array",
+              "description": "Typical periods of activity",
+              "items": {
+                "type": "string",
+                "enum": ["diurnal", "nocturnal", "crepuscular", "cathemeral"]
+              }
+            },
+            "territorial": {
+              "type": "boolean",
+              "description": "Whether the animal defends territory"
+            }
+          }
+        },
+        "diet": {
+          "type": "object",
+          "description": "Feeding characteristics",
+          "properties": {
+            "diet_type": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["carnivore", "herbivore", "omnivore", "detritivore", "filter_feeder", "parasite", "other"]
+              }
+            },
+            "feeding_method": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "How the animal acquires food"
+            },
+            "preferred_food": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Preferred food items or species"
+            },
+            "dietary_requirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Special dietary needs"
+            }
+          }
+        },
+        "social_structure": {
+          "type": "object",
+          "description": "Social organization and behavior",
+          "properties": {
+            "social_group": {
+              "type": "string",
+              "enum": ["solitary", "pair", "family", "herd", "flock", "school", "pod", "colony", "other"],
+              "description": "Primary social grouping"
+            },
+            "group_size": {
+              "type": "object",
+              "properties": {
+                "typical": {
+                  "type": "number"
+                },
+                "range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "dominance_hierarchy": {
+              "type": "boolean",
+              "description": "Whether the social group has a dominance hierarchy"
+            },
+            "mating_system": {
+              "type": "string",
+              "enum": ["monogamous", "polygynous", "polyandrous", "polygynandrous", "promiscuous", "other"],
+              "description": "Mating system pattern"
+            },
+            "parental_care": {
+              "type": "string",
+              "description": "Parental care behavior"
+            }
+          }
+        },
+        "reproduction": {
+          "type": "object",
+          "description": "Reproductive characteristics",
+          "properties": {
+            "reproductive_mode": {
+              "type": "string",
+              "enum": ["sexual", "asexual", "both"],
+              "description": "Primary mode of reproduction"
+            },
+            "sexual_dimorphism": {
+              "type": "boolean",
+              "description": "Whether males and females have distinct appearances"
+            },
+            "breeding_season": {
+              "type": "string",
+              "description": "Time of year breeding typically occurs"
+            },
+            "gestation_period": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": ["days", "weeks", "months"]
+                }
+              },
+              "description": "Length of pregnancy or incubation"
+            },
+            "litter_size": {
+              "type": "object",
+              "properties": {
+                "typical": {
+                  "type": "number"
+                },
+                "range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "description": "Number of offspring typically produced"
+            },
+            "maturation_time": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": ["days", "weeks", "months", "years"]
+                }
+              },
+              "description": "Time to reach sexual maturity"
+            }
+          }
+        },
+        "physical_characteristics": {
+          "type": "object",
+          "description": "Physical attributes specific to animals",
+          "properties": {
+            "body_dimensions": {
+              "type": "object",
+              "properties": {
+                "length": {
+                  "$ref": "measurements/spatial_measurement.schema.json"
+                },
+                "height": {
+                  "$ref": "measurements/spatial_measurement.schema.json"
+                },
+                "wingspan": {
+                  "$ref": "measurements/spatial_measurement.schema.json"
+                },
+                "weight": {
+                  "$ref": "measurements/spatial_measurement.schema.json"
+                }
+              }
+            },
+            "coloration": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Body coloring and patterns"
+            },
+            "distinctive_features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Notable physical characteristics"
+            }
+          }
+        },
+        "behavior": {
+          "type": "object",
+          "description": "Behavioral characteristics",
+          "properties": {
+            "communication_methods": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "How the animal communicates"
+            },
+            "vocalizations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Types of sounds produced"
+            },
+            "behavioral_adaptations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Special behavioral traits"
+            }
+          }
+        },
+        "habitat": {
+          "type": "object",
+          "description": "Detailed habitat information",
+          "properties": {
+            "preferred_habitat": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Types of environments preferred"
+            },
+            "niche": {
+              "type": "string",
+              "description": "Ecological niche description"
+            },
+            "range": {
+              "type": "object",
+              "properties": {
+                "geographic_regions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "elevation_range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "description": "Minimum and maximum elevation in meters"
+                },
+                "depth_range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "description": "Minimum and maximum depth in meters (for aquatic animals)"
+                }
+              }
+            }
+          }
+        },
+        "tracked_by": {
+          "type": "array",
+          "description": "Devices or systems used to track the animal",
+          "items": {
+            "type": "object",
+            "properties": {
+              "device_id": {
+                "type": "string",
+                "description": "ID of tracking device"
+              },
+              "device_type": {
+                "type": "string",
+                "enum": ["gps_collar", "radio_tag", "satellite_tag", "pit_tag", "band", "acoustic_tag", "other"],
+                "description": "Type of tracking technology"
+              },
+              "attachment_location": {
+                "type": "string",
+                "description": "Where on the animal the device is attached"
+              },
+              "installation_date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "battery_life": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "enum": ["days", "months", "years"]
+                  }
+                }
+              },
+              "data_transmission": {
+                "type": "string",
+                "enum": ["real-time", "store-on-board", "proximity-download", "other"],
+                "description": "How data is retrieved from the device"
+              }
+            },
+            "required": ["device_id", "device_type"]
+          }
+        },
+        "conservation": {
+          "type": "object",
+          "description": "Conservation-specific information",
+          "properties": {
+            "threats": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Known threats to the species"
+            },
+            "conservation_efforts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Current conservation initiatives"
+            },
+            "population_trend": {
+              "type": "string",
+              "enum": ["increasing", "stable", "decreasing", "unknown"],
+              "description": "Overall population trend"
+            },
+            "estimated_population": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "year": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "required": ["mobility", "diet"],
+  "additionalProperties": false
+}

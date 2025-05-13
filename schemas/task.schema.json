@@ -1,0 +1,151 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/task.schema.json",
+    "title": "DAO Task Schema",
+    "description": "Schema for a discrete unit of work inside a DAO Project.",
+    "type": "object",
+    "required": ["id", "title", "status"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "UUID v4 of the task.",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      },
+      "title": { "type": "string", "maxLength": 140 },
+      "description": { "type": "string" },
+      "status": {
+        "type": "string",
+        "enum": ["open", "claimed", "in_progress", "submitted", "closed", "archived"]
+      },
+      "estimated_hours": { "type": "number", "minimum": 0 },
+      "people_required": { "type": "integer", "minimum": 1 },
+      "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
+      "inputs": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true
+      },
+      "outputs": { "type": "string" },
+      "resources": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true,
+        "description": "Legacy field for simple resource strings"
+      },
+      "required_resources": {
+        "type": "array",
+        "description": "Resources required to complete this task",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": { 
+              "type": "string",
+              "description": "Reference to a resource schema id"
+            },
+            "quantity": { 
+              "type": "number",
+              "description": "Amount of the resource required" 
+            },
+            "unit": { 
+              "type": "string",
+              "description": "Unit of measure (should match resource's unit_of_measure)"
+            },
+            "substitutable": {
+              "type": "boolean",
+              "description": "Whether alternatives can be used",
+              "default": false
+            },
+            "notes": {
+              "type": "string",
+              "description": "Additional requirements or specifications"
+            }
+          }
+        }
+      },
+      "consumes_resources": {
+        "type": "array",
+        "description": "Resources consumed when executing this task",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": { 
+              "type": "string",
+              "description": "Reference to a resource schema id"
+            },
+            "quantity": { 
+              "type": "number",
+              "description": "Amount of the resource consumed" 
+            },
+            "unit": { 
+              "type": "string",
+              "description": "Unit of measure (should match resource's unit_of_measure)"
+            },
+            "return_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Percentage that can be returned/recycled (Unit: %, UCUM code for percent)"
+            }
+          }
+        }
+      },
+      "produces_resources": {
+        "type": "array",
+        "description": "Resources produced by this task",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": { 
+              "type": "string",
+              "description": "Reference to a resource schema id"
+            },
+            "quantity": { 
+              "type": "number",
+              "description": "Amount of the resource produced" 
+            },
+            "unit": { 
+              "type": "string",
+              "description": "Unit of measure (should match resource's unit_of_measure)"
+            },
+            "quality_factor": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Quality rating of produced resource (Unit: %, UCUM code for percent)"
+            }
+          }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true
+      },
+      "depends_on": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "description": "Task IDs this one depends on",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "uniqueItems": true
+      },
+      "claimed_by": { "type": "string" },
+      "submitted_by": { "type": "string" },
+      "bounty": { "type": "number", "minimum": 0 },
+      "submission": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "format": "uri" },
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "hours_spent": { "type": "number", "minimum": 0 }
+        },
+        "required": ["url", "submitted_at", "hours_spent"],
+        "additionalProperties": false
+      }
+    },
+    "additionalProperties": false
+  }

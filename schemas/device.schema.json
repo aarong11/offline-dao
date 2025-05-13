@@ -1,0 +1,129 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/device.schema.json",
+    "title": "Contributor Device",
+    "description": "Schema for a hardware device associated with a Contributor (laptop, sensor node, signed sentinel Pi, etc.).  Used for device‑access verification and nonce rotation logs.",
+    "type": "object",
+    "required": ["device_id", "nonce", "responsibility", "activated_at"],
+    "properties": {
+      "device_id": {
+        "type": "string",
+        "description": "Base64‑encoded hash of device serial + nonce."
+      },
+      "nonce": {
+        "type": "string",
+        "description": "Random nonce used to salt the device hash."
+      },
+      "responsibility": {
+        "type": "string",
+        "description": "Role of the device (sentinel, dev‑laptop, signer, etc.)."
+      },
+      "activated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Epoch marker or RFC 3339 timestamp when the device was first authorised."
+      },
+      "deactivated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Optional timestamp when the device was revoked."
+      },
+      "note": {
+        "type": "string",
+        "description": "Optional human note on device purpose."
+      },
+      "custody_log": {
+        "type": "array",
+        "description": "Chronological list of custody events for tracking device possession, maintenance, and transfers",
+        "items": {
+          "$ref": "common/custody_event.schema.json"
+        }
+      },
+      "manufacturing_resources": {
+        "type": "array",
+        "description": "Resources used in the device's manufacturing",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": { 
+              "type": "string", 
+              "description": "Reference to a resource schema id" 
+            },
+            "quantity": { "type": "number" },
+            "unit": { "type": "string" },
+            "source_location": { "type": "string" },
+            "renewable_percentage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Percentage from renewable sources (Unit: %, UCUM code for percent)" 
+            }
+          }
+        }
+      },
+      "operational_resources": {
+        "type": "array",
+        "description": "Resources consumed during device operation",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "consumption_rate"],
+          "properties": {
+            "resource_id": { 
+              "type": "string", 
+              "description": "Reference to a resource schema id" 
+            },
+            "consumption_rate": { "type": "number", "description": "Rate of consumption" },
+            "rate_unit": { 
+              "type": "string", 
+              "description": "Unit of consumption rate (e.g., 'kW.h/d' for kilowatt-hours per day)" 
+            },
+            "variable": {
+              "type": "boolean",
+              "description": "Whether consumption rate is variable",
+              "default": false
+            },
+            "peak_consumption": {
+              "type": "number",
+              "description": "Maximum consumption rate"
+            }
+          }
+        }
+      },
+      "device_specifications": {
+        "type": "object",
+        "description": "Technical specifications of the device",
+        "properties": {
+          "manufacturer": { "type": "string" },
+          "model": { "type": "string" },
+          "serial_number": { "type": "string" },
+          "hardware_version": { "type": "string" },
+          "firmware_version": { "type": "string" },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "component_type": { "type": "string" },
+                "description": { "type": "string" },
+                "manufacturer": { "type": "string" },
+                "resource_id": { 
+                  "type": "string", 
+                  "description": "Reference to component as resource" 
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "additionalProperties": false,
+    "examples": [
+      {
+        "device_id": "YmFzZTY0aGFzaA==",
+        "nonce": "3b9ee0e5",
+        "responsibility": "sentinel",
+        "activated_at": "2025-05-13T12:00:00Z"
+      }
+    ]
+  }

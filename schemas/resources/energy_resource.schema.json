@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resources/energy_resource.schema.json",
+  "title": "Energy Resource",
+  "description": "Schema for energy-related resources including renewable and non-renewable sources",
+  "allOf": [
+    { "$ref": "../resource.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "energy_type": {
+          "type": "string",
+          "enum": ["electrical", "thermal", "mechanical", "chemical", "nuclear", "gravitational", "electromagnetic"],
+          "description": "Physical form of energy this resource represents"
+        },
+        "energy_source": {
+          "type": "string",
+          "enum": ["solar", "wind", "hydro", "geothermal", "biomass", "fossil_fuel", "nuclear", "tidal", "hydrogen", "battery", "other"],
+          "description": "Source of the energy"
+        },
+        "generation_properties": {
+          "type": "object",
+          "description": "Properties related to energy generation",
+          "properties": {
+            "capacity_factor": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Ratio of actual output to potential output at full capacity"
+            },
+            "peak_capacity": {
+              "$ref": "../measurements/power_measurement.schema.json",
+              "description": "Maximum power generation capacity"
+            },
+            "response_time": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "unit": { "type": "string", "enum": ["s", "min", "h"] }
+              },
+              "description": "Time required to reach full generation capacity"
+            },
+            "intermittency": {
+              "type": "string",
+              "enum": ["none", "low", "medium", "high", "variable"],
+              "description": "Degree of variability in energy production"
+            },
+            "dispatchability": {
+              "type": "string",
+              "enum": ["non_dispatchable", "partially_dispatchable", "fully_dispatchable"],
+              "description": "Ability to control energy output on demand"
+            },
+            "storage_capacity": {
+              "$ref": "../measurements/power_measurement.schema.json",
+              "description": "Energy storage capacity if applicable"
+            }
+          }
+        },
+        "energy_conversion": {
+          "type": "object",
+          "description": "Energy transformation and conversion properties",
+          "properties": {
+            "input_energy_type": {
+              "type": "string",
+              "description": "Type of energy used as input if applicable"
+            },
+            "output_energy_type": {
+              "type": "string",
+              "description": "Type of energy produced as output"
+            },
+            "conversion_efficiency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Efficiency of energy conversion (Unit: %, UCUM code for percent)"
+            },
+            "energy_density": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "unit": { 
+                  "type": "string", 
+                  "description": "UCUM code for energy per volume or mass (e.g., J/kg, W.h/l)"
+                }
+              },
+              "description": "Energy content per unit volume or mass"
+            }
+          }
+        },
+        "grid_integration": {
+          "type": "object",
+          "description": "Characteristics related to integration with energy distribution systems",
+          "properties": {
+            "transmission_losses": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Typical energy loss during transmission (Unit: %, UCUM code for percent)"
+            },
+            "grid_compatibility": {
+              "type": "string",
+              "enum": ["low", "medium", "high"],
+              "description": "Ease of integration with existing power grids"
+            },
+            "requires_conversion": {
+              "type": "boolean",
+              "description": "Whether energy requires conversion before grid integration"
+            },
+            "balancing_requirements": {
+              "type": "string",
+              "description": "Grid balancing needs for this energy type"
+            }
+          }
+        },
+        "lifecycle_emissions": {
+          "type": "object",
+          "description": "Emissions throughout the lifecycle of energy production",
+          "properties": {
+            "construction_emissions_co2e_per_kWh": {
+              "type": "number",
+              "description": "CO2 equivalent from construction/manufacturing (Unit: g/kW.h)"
+            },
+            "operational_emissions_co2e_per_kWh": {
+              "type": "number",
+              "description": "CO2 equivalent from operational phase (Unit: g/kW.h)"
+            },
+            "decommissioning_emissions_co2e_per_kWh": {
+              "type": "number",
+              "description": "CO2 equivalent from decommissioning (Unit: g/kW.h)"
+            },
+            "lifecycle_emissions_methodology": {
+              "type": "string",
+              "description": "Standard or methodology used to calculate lifecycle emissions"
+            }
+          }
+        },
+        "land_requirements": {
+          "type": "object",
+          "properties": {
+            "area_per_MW": {
+              "$ref": "../measurements/spatial_measurement.schema.json",
+              "description": "Land area required per megawatt of capacity"
+            },
+            "land_type": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Types of land suitable for energy production"
+            },
+            "competitive_land_uses": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Alternative uses for the same land type"
+            }
+          }
+        },
+        "water_usage": {
+          "type": "object",
+          "properties": {
+            "consumption_l_per_MWh": {
+              "type": "number",
+              "description": "Water consumed per megawatt-hour (Unit: l/MW.h)"
+            },
+            "withdrawal_l_per_MWh": {
+              "type": "number",
+              "description": "Water withdrawn per megawatt-hour (Unit: l/MW.h)"
+            },
+            "water_type": {
+              "type": "string",
+              "enum": ["freshwater", "saltwater", "reclaimed", "none"],
+              "description": "Type of water required"
+            }
+          }
+        },
+        "weather_dependency": {
+          "type": "object",
+          "properties": {
+            "dependent_factor": {
+              "type": "string", 
+              "enum": ["sunlight", "wind", "precipitation", "temperature", "none"],
+              "description": "Primary weather factor affecting energy production"
+            },
+            "sensitivity": {
+              "type": "string",
+              "enum": ["low", "medium", "high"],
+              "description": "Degree of sensitivity to weather conditions"
+            },
+            "seasonal_variation": {
+              "type": "string",
+              "enum": ["none", "low", "medium", "high"],
+              "description": "Degree of seasonal variation in output"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

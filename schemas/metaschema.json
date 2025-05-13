@@ -1,0 +1,73 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/meta.schema.json",
+    "title": "DAO Master Meta‑Schema",
+    "description": "Manifest that tells people and tools what every subschema in the offline‑first DAO stack does and how they inter‑relate.  This file is informational only; it is **not** a validation schema for instance data.",
+    "type": "object",
+    "properties": {
+      "schemas": {
+        "type": "array",
+        "description": "List of subschema descriptors in no particular order.",
+        "items": {
+          "type": "object",
+          "required": ["file", "title", "purpose"],
+          "properties": {
+            "file":        {"type": "string", "description": "Relative path under /schemas"},
+            "title":       {"type": "string"},
+            "purpose":     {"type": "string"},
+            "governs":     {"type": "string", "description": "Node, edge, or packet class governed."},
+            "linksTo":     {"type": "array", "items": {"type": "string"}, "description": "Other schema IDs referenced via $ref or logical relation."},
+            "version":     {"type": "string", "default": "1.0.0"}
+          }
+        }
+      }
+    },
+    "schemas": [
+      {"file":"transmission_medium.schema.json","title":"Transmission Medium","purpose":"Capabilities & tags for any communication carrier","governs":"node:TransmissionMedium","linksTo":["transport.schema.json"]},
+      {"file":"transport.schema.json","title":"Transport Layer","purpose":"Defines logical transports (MC‑TCP/UDP/FEC)","governs":"node:Transport","linksTo":["packet_header.schema.json"]},
+      {"file":"channel_adapter.schema.json","title":"Channel Adapter","purpose":"Low‑level binding to a specific medium","governs":"node:ChannelTransport","linksTo":["transmission_medium.schema.json"]},
+      {"file":"packet_header.schema.json","title":"Packet Header","purpose":"8‑byte common header for all transports","governs":"spec:header","linksTo":[]},
+      {"file":"project.schema.json","title":"Project","purpose":"Top‑level collaborative container","governs":"node:Project","linksTo":["task.schema.json","funding_entry.schema.json"]},
+      {"file":"task.schema.json","title":"Task","purpose":"Work unit inside a project","governs":"node:Task","linksTo":["resource.schema.json"]},
+      {"file":"funding_entry.schema.json","title":"Funding Entry","purpose":"Money or resources committed to a project","governs":"node:Funding","linksTo":[]},
+      {"file":"contributors/contributor.schema.json","title":"Contributor","purpose":"Pseudonymous participant profile","governs":"node:Contributor","linksTo":["device.schema.json"]},
+      {"file":"contributors/contributor_base.schema.json","title":"Contributor Base","purpose":"Abstract base schema for all contributor types","governs":"node:ContributorBase","linksTo":[]},
+      {"file":"contributors/ai_contributor.schema.json","title":"AI Contributor","purpose":"AI agent that contributes to projects","governs":"node:AIContributor","linksTo":["contributors/contributor_base.schema.json"]},
+      {"file":"contributors/dao_contributor.schema.json","title":"DAO Contributor","purpose":"Organization that contributes to projects","governs":"node:DAOContributor","linksTo":["contributors/contributor_base.schema.json"]},
+      {"file":"contributors/human_contributor.schema.json","title":"Human Contributor","purpose":"Human individual that contributes to projects","governs":"node:HumanContributor","linksTo":["contributors/contributor_base.schema.json"]},
+      {"file":"device.schema.json","title":"Device","purpose":"Hardware element bound to contributor","governs":"node:Device","linksTo":["resource.schema.json","common/custody_event.schema.json"]},
+      {"file":"experiment.schema.json","title":"Experiment","purpose":"Federated research experiment descriptor","governs":"node:Experiment","linksTo":["transmission_medium.schema.json"]},
+      {"file":"epoch_log_entry.schema.json","title":"Epoch Log Entry","purpose":"Human‑time anchor for deltas","governs":"log:epoch","linksTo":[]},
+      {"file":"project_delta.schema.json","title":"Project Delta","purpose":"Signed diff bundle for offline sync","governs":"file:.diff.json","linksTo":["project.schema.json","packet_header.schema.json"]},
+      {"file":"graph_node.meta.schema.json","title":"Graph Node Meta","purpose":"Common header inherited by all node schemas","governs":"meta","linksTo":[]},
+      {"file":"graph_edge.meta.schema.json","title":"Graph Edge Meta","purpose":"Generic edge descriptor","governs":"edge:*","linksTo":[]},
+      {"file":"physical_layer.schema.json","title":"Physical Layer","purpose":"Describes physical and electromagnetic properties of transmission media","governs":"spec:physical","linksTo":["transmission_medium.schema.json"]},
+      {"file":"tool.schema.json","title":"Tool","purpose":"Function-specific artifact used by devices or contributors for tasks","governs":"node:Tool","linksTo":["device.schema.json","task.schema.json","resource.schema.json"]},
+      {"file":"training_dataset.schema.json","title":"Training Dataset","purpose":"Defines datasets used to train or fine-tune models with provenance and metadata","governs":"node:TrainingDataset","linksTo":["contributors/contributor_base.schema.json","task.schema.json","common/custody_event.schema.json"]},
+      {"file":"storage_medium.schema.json","title":"Storage Medium","purpose":"Describes physical or virtual storage media with durability, security, and access control properties","governs":"node:StorageMedium","linksTo":["training_dataset.schema.json","resource.schema.json","common/custody_event.schema.json"]},
+      {"file":"biological_entity.schema.json","title":"Biological Entity","purpose":"Base schema for all biological entities including animals, plants, and other organisms","governs":"node:BiologicalEntity","linksTo":["measurement.schema.json"]},
+      {"file":"animal.schema.json","title":"Animal","purpose":"Schema for animal biological entities, extending the base biological entity schema","governs":"node:Animal","linksTo":["biological_entity.schema.json","measurements/spatial_measurement.schema.json"]},
+      {"file":"plant.schema.json","title":"Plant","purpose":"Schema for plant biological entities, extending the base biological entity schema","governs":"node:Plant","linksTo":["biological_entity.schema.json","measurements/spatial_measurement.schema.json","measurements/thermal_measurement.schema.json"]},
+      {"file":"measurement.schema.json","title":"Measurement","purpose":"Generic measurement container for any quantifiable property","governs":"node:Measurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"measurements/base_measurement.schema.json","title":"Base Measurement","purpose":"Base schema for all physical measurements with unit, context and provenance","governs":"node:BaseMeasurement","linksTo":[]},
+      {"file":"measurements/spatial_measurement.schema.json","title":"Spatial Measurement","purpose":"Measurements related to physical dimensions and distances","governs":"node:SpatialMeasurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"measurements/thermal_measurement.schema.json","title":"Thermal Measurement","purpose":"Temperature and heat-related measurements","governs":"node:ThermalMeasurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"measurements/data_measurement.schema.json","title":"Data Measurement","purpose":"Measurements related to digital data quantities and rates","governs":"node:DataMeasurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"measurements/power_measurement.schema.json","title":"Power Measurement","purpose":"Energy and power-related measurements","governs":"node:PowerMeasurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"measurements/electromagnetic_measurement.schema.json","title":"Electromagnetic Measurement","purpose":"Measurements related to electromagnetic properties","governs":"node:ElectromagneticMeasurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"measurements/signal_measurement.schema.json","title":"Signal Measurement","purpose":"Measurements related to signal processing and communication","governs":"node:SignalMeasurement","linksTo":["measurements/base_measurement.schema.json"]},
+      {"file":"attachment.schema.json","title":"Attachment","purpose":"File or data attachment associated with other entities","governs":"node:Attachment","linksTo":[]},
+      {"file":"emotional_state.schema.json","title":"Emotional State","purpose":"Representation of emotional conditions or affect","governs":"node:EmotionalState","linksTo":[]},
+      {"file":"memory.schema.json","title":"Memory","purpose":"Long-term memory storage for agents or systems","governs":"node:Memory","linksTo":[]},
+      {"file":"psychological_state.schema.json","title":"Psychological State","purpose":"Cognitive and psychological conditions of agents","governs":"node:PsychologicalState","linksTo":["emotional_state.schema.json"]},
+      {"file":"telemetry_stream.schema.json","title":"Telemetry Stream","purpose":"Real-time data stream from devices or systems","governs":"node:TelemetryStream","linksTo":["device.schema.json","measurement.schema.json"]},
+      {"file":"monitoring_rule.schema.json","title":"Monitoring Rule","purpose":"Rules for monitoring and alerting on system conditions","governs":"node:MonitoringRule","linksTo":["telemetry_stream.schema.json"]},
+      {"file":"visualization_config.schema.json","title":"Visualization Config","purpose":"Configuration for data visualization displays","governs":"node:VisualizationConfig","linksTo":["measurement.schema.json","telemetry_stream.schema.json"]},
+      {"file":"common/signature.schema.json","title":"Signature","purpose":"Cryptographic signature verification information","governs":"node:Signature","linksTo":[]},
+      {"file":"common/custody_event.schema.json","title":"Custody Event","purpose":"Cryptographically signed, timestamped event representing a change in custody or state of a resource or asset","governs":"node:CustodyEvent","linksTo":["common/signature.schema.json"]},
+      {"file":"resource.schema.json","title":"Resource","purpose":"Schema for modeling physical, renewable, and abstract resources with supply chain provenance, sustainability metrics, and lifecycle characteristics","governs":"node:Resource","linksTo":["measurement.schema.json","common/signature.schema.json","common/custody_event.schema.json"]},
+      {"file":"resources/material_resource.schema.json","title":"Material Resource","purpose":"Schema for physical material resources like raw minerals, metals, and manufactured components with detailed physical properties","governs":"node:MaterialResource","linksTo":["resource.schema.json","measurements/thermal_measurement.schema.json"]},
+      {"file":"resources/energy_resource.schema.json","title":"Energy Resource","purpose":"Schema for energy-related resources including renewable and non-renewable sources","governs":"node:EnergyResource","linksTo":["resource.schema.json","measurements/power_measurement.schema.json"]},
+      {"file":"resources/computational_resource.schema.json","title":"Computational Resource","purpose":"Schema for abstract computational resources such as compute time, bandwidth, storage capacity, and tokens","governs":"node:ComputationalResource","linksTo":["resource.schema.json","measurements/data_measurement.schema.json"]}
+    ]
+  }

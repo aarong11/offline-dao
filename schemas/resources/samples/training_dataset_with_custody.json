@@ -1,0 +1,182 @@
+{
+  "$schema": "https://dao.example.org/schemas/training_dataset.schema.json",
+  "id": "ds.forest-sensor-training-2025-q1",
+  "title": "Black Forest Environmental Sensor Training Dataset Q1 2025",
+  "description": "Comprehensive environmental monitoring dataset from Black Forest research stations, including temperature, humidity, air quality, and particle detection readings with synchronized time series",
+  "source_type": "collected",
+  "data_types": ["time_series", "environmental", "sensor_readings", "weather"],
+  "format": ["parquet", "csv", "json"],
+  "record_count": 8742156,
+  "size_bytes": 12580000000,
+  "created_at": "2025-04-20T16:30:00Z",
+  "license": "CC-BY-4.0",
+  "custody_log": [
+    {
+      "event_type": "creation",
+      "actor_id": "cont.data-scientist-04",
+      "timestamp": "2025-04-20T16:30:00Z",
+      "location": "DAO Research Data Processing Center, Berlin",
+      "notes": "Initial collection and aggregation of Q1 forest sensor data",
+      "signature": {
+        "value": "Y3JlYXRpb25fc2lnbmF0dXJlX2RhdGFzZXQ=",
+        "algorithm": "ed25519",
+        "public_key": "ZGF0YV9zY2llbnRpc3Rfa2V5",
+        "timestamp": "2025-04-20T16:38:45Z"
+      }
+    },
+    {
+      "event_type": "transformation",
+      "actor_id": "dev.data-processing-pipeline",
+      "timestamp": "2025-04-21T03:15:00Z",
+      "location": "DAO Computing Cluster, Berlin",
+      "notes": "Automated cleaning, normalization, and feature extraction processing completed",
+      "previous_hash": "sha256:b478a5e03f12c6d4f52354e71a2dfe720d99f4ec58ad660a181dd71c9aa1d0a2",
+      "signature": {
+        "value": "cHJvY2Vzc2luZ19zaWduYXR1cmVfZGF0YXNldA==",
+        "algorithm": "ed25519",
+        "public_key": "ZGF0YV9wcm9jZXNzaW5nX3BpcGVsaW5lX2tleQ==",
+        "timestamp": "2025-04-21T06:22:15Z"
+      },
+      "metadata": {
+        "pipeline_id": "ENV-PROCESS-STD-2025",
+        "version": "4.2.1",
+        "anomalies_detected": 124,
+        "anomalies_removed": 98,
+        "missing_values_imputed": 1253
+      }
+    },
+    {
+      "event_type": "validation",
+      "actor_id": "cont.environmental-specialist-07",
+      "timestamp": "2025-04-22T14:20:00Z",
+      "location": "DAO Research Center, Berlin",
+      "notes": "Expert validation of processed dataset for ecological and environmental accuracy",
+      "previous_hash": "sha256:e73d4d352e81b19c663c132f0952bf8238c536373e030256d0123ed2c3c31eb2",
+      "signature": {
+        "value": "dmFsaWRhdGlvbl9zaWduYXR1cmVfZGF0YXNldA==",
+        "algorithm": "ed25519",
+        "public_key": "ZW52aXJvbm1lbnRhbF9zcGVjaWFsaXN0X2tleQ==",
+        "timestamp": "2025-04-22T18:05:53Z"
+      },
+      "metadata": {
+        "validation_checklist_id": "ENV-VAL-2025-04",
+        "accuracy_score": 96.8,
+        "ecological_consistency_verified": true,
+        "seasonal_patterns_verified": true
+      }
+    },
+    {
+      "event_type": "transfer",
+      "actor_id": "cont.ml-engineer-02",
+      "timestamp": "2025-04-23T09:40:00Z",
+      "location": "DAO Research Data Center, Berlin",
+      "notes": "Dataset transferred to ML training team for model development",
+      "previous_hash": "sha256:c8b965c5a0d8aad36fddfd682f65852fb56a590b68c92c3f4373a688b59208ea",
+      "signature": {
+        "value": "dHJhbnNmZXJfc2lnbmF0dXJlX2RhdGFzZXQ=",
+        "algorithm": "ed25519",
+        "public_key": "bWxfZW5naW5lZXJfa2V5",
+        "timestamp": "2025-04-23T09:43:17Z"
+      }
+    },
+    {
+      "event_type": "transformation",
+      "actor_id": "dev.ml-platform",
+      "timestamp": "2025-04-24T12:15:00Z",
+      "location": "DAO ML Compute Platform, Berlin",
+      "notes": "Dataset split into training/validation/test sets and converted to optimized ML formats",
+      "previous_hash": "sha256:6d8e2f7a1b5c9d4e3f2a1b5c8d7e6f5d4e3f2a1b5c8d7e6f5d4e3f2a1b5c8d7e",
+      "signature": {
+        "value": "bWxfcHJlcF9zaWduYXR1cmVfZGF0YXNldA==",
+        "algorithm": "ed25519",
+        "public_key": "bWxfcGxhdGZvcm1fa2V5",
+        "timestamp": "2025-04-24T14:30:22Z"
+      },
+      "metadata": {
+        "ml_pipeline_id": "ML-PREP-ENV-2025",
+        "training_split": 0.7,
+        "validation_split": 0.15,
+        "test_split": 0.15,
+        "format_optimizations": ["quantization", "compression", "indexing"]
+      }
+    }
+  ],
+  "influenced_by": [
+    {
+      "contributor_id": "cont.field-researcher-12",
+      "contribution_type": "data_collection",
+      "weight": 0.35
+    },
+    {
+      "contributor_id": "cont.data-scientist-04",
+      "contribution_type": "curation",
+      "weight": 0.45
+    },
+    {
+      "contributor_id": "cont.environmental-specialist-07",
+      "contribution_type": "annotation",
+      "weight": 0.2
+    }
+  ],
+  "provenance": [
+    {
+      "event": "raw_data_collection",
+      "actor": "cont.field-researcher-12",
+      "timestamp": "2025-01-01T00:00:00Z",
+      "notes": "Beginning of Q1 automated sensor data collection"
+    },
+    {
+      "event": "data_processing",
+      "actor": "cont.data-scientist-04",
+      "timestamp": "2025-04-20T10:15:00Z",
+      "notes": "Data extraction from distributed sensors and initial processing"
+    }
+  ],
+  "access_control": [
+    {
+      "agent_id": "cont.ml-engineer-02",
+      "access_level": "write",
+      "granted_at": "2025-04-23T09:40:00Z"
+    },
+    {
+      "agent_id": "cont.data-scientist-04",
+      "access_level": "admin",
+      "granted_at": "2025-04-20T16:30:00Z"
+    },
+    {
+      "agent_id": "cont.environmental-researcher-team",
+      "access_level": "read",
+      "granted_at": "2025-04-25T08:00:00Z"
+    }
+  ],
+  "copy_count": 3,
+  "data_quality_metrics": {
+    "completeness": 0.992,
+    "accuracy": 0.968,
+    "noise_level": 1.7
+  },
+  "resource_requirements": {
+    "memory_bytes": 34359738368,
+    "processing_time_s": 1800,
+    "storage_bytes": 25160000000
+  },
+  "archival": {
+    "checksum": "sha256:7d9c8f6a5b4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7",
+    "checksum_algorithm": "sha256",
+    "format_version": "1.0",
+    "archive_status": "active",
+    "last_verified_at": "2025-04-25T06:00:00Z",
+    "curator_id": "cont.data-scientist-04",
+    "retention_policy": "retain_3_years",
+    "rights_statement": "Creative Commons Attribution 4.0 International"
+  },
+  "tags": [
+    "environmental",
+    "black-forest",
+    "sensor-data",
+    "time-series",
+    "air-quality",
+    "weather",
+    "2025-q1"
+  ]
+}

@@ -1,0 +1,181 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/physical_layer.schema.json",
+    "title": "Physical Layer",
+    "description": "Describes the physical and electromagnetic properties of transmission media.",
+    "type": "object",
+    "properties": {
+      "medium_type": {
+        "type": "string",
+        "description": "General type of physical transmission (e.g., RF, optical, acoustic, conductive, thermal, chemical, hybrid)",
+        "enum": ["RF", "optical", "acoustic", "thermal", "conductive", "chemical", "hybrid"]
+      },
+      "carrier_frequency": {
+        "$ref": "measurements/signal_measurement.schema.json",
+        "description": "Nominal carrier frequency measurement"
+      },
+      "carrier_frequency_mhz": {
+        "type": "number",
+        "description": "Nominal carrier frequency (Unit: MHz, UCUM code for megahertz)"
+      },
+      "bandwidth": {
+        "$ref": "measurements/signal_measurement.schema.json",
+        "description": "Maximum bandwidth measurement"
+      },
+      "bandwidth_mhz": {
+        "type": "number",
+        "description": "Maximum bandwidth (Unit: MHz, UCUM code for megahertz)"
+      },
+      "data_rate": {
+        "$ref": "measurements/data_measurement.schema.json",
+        "description": "Maximum data rate measurement"
+      },
+      "data_rate_kbps": {
+        "type": "number",
+        "description": "Maximum data rate (Unit: kbit/s, UCUM code for kilobits per second)"
+      },
+      "modulation": {
+        "type": "string",
+        "description": "Modulation scheme (e.g., GFSK, QPSK, OOK, AM, FM, FSK, etc.)"
+      },
+      "power_range": {
+        "type": "array",
+        "description": "Transmit power range measurements",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": { "$ref": "measurements/signal_measurement.schema.json" }
+      },
+      "power_range_dbm": {
+        "type": "array",
+        "description": "Transmit power range (Unit: dB[mW], UCUM code for decibel-milliwatts)",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": { "type": "number" }
+      },
+      "wavelength": {
+        "$ref": "measurements/spatial_measurement.schema.json",
+        "description": "Wavelength measurement for optical transmissions"
+      },
+      "wavelength_nm": {
+        "type": "number",
+        "description": "Wavelength for optical transmissions (Unit: nm, UCUM code for nanometers)"
+      },
+      "range": {
+        "$ref": "measurements/spatial_measurement.schema.json",
+        "description": "Effective range measurement"
+      },
+      "range_m": {
+        "type": "number",
+        "description": "Effective range (Unit: m, UCUM code for meters)"
+      },
+      "energy_per_bit": {
+        "$ref": "measurements/power_measurement.schema.json",
+        "description": "Energy required per bit transmitted measurement"
+      },
+      "energy_per_bit_j": {
+        "type": "number",
+        "description": "Energy required per bit transmitted (Unit: J, UCUM code for joules)"
+      },
+      "attenuation_model": {
+        "type": "string",
+        "description": "Signal loss behavior in different environments",
+        "enum": ["free_space", "urban_outdoors", "urban_indoors", "subterranean", "underwater", "line_of_sight", "non_line_of_sight"]
+      },
+      "attenuation_rate": {
+        "$ref": "measurements/signal_measurement.schema.json",
+        "description": "Signal attenuation rate measurement"
+      },
+      "attenuation_db_per_m": {
+        "type": "number",
+        "description": "Signal attenuation rate (Unit: dB/m, UCUM code for decibels per meter)"
+      },
+      "temperature_range": {
+        "type": "object",
+        "description": "Operating temperature range",
+        "properties": {
+          "min": { "$ref": "measurements/thermal_measurement.schema.json" },
+          "max": { "$ref": "measurements/thermal_measurement.schema.json" }
+        }
+      },
+      "antenna_type": {
+        "type": "string",
+        "description": "Type of antenna typically required or used",
+        "enum": ["omnidirectional", "directional", "yagi", "patch", "parabolic", "none"]
+      },
+      "antenna_gain": {
+        "$ref": "measurements/signal_measurement.schema.json",
+        "description": "Antenna gain measurement"
+      },
+      "antenna_gain_dbi": {
+        "type": "number",
+        "description": "Antenna gain (Unit: dB, UCUM code for decibels, isotropic reference)"
+      },
+      "shared_spectrum": {
+        "type": "boolean",
+        "description": "Whether this medium operates in an unlicensed or shared spectrum"
+      },
+      "regulatory_zone": {
+        "type": "array",
+        "description": "Applicable regulatory bodies or rules",
+        "items": { "type": "string" }
+      },
+      "em_risk_rating": {
+        "type": "string",
+        "description": "Detectability and EM signature classification",
+        "enum": ["low", "moderate", "high", "very_high"]
+      },
+      "signal_to_noise_ratio": {
+        "$ref": "measurements/signal_measurement.schema.json",
+        "description": "Typical signal-to-noise ratio measurement"
+      },
+      "bit_error_rate": {
+        "$ref": "measurements/data_measurement.schema.json",
+        "description": "Expected bit error rate measurement"
+      },
+      "latency": {
+        "$ref": "measurements/data_measurement.schema.json",
+        "description": "Intrinsic latency measurement of the physical medium"
+      },
+      "latency_ms": {
+        "type": "number",
+        "description": "Intrinsic latency of the physical medium (Unit: ms, UCUM code for milliseconds)"
+      },
+      "measurements": {
+        "type": "array",
+        "description": "Collection of all measurements related to this physical layer",
+        "items": { "$ref": "measurement.schema.json" }
+      },
+      "possible_failures": {
+        "type": "array",
+        "description": "Known or anticipated failure mechanisms",
+        "items": {
+          "type": "object",
+          "required": ["type", "cause", "intentional"],
+          "properties": {
+            "type": { "type": "string", "description": "Nature of failure (e.g., jamming, environmental interference, power loss, spoofing)" },
+            "cause": { "type": "string", "description": "Physical or logical cause of the failure" },
+            "intentional": { "type": "boolean", "description": "Whether the failure could be adversarial in nature" },
+            "mitigation": { "type": "string", "description": "Possible countermeasure or recovery method" }
+          }
+        }
+      },
+      "legal_status_by_region": {
+        "type": "array",
+        "description": "Region-specific legal constraints",
+        "items": {
+          "type": "object",
+          "required": ["region", "status"],
+          "properties": {
+            "region": { "type": "string" },
+            "status": { "type": "string", "enum": ["legal", "restricted", "prohibited", "unclear"] },
+            "notes": { "type": "string" }
+          }
+        }
+      },
+      "linked_medium_id": {
+        "type": "string",
+        "description": "ID or reference to associated transmission_medium node"
+      }
+    },
+    "required": ["medium_type", "linked_medium_id"]
+  }

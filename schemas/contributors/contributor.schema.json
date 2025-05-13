@@ -1,0 +1,127 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/contributors/contributor.schema.json",
+    "title": "Contributor (Pseudonymous Participant)",
+    "description": "Schema for a contributor node in the DAO graph. Captures skills, resources, public key, linked identities, devices, and contribution history while preserving anonymity.",
+    "type": "object",
+    "required": [
+      "anon_id",
+      "public_key",
+      "skills",
+      "resources",
+      "availability",
+      "epoch",
+      "devices",
+      "score"
+    ],
+    "properties": {
+      "anon_id": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._-]{3,64}$",
+        "description": "Chosen pseudonym. 3–64 URL‑safe characters."
+      },
+      "public_key": {
+        "type": "string",
+        "description": "Base64‑encoded Ed25519 (or other) public key used for signature verification."
+      },
+      "skills": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true,
+        "description": "Free‑form skill keywords provided by contributor."
+      },
+      "resources": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true,
+        "description": "Assets/tools contributor can supply (GPU, lab, budget, etc.)."
+      },
+      "availability": {
+        "type": "string",
+        "description": "Availability statement (e.g., 'weekends', '5h/week')."
+      },
+      "epoch": {
+        "type": "string",
+        "description": "Local epoch marker when the identity was created (human‑readable event or ISO8601)."
+      },
+      "location": {
+        "type": "string",
+        "description": "Optional coarse location hint (do not reveal precise GPS).",
+        "minLength": 0
+      },
+      "max_parallel": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 1,
+        "description": "How many tasks contributor is willing to run in parallel."
+      },
+      "linked_identities": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Pseudonyms linked by the contributor (if any)."
+      },
+      "multisig": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Additional signers participating in link signature multisig."
+      },
+      "link_signature": {
+        "type": "string",
+        "description": "Base64 signature over linked identities list."
+      },
+      "score": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Reputation or trust score (0–∞)."
+      },
+      "contributions": {
+        "type": "array",
+        "description": "History of task contributions (lightweight ledger).",
+        "items": {
+          "type": "object",
+          "required": ["project_id", "task_id", "status"],
+          "properties": {
+            "project_id": { "type": "string" },
+            "task_id": { "type": "string" },
+            "hours": { "type": "number", "minimum": 0 },
+            "status": {
+              "type": "string",
+              "enum": ["in_progress", "submitted", "accepted", "rejected"]
+            }
+          }
+        }
+      },
+      "devices": {
+        "type": "array",
+        "description": "Registered devices controlled by this contributor.",
+        "items": { "$ref": "../device.schema.json" }
+      },
+      "device_access": {
+        "type": "array",
+        "description": "Explicit device access permissions granted to other identities.",
+        "items": {
+          "type": "object",
+          "required": ["device_id", "scope"],
+          "properties": {
+            "device_id": { "type": "string" },
+            "scope": {
+              "type": "array",
+              "items": { "type": "string" },
+              "uniqueItems": true
+            }
+          }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true,
+        "description": "Extra searchable labels (language, timezone, etc.)."
+      },
+      "meta": {
+        "type": "object",
+        "description": "Open field for any additional contributor data."
+      }
+    },
+    "additionalProperties": false
+  }

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/common/custody_event.schema.json",
+  "title": "Custody Event",
+  "description": "Cryptographically signed, timestamped custody event representing a change in custody, inspection, or transformation of a DAO resource or asset.",
+  "type": "object",
+  "required": ["event_type", "actor_id", "timestamp"],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "description": "Type of custody event",
+      "enum": ["transfer", "receipt", "inspection", "transformation", "creation", "destruction", "maintenance", "update", "validation", "other"]
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "Device ID or contributor ID responsible for this custody event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this custody event occurred"
+    },
+    "location": {
+      "type": "string",
+      "description": "Physical or logical location where the custody event occurred (e.g., geo coordinates, facility name, network location)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional human-readable notes about this custody event"
+    },
+    "signature": {
+      "$ref": "../common/signature.schema.json",
+      "description": "Cryptographic signature for integrity verification"
+    },
+    "previous_hash": {
+      "type": "string",
+      "description": "Hash of the previous event in the custody chain for tamper-evident chaining"
+    },
+    "nonce": {
+      "type": "string",
+      "description": "Optional nonce used to prevent replay attacks"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional event-specific metadata",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

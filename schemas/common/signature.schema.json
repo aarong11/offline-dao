@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/common/signature.schema.json",
+  "title": "Cryptographic Signature",
+  "description": "Common schema for cryptographic signatures used across the DAO ecosystem",
+  "type": "object",
+  "required": ["value", "algorithm", "public_key"],
+  "properties": {
+    "value": {
+      "type": "string",
+      "description": "Base64-encoded signature value"
+    },
+    "algorithm": {
+      "type": "string",
+      "description": "Signature algorithm used",
+      "enum": ["ed25519", "sha256-ecdsa", "secp256k1", "rsa-sha256"]
+    },
+    "public_key": {
+      "type": "string",
+      "description": "Public key or key identifier to use for verification"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the signature was created"
+    },
+    "nonce": {
+      "type": "string",
+      "description": "Optional nonce used in signature generation for replay protection"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Additional signature metadata (e.g., key derivation info, certificate paths)"
+    }
+  },
+  "additionalProperties": false
+}

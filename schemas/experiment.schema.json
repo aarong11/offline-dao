@@ -1,0 +1,135 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/experiment.schema.json",
+    "title": "DAO Federated‑Research Experiment Node",
+    "description": "Standard JSON Schema for an Experiment node in the DAO research graph. Each experiment tests or documents a transmission medium, algorithm, or any other R&D topic, enabling collaborators to merge results in a tamper‑evident way.",
+    "type": "object",
+    "required": [
+      "id",
+      "type",
+      "title",
+      "hypothesis",
+      "created_at",
+      "lead",
+      "status"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique slug identifier (prefixed with \"ex.\").",
+        "pattern": "^ex\\.[a-z0-9_-]{3,64}$"
+      },
+      "type": {
+        "const": "Experiment",
+        "description": "Node class discriminator, must be the literal string 'Experiment'."
+      },
+      "title": {
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 160
+      },
+      "hypothesis": {
+        "type": "string",
+        "description": "Short statement of what the experiment seeks to prove or measure.",
+        "minLength": 8
+      },
+      "lead": {
+        "type": "string",
+        "description": "Anon‑ID of the primary contributor responsible for the experiment."
+      },
+      "contributors": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Optional list of additional contributor anon‑IDs."
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "ISO‑8601 timestamp when the experiment node was first created."
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp automatically refreshed on each edit."
+      },
+      "status": {
+        "type": "string",
+        "description": "Current lifecycle state of the experiment.",
+        "enum": [
+          "idea",
+          "design",
+          "running",
+          "completed",
+          "abandoned"
+        ]
+      },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Free‑form or ontology‑based tags (e.g., 'urgent-alert', 'low-bandwidth')."
+      },
+      "protocol": {
+        "type": "object",
+        "description": "Technical recipe to run the experiment.",
+        "required": ["medium_id", "transport"],
+        "properties": {
+          "medium_id": {
+            "type": "string",
+            "description": "ID of the TransmissionMedium node the experiment targets."
+          },
+          "transport": {
+            "type": "string",
+            "description": "Name of the Transport implementation to use (e.g., 'TcpTransport')."
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Key‑value map of protocol‑specific knobs (symbol size, retry, etc.).",
+            "additionalProperties": {
+              "type": ["number", "string", "boolean", "array", "object", "null"]
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "metrics": {
+        "type": "object",
+        "description": "Dict of quantitative metrics captured after execution (latency, loss, throughput).",
+        "additionalProperties": {
+          "type": "number"
+        }
+      },
+      "result_digest": {
+        "type": "string",
+        "description": "Optional SHA‑256 or multihash of raw result artifact stored elsewhere."
+      },
+      "attachments": {
+        "type": "array",
+        "description": "URIs (IPFS, HTTPS, git) where raw data, code, or reports are stored.",
+        "items": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "status_history": {
+        "type": "array",
+        "description": "Chronological log of status changes.",
+        "items": {
+          "type": "object",
+          "required": ["status", "timestamp"],
+          "properties": {
+            "status": { "$ref": "#/properties/status" },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 280
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+}

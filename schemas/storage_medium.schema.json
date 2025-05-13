@@ -1,0 +1,367 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/storage_medium.schema.json",
+    "title": "Storage Medium",
+    "description": "Schema describing physical or virtual storage media for datasets, models, or project artifacts. Tracks durability, redundancy, security, energy profile, and access control.",
+    "type": "object",
+    "required": ["id", "type", "medium_category"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique ID or slug for the storage medium"
+      },
+      "label": {
+        "type": "string",
+        "description": "Human-readable label for the medium (e.g., Glacier Vault, Disk A1, IPFS node)"
+      },
+      "type": {
+        "type": "string",
+        "description": "Discriminator to identify object class as 'StorageMedium' node in the graph.",
+        "const": "StorageMedium"
+      },
+      "medium_category": {
+        "type": "string",
+        "enum": ["physical", "logical"],
+        "description": "Primary categorization of storage medium as physical or logical"
+      },
+      "custody_log": {
+        "type": "array",
+        "description": "Chronological list of custody events for tracking storage medium transfers, maintenance, and data movements",
+        "items": {
+          "$ref": "common/custody_event.schema.json"
+        }
+      },
+      "capacity": {
+        "$ref": "measurements/data_measurement.schema.json",
+        "description": "Total storage capacity measurement"
+      },
+      "capacity_bytes": {
+        "type": "integer",
+        "description": "Total capacity in bytes (Unit: By, compatible with UCUM 'By' code for byte)"
+      },
+      "used_bytes": {
+        "type": "integer",
+        "description": "Current used storage in bytes (Unit: By, compatible with UCUM 'By' code for byte)"
+      },
+      "redundancy": {
+        "type": "string",
+        "enum": ["none", "mirrored", "raid5", "raid6", "geo-redundant", "block-replicated"],
+        "description": "Redundancy scheme applied to this storage"
+      },
+      "encryption": {
+        "type": "string",
+        "enum": ["none", "at_rest", "e2e", "hardware"],
+        "description": "Level or method of encryption"
+      },
+      "access_policy_summary": {
+        "type": "string",
+        "description": "Human-readable summary of access control policy for this medium"
+      },
+      "contains_dataset_ids": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Dataset IDs stored on this medium"
+      },
+      "performance_metrics": {
+        "type": "array",
+        "description": "Performance metrics related to this storage medium",
+        "items": { "$ref": "measurement.schema.json" }
+      },
+      "audit_log": {
+        "type": "array",
+        "description": "Log of events related to this medium",
+        "items": {
+          "type": "object",
+          "required": ["event", "timestamp"],
+          "properties": {
+            "log_id": { "type": "string", "description": "Optional UUID or hash of the log entry" },
+            "event": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "actor": { "type": "string" },
+            "notes": { "type": "string" }
+          }
+        }
+      },
+      "component_resources": {
+        "type": "array",
+        "description": "Material resources used in the construction of this storage medium",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": { 
+              "type": "string", 
+              "description": "Reference to a resource schema id" 
+            },
+            "quantity": { "type": "number" },
+            "unit": { "type": "string" },
+            "component": { 
+              "type": "string",
+              "description": "What component uses this resource (e.g., 'nand_flash', 'controller', 'casing')" 
+            },
+            "recoverable": {
+              "type": "boolean",
+              "description": "Whether the resource can be recovered at end-of-life",
+              "default": false
+            },
+            "recovery_efficiency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Efficiency of recovery process (Unit: %, UCUM code for percent)"
+            }
+          }
+        }
+      },
+      "operational_resources": {
+        "type": "array",
+        "description": "Resources consumed during operation of this storage medium",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "consumption_rate"],
+          "properties": {
+            "resource_id": { 
+              "type": "string", 
+              "description": "Reference to a resource schema id" 
+            },
+            "consumption_rate": { 
+              "type": "number",
+              "description": "Rate of resource consumption" 
+            },
+            "rate_unit": { 
+              "type": "string", 
+              "description": "Unit for consumption rate (e.g., 'kW.h/GBy' for energy per gigabyte stored)" 
+            },
+            "consumption_profile": {
+              "type": "string",
+              "enum": ["constant", "load_dependent", "access_dependent", "temperature_dependent"],
+              "description": "How consumption varies based on usage patterns"
+            }
+          }
+        }
+      },
+      "sustainability_metrics": {
+        "type": "object",
+        "description": "Sustainability and environmental impact metrics",
+        "properties": {
+          "embodied_carbon_kg_co2e": {
+            "type": "number",
+            "description": "Total carbon emissions from manufacturing (Unit: kg, UCUM code for kilograms of CO2 equivalent)"
+          },
+          "operational_carbon_kg_co2e_per_year": {
+            "type": "number",
+            "description": "Annual carbon emissions from operation (Unit: kg/a, UCUM code for kilograms per year)"
+          },
+          "energy_efficiency_rating": {
+            "type": "string",
+            "enum": ["a+++", "a++", "a+", "a", "b", "c", "d", "e", "f", "g", "unrated"],
+            "description": "Energy efficiency rating if applicable"
+          },
+          "sustainability_certification": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "certification": { "type": "string" },
+                "issued_by": { "type": "string" },
+                "issue_date": { "type": "string", "format": "date" },
+                "expiration_date": { "type": "string", "format": "date" }
+              }
+            }
+          }
+        }
+      },
+      "meta": {
+        "type": "object",
+        "description": "Freeform container for implementation-specific metadata",
+        "additionalProperties": true
+      }
+    },
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["medium_category", "physical_medium_type", "location"],
+        "properties": {
+          "medium_category": {
+            "const": "physical"
+          },
+          "physical_medium_type": {
+            "type": "string",
+            "enum": ["optical", "magnetic", "ssd", "nvme", "tape", "paper", "other"],
+            "description": "Physical storage technology category"
+          },
+          "location": {
+            "type": "string",
+            "description": "Physical location (e.g., 'dc.ams1', 'cabinet 4B', 'safe 2')"
+          },
+          "device_id": {
+            "type": "string",
+            "description": "Hardware device identifier (serial number, asset tag, etc.)"
+          },
+          "manufacturer": {
+            "type": "string",
+            "description": "Hardware manufacturer name"
+          },
+          "model": {
+            "type": "string",
+            "description": "Hardware model identifier"
+          },
+          "firmware_version": {
+            "type": "string",
+            "description": "Current firmware version if applicable"
+          },
+          "energy_profile": {
+            "type": "string",
+            "enum": ["low", "moderate", "high", "renewable-only", "unknown"],
+            "description": "Environmental impact / energy draw of the storage medium"
+          },
+          "expected_lifespan_years": {
+            "type": "number",
+            "description": "Expected physical media lifespan (Unit: a, UCUM code for years)"
+          },
+          "manufacturing_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of manufacture"
+          },
+          "physical_dimensions": {
+            "type": "object",
+            "description": "Physical dimensions of the storage medium",
+            "properties": {
+              "weight": { "$ref": "measurements/spatial_measurement.schema.json" },
+              "height": { "$ref": "measurements/spatial_measurement.schema.json" },
+              "width": { "$ref": "measurements/spatial_measurement.schema.json" },
+              "depth": { "$ref": "measurements/spatial_measurement.schema.json" },
+              "volume": { "$ref": "measurements/spatial_measurement.schema.json" }
+            }
+          },
+          "weight_g": {
+            "type": "number",
+            "description": "Weight of the storage medium (Unit: g, UCUM code for grams)"
+          },
+          "height_mm": {
+            "type": "number",
+            "description": "Height of the storage medium (Unit: mm, UCUM code for millimeters)"
+          },
+          "width_mm": {
+            "type": "number",
+            "description": "Width of the storage medium (Unit: mm, UCUM code for millimeters)"
+          },
+          "depth_mm": {
+            "type": "number",
+            "description": "Depth of the storage medium (Unit: mm, UCUM code for millimeters)"
+          },
+          "volume_cm3": {
+            "type": "number",
+            "description": "Volume of the storage medium (Unit: cm3, UCUM code for cubic centimeters)"
+          },
+          "form_factor": {
+            "type": "string",
+            "description": "Standardized form factor (e.g., '2.5-inch', '3.5-inch', 'M.2', 'LTO-9')"
+          },
+          "operating_temperature_range": {
+            "type": "object",
+            "description": "Operating temperature range for the device",
+            "properties": {
+              "min": { "$ref": "measurements/thermal_measurement.schema.json" },
+              "max": { "$ref": "measurements/thermal_measurement.schema.json" }
+            }
+          },
+          "power_consumption": {
+            "type": "object",
+            "description": "Power consumption measurements",
+            "properties": {
+              "idle": { "$ref": "measurements/power_measurement.schema.json" },
+              "active": { "$ref": "measurements/power_measurement.schema.json" }
+            }
+          },
+          "power_consumption_idle_w": {
+            "type": "number",
+            "description": "Power consumption when idle (Unit: W, UCUM code for watts)"
+          },
+          "power_consumption_active_w": {
+            "type": "number",
+            "description": "Power consumption when active (Unit: W, UCUM code for watts)"
+          },
+          "performance": {
+            "type": "object",
+            "description": "Performance characteristics",
+            "properties": {
+              "read_speed": { "$ref": "measurements/data_measurement.schema.json" },
+              "write_speed": { "$ref": "measurements/data_measurement.schema.json" },
+              "latency": { "$ref": "measurements/data_measurement.schema.json" }
+            }
+          },
+          "read_speed_mbps": {
+            "type": "number",
+            "description": "Maximum read speed (Unit: Mbit/s, UCUM code for megabits per second)"
+          },
+          "write_speed_mbps": {
+            "type": "number",
+            "description": "Maximum write speed (Unit: Mbit/s, UCUM code for megabits per second)"
+          }
+        }
+      },
+      {
+        "type": "object",
+        "required": ["medium_category", "logical_medium_type"],
+        "properties": {
+          "medium_category": {
+            "const": "logical"
+          },
+          "logical_medium_type": {
+            "type": "string",
+            "enum": ["cloud", "cold_cloud", "distributed", "ephemeral", "volume", "filesystem", "container", "object_store", "other"],
+            "description": "Logical storage technology category"
+          },
+          "location": {
+            "type": "string", 
+            "description": "Logical location descriptor (e.g., 'ipfs://node-x', 's3://bucket-name')"
+          },
+          "storage_format": {
+            "type": "string",
+            "description": "Filesystem or archival format used (e.g., ext4, zfs, tar.gz, IPFS chunked)"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Service provider or platform (e.g., AWS, GCP, IPFS)"
+          },
+          "contractual_retention_years": {
+            "type": "number", 
+            "description": "Contractual data retention period (Unit: a, UCUM code for years)"
+          },
+          "sla_availability_percent": {
+            "type": "number",
+            "description": "Service level agreement availability percentage (Unit: %, UCUM code for percent)"
+          },
+          "performance": {
+            "type": "object",
+            "description": "Performance characteristics",
+            "properties": {
+              "access_latency": { "$ref": "measurements/data_measurement.schema.json" },
+              "bandwidth": { "$ref": "measurements/data_measurement.schema.json" },
+              "throughput": { "$ref": "measurements/data_measurement.schema.json" }
+            }
+          },
+          "average_access_latency_ms": {
+            "type": "number",
+            "description": "Average access latency (Unit: ms, UCUM code for milliseconds)"
+          },
+          "bandwidth_mbps": {
+            "type": "number",
+            "description": "Bandwidth capacity (Unit: Mbit/s, UCUM code for megabits per second)"
+          },
+          "hosted_on_physical_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of physical storage media that host this logical medium"
+          },
+          "contains_volume_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Logical volume or partition IDs hosted by this medium"
+          }
+        }
+      }
+    ]
+  }

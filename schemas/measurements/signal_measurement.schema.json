@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurements/signal_measurement.schema.json",
+  "title": "Signal Measurement",
+  "description": "Schema for signal strength, frequency, bandwidth and other signal-related measurements.",
+  "allOf": [
+    { "$ref": "base_measurement.schema.json" },
+    {
+      "properties": {
+        "quantity_kind": {
+          "enum": [
+            "Frequency", 
+            "PowerRatio", 
+            "SignalStrength", 
+            "SignalToNoiseRatio", 
+            "SoundPressureLevel",
+            "Bandwidth"
+          ]
+        },
+        "unit": {
+          "oneOf": [
+            {
+              "title": "Frequency Units",
+              "enum": ["Hz", "kHz", "MHz", "GHz"]
+            },
+            {
+              "title": "Signal Units",
+              "enum": ["dB", "dB[mW]", "dB[SPL]", "dB[uV/m]"]
+            },
+            {
+              "title": "Bandwidth Units",
+              "enum": ["Hz", "kHz", "MHz", "GHz"]
+            }
+          ]
+        },
+        "channel": {
+          "type": "string",
+          "description": "Optional channel or frequency band identifier."
+        },
+        "signal_type": {
+          "type": "string",
+          "description": "Type of signal being measured (e.g., 'wifi', 'bluetooth', 'cellular', 'audio')."
+        },
+        "measurement_protocol": {
+          "type": "string",
+          "description": "Protocol or method used for the measurement (e.g., 'RSSI', 'CSI', 'spectrum-analyzer')."
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "quantity_kind": "SignalStrength",
+      "value": -67.5,
+      "unit": "dB[mW]",
+      "timestamp": "2025-05-13T11:59:27Z",
+      "observed_by": "dev.wifi-scanner-001",
+      "feature_of_interest": "tm.wifi-channel-5",
+      "signal_type": "wifi",
+      "channel": "5GHz-40"
+    },
+    {
+      "quantity_kind": "Frequency",
+      "value": 2437,
+      "unit": "MHz",
+      "feature_of_interest": "tm.wifi-ap-002",
+      "signal_type": "wifi",
+      "channel": "6"
+    }
+  ]
+}

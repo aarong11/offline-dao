@@ -1,0 +1,57 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/project.schema.json",
+    "title": "DAO Project Schema",
+    "description": "A top‑level work stream in the DAO.  Groups tasks, funding entries, tags, and overall status.",
+    "type": "object",
+    "required": ["id", "title", "summary", "status", "tags", "tasks", "funding"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Canonical UUID for the project",
+        "pattern": "^[0-9a-fA-F\\-]{36}$"
+      },
+      "title": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 140
+      },
+      "summary": {
+        "type": "string",
+        "maxLength": 1000
+      },
+      "status": {
+        "type": "string",
+        "enum": ["active", "paused", "completed", "archived"]
+      },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string", "pattern": "^[a-zA-Z0-9._:-]{2,40}$" },
+        "uniqueItems": true
+      },
+      "tasks": {
+        "type": "array",
+        "description": "Ordered list of task objects for the project",
+        "items": { "$ref": "https://dao.example.org/schemas/task.schema.json" }
+      },
+      "funding": {
+        "type": "array",
+        "description": "Funding entries attached to the project",
+        "items": { "$ref": "https://dao.example.org/schemas/funding_entry.schema.json" }
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "meta": {
+        "type": "object",
+        "description": "Open field for extensions (e.g., repo URL, governance model)",
+        "additionalProperties": true
+      }
+    },
+    "additionalProperties": false
+}

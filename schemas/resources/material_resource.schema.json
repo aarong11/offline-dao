@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resources/material_resource.schema.json",
+  "title": "Material Resource",
+  "description": "Schema for physical material resources like raw minerals, metals, and manufactured components with detailed physical properties",
+  "allOf": [
+    { "$ref": "../resource.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "material_properties": {
+          "type": "object",
+          "description": "Detailed physical properties specific to materials",
+          "properties": {
+            "state_of_matter": {
+              "type": "string",
+              "enum": ["solid", "liquid", "gas", "plasma"],
+              "description": "Physical state of the material"
+            },
+            "melting_point": {
+              "$ref": "../measurements/thermal_measurement.schema.json",
+              "description": "Temperature at which material changes from solid to liquid state"
+            },
+            "boiling_point": {
+              "$ref": "../measurements/thermal_measurement.schema.json",
+              "description": "Temperature at which material changes from liquid to gas state"
+            },
+            "thermal_conductivity": {
+              "type": "number",
+              "description": "Thermal conductivity (Unit: W/(m.K), UCUM code for watts per meter-kelvin)"
+            },
+            "electrical_conductivity": {
+              "type": "number",
+              "description": "Electrical conductivity (Unit: S/m, UCUM code for siemens per meter)"
+            },
+            "magnetic_properties": {
+              "type": "string",
+              "enum": ["diamagnetic", "paramagnetic", "ferromagnetic", "antiferromagnetic", "ferrimagnetic", "none"],
+              "description": "Magnetic characteristics of the material"
+            },
+            "hardness": {
+              "type": "object",
+              "properties": {
+                "scale": {
+                  "type": "string",
+                  "enum": ["mohs", "brinell", "rockwell", "vickers", "shore"]
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "description": "Hardness measurement on specified scale"
+            },
+            "corrosion_resistance": {
+              "type": "string",
+              "enum": ["poor", "fair", "good", "excellent"],
+              "description": "Resistance to environmental degradation"
+            }
+          }
+        },
+        "extraction_method": {
+          "type": "string",
+          "description": "Primary method used to obtain the raw material"
+        },
+        "strategic_importance": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Level of strategic importance in global supply chains"
+        },
+        "alternative_materials": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "resource_id": { "type": "string" },
+              "compatibility": { 
+                "type": "number", 
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Compatibility percentage (Unit: %, UCUM code for percent)" 
+              },
+              "trade_offs": { "type": "string" }
+            }
+          },
+          "description": "Potential material substitutes with compatibility scores"
+        },
+        "grade_classification": {
+          "type": "string",
+          "description": "Quality or purity grade classification"
+        },
+        "known_deposits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "location": { "type": "string" },
+              "estimated_size": {
+                "type": "object",
+                "properties": {
+                  "amount": { "type": "number" },
+                  "unit": { "type": "string" }
+                }
+              },
+              "accessibility": {
+                "type": "string",
+                "enum": ["easy", "moderate", "difficult", "inaccessible"]
+              }
+            }
+          },
+          "description": "Known geographical deposits for raw materials"
+        }
+      }
+    }
+  ]
+}

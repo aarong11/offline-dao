@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/memory.schema.json",
+  "title": "Memory Record",
+  "description": "Schema for memory records representing internal experiences, events or knowledge cues with cryptographic linking",
+  "type": "object",
+  "required": ["type", "human_id", "timestamp", "epoch", "content", "confidence", "previous_memory_cid", "signature"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "Memory",
+      "description": "Type discriminator for this schema"
+    },
+    "human_id": {
+      "type": "string",
+      "description": "Reference to the human contributor this memory belongs to"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time", 
+      "description": "When this memory was recorded"
+    },
+    "epoch": {
+      "type": "string",
+      "description": "Local epoch marker when this memory was recorded (human-readable event or ISO8601)"
+    },
+    "content": {
+      "type": "object",
+      "required": ["summary"],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Concise summary of the memory"
+        },
+        "detailed_description": {
+          "type": "string",
+          "description": "Optional detailed description of the memory"
+        },
+        "memory_type": {
+          "type": "string",
+          "enum": ["episodic", "semantic", "procedural", "implicit", "autobiographical", "external"],
+          "description": "Classification of memory type"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords or tags associated with this memory"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cid", "type"],
+            "properties": {
+              "cid": {
+                "type": "string",
+                "pattern": "^(sha256|sha3):[a-f0-9]{64}$",
+                "description": "Content identifier for the attachment"
+              },
+              "type": {
+                "type": "string",
+                "description": "MIME type or format of the attachment"
+              },
+              "description": {
+                "type": "string",
+                "description": "Brief description of the attachment"
+              }
+            }
+          },
+          "description": "External files or data related to this memory"
+        }
+      }
+    },
+    "confidence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Subjective confidence in the accuracy of this memory (1-10)"
+    },
+    "importance": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Subjective importance of this memory (1-10)"
+    },
+    "context": {
+      "$ref": "./common/cognition/memory_context.schema.json",
+      "description": "Contextual information about this memory to support AI-assisted recall"
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "external_verification": {
+          "type": "boolean",
+          "description": "Whether this memory has been externally verified"
+        },
+        "verification_method": {
+          "type": "string",
+          "description": "How the memory was verified (if applicable)"
+        },
+        "corroborating_memories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+          },
+          "description": "CID references to other memories that corroborate this one"
+        }
+      }
+    },
+    "previous_memory_cid": {
+      "type": "string",
+      "description": "CID reference to the chronologically previous memory record, forming a verifiable chain",
+      "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+    },
+    "related_memories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+      },
+      "description": "CID references to related memories (not necessarily chronological)"
+    },
+    "ai_metadata": {
+      "type": "object",
+      "description": "Metadata for AI processing and retrieval enhancement",
+      "properties": {
+        "embedding_model": {
+          "type": "string",
+          "description": "Identifier of the embedding model used (if any)"
+        },
+        "vector_embedding_cid": {
+          "type": "string",
+          "pattern": "^(sha256|sha3):[a-f0-9]{64}$",
+          "description": "CID reference to a vector embedding of this memory for similarity search"
+        },
+        "semantic_clusters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Semantic cluster identifiers this memory belongs to"
+        },
+        "retrieval_cues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "High-value retrieval cues for this memory"
+        },
+        "confidence_factors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["factor", "impact"],
+            "properties": {
+              "factor": {
+                "type": "string",
+                "description": "Factor affecting confidence (e.g., 'direct_observation', 'hearsay', 'repeated_recall')"
+              },
+              "impact": {
+                "type": "integer",
+                "minimum": -5,
+                "maximum": 5,
+                "description": "Impact on confidence from very negative (-5) to very positive (+5)"
+              }
+            }
+          },
+          "description": "Factors affecting the confidence score"
+        }
+      }
+    },
+    "signature": {
+      "$ref": "./common/signature.schema.json",
+      "description": "Cryptographic signature for this record"
+    }
+  },
+  "examples": [
+    {
+      "type": "Memory",
+      "human_id": "h.jane_researcher",
+      "timestamp": "2023-11-15T18:30:00Z",
+      "epoch": "After daily project review",
+      "content": {
+        "summary": "Project team agreed to adjust milestone dates during afternoon meeting",
+        "detailed_description": "During our 3pm meeting, we collectively decided to push back milestone 3 by two weeks due to unforeseen technical challenges with the database migration. Alex offered to help with optimization work.",
+        "memory_type": "episodic",
+        "tags": ["meeting", "milestone", "schedule-change", "teamwork"]
+      },
+      "confidence": 9,
+      "importance": 8,
+      "context": {
+        "emotional_context": {
+          "emotional_state_cid": "sha256:c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4",
+          "valence": 2,
+          "intensity": 6
+        },
+        "psychological_context": {
+          "psychological_state_cid": "sha256:d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5",
+          "stress_level": 7,
+          "cognitive_load": 6
+        },
+        "temporal_context": {
+          "event_timestamp": "2023-11-15T15:00:00Z",
+          "duration": "PT1H30M",
+          "recurrence": "one_time"
+        },
+        "spatial_context": {
+          "location_type": "office",
+          "region": "conference room B"
+        },
+        "social_context": {
+          "people": ["team_lead", "backend_developer", "project_manager"],
+          "social_setting": "small_group"
+        },
+        "semantic_cues": ["milestone", "deadline", "database", "meeting"]
+      },
+      "previous_memory_cid": "sha256:e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6",
+      "signature": {
+        "value": "base64-signature-here",
+        "algorithm": "ed25519",
+        "public_key": "base64-public-key-here",
+        "timestamp": "2023-11-15T18:30:00Z"
+      }
+    }
+  ]
+}

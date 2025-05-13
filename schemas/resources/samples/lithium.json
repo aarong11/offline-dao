@@ -1,0 +1,272 @@
+{
+  "$schema": "https://dao.example.org/schemas/resources/material_resource.schema.json",
+  "id": "res.lithium-raw",
+  "type": "Resource",
+  "name": "Raw Lithium",
+  "resource_category": "raw_material",
+  "resource_type": "metal",
+  "description": "Lithium in raw form used for battery production and electronics",
+  "unit_of_measure": "kg",
+  "supply_chain": {
+    "origin": {
+      "geographic_source": [
+        {
+          "region": "Chile, Salar de Atacama",
+          "percentage": 40,
+          "coordinates": {
+            "latitude": -23.5,
+            "longitude": -68.2
+          }
+        },
+        {
+          "region": "Australia, Greenbushes",
+          "percentage": 35,
+          "coordinates": {
+            "latitude": -33.86,
+            "longitude": 116.06
+          }
+        },
+        {
+          "region": "Argentina, Salar del Hombre Muerto",
+          "percentage": 25,
+          "coordinates": {
+            "latitude": -25.5,
+            "longitude": -66.9
+          }
+        }
+      ],
+      "geopolitical_context": [
+        {
+          "factor": "Trade restrictions",
+          "impact": "medium",
+          "description": "Potential export limitations from producing countries"
+        },
+        {
+          "factor": "Indigenous land rights",
+          "impact": "high",
+          "description": "Mining operations affect indigenous communities and water resources"
+        }
+      ]
+    },
+    "extraction_date": "2023-06-15T00:00:00Z",
+    "transformation_stages": [
+      {
+        "stage": "Mining",
+        "process": "Extraction from lithium-rich brine",
+        "location": "Chile",
+        "timestamp": "2023-06-15T00:00:00Z",
+        "energy_used": {
+          "quantity_kind": "Energy",
+          "value": 15000,
+          "unit": "kW.h"
+        },
+        "emissions": {
+          "co2_equivalent_kg": 3600,
+          "specific_emissions": [
+            {
+              "type": "CO2",
+              "value": 3200,
+              "unit": "kg"
+            },
+            {
+              "type": "CH4",
+              "value": 15,
+              "unit": "kg"
+            }
+          ]
+        },
+        "ethical_flags": [
+          {
+            "concern": "Water consumption in arid regions",
+            "severity": "high"
+          }
+        ],
+        "output_byproducts": [
+          {
+            "byproduct": "Salt waste",
+            "quantity": 8500,
+            "unit": "kg",
+            "handling": "Local disposal"
+          }
+        ]
+      },
+      {
+        "stage": "Processing",
+        "process": "Concentration and purification",
+        "location": "Chile",
+        "timestamp": "2023-07-01T00:00:00Z",
+        "energy_used": {
+          "quantity_kind": "Energy",
+          "value": 7500,
+          "unit": "kW.h"
+        },
+        "emissions": {
+          "co2_equivalent_kg": 1800
+        },
+        "input_resources": [
+          {
+            "resource_id": "res.water-industrial",
+            "quantity": 500000,
+            "unit": "l"
+          }
+        ]
+      }
+    ],
+    "chain_of_custody": [
+      {
+        "custodian": "SQM Mining Corp",
+        "timestamp": "2023-06-15T00:00:00Z",
+        "location": "Salar de Atacama, Chile"
+      },
+      {
+        "custodian": "Global Battery Materials Inc",
+        "timestamp": "2023-08-01T00:00:00Z",
+        "location": "Processing Facility, Santiago, Chile"
+      }
+    ]
+  },
+  "sustainability": {
+    "carbon_footprint": {
+      "total_co2e_kg": 5400,
+      "methodology": "ISO 14067:2018"
+    },
+    "energy_usage": {
+      "embodied_energy": {
+        "quantity_kind": "Energy",
+        "value": 22500,
+        "unit": "kW.h"
+      }
+    },
+    "water_usage": {
+      "total_water_usage_l": 500000,
+      "water_intensity": 500
+    },
+    "recyclability": {
+      "recyclable_percentage": 95,
+      "recycling_process": "Electrochemical recovery",
+      "recycling_energy": {
+        "quantity_kind": "Energy",
+        "value": 8000,
+        "unit": "kW.h"
+      }
+    },
+    "lifecycle": {
+      "expected_lifetime": {
+        "value": 10,
+        "unit": "a"
+      }
+    }
+  },
+  "legal_constraints": [
+    {
+      "region": "European Union",
+      "constraint_type": "Import regulation",
+      "description": "EU Battery Regulation requiring supply chain traceability",
+      "regulation_id": "EU 2023/1542",
+      "compliance_status": "compliant"
+    }
+  ],
+  "physical_properties": {
+    "measurements": [
+      {
+        "quantity_kind": "Density",
+        "value": 0.534,
+        "unit": "g/cm3"
+      }
+    ],
+    "composition": [
+      {
+        "component": "Lithium",
+        "percentage": 99.5
+      },
+      {
+        "component": "Trace elements",
+        "percentage": 0.5
+      }
+    ],
+    "purity": 99.5,
+    "density": 534
+  },
+  "availability": {
+    "scarcity_level": "limited",
+    "estimated_reserves": {
+      "amount": 22,
+      "unit": "Mt",
+      "year": 2023
+    },
+    "production_rate": {
+      "amount": 140000,
+      "unit": "t",
+      "time_period": "yearly"
+    },
+    "renewable": false
+  },
+  "market_data": {
+    "price_history": [
+      {
+        "date": "2023-01-01",
+        "price": 78500,
+        "currency": "USD",
+        "unit": "t"
+      },
+      {
+        "date": "2023-06-01",
+        "price": 62000,
+        "currency": "USD",
+        "unit": "t"
+      }
+    ],
+    "volatility": "high",
+    "price_trend": "decreasing"
+  },
+  "material_properties": {
+    "state_of_matter": "solid",
+    "melting_point": {
+      "quantity_kind": "Temperature",
+      "value": 180.5,
+      "unit": "Cel"
+    },
+    "boiling_point": {
+      "quantity_kind": "Temperature",
+      "value": 1342,
+      "unit": "Cel"
+    },
+    "thermal_conductivity": 85,
+    "electrical_conductivity": 1.1e7,
+    "magnetic_properties": "paramagnetic",
+    "hardness": {
+      "scale": "mohs",
+      "value": 0.6
+    },
+    "corrosion_resistance": "poor"
+  },
+  "extraction_method": "Brine evaporation and filtration",
+  "strategic_importance": "critical",
+  "alternative_materials": [
+    {
+      "resource_id": "res.sodium-raw",
+      "compatibility": 65,
+      "trade_offs": "Lower energy density, shorter cycle life, but more abundant"
+    }
+  ],
+  "grade_classification": "Battery grade",
+  "known_deposits": [
+    {
+      "location": "Salar de Atacama, Chile",
+      "estimated_size": {
+        "amount": 7.5,
+        "unit": "Mt"
+      },
+      "accessibility": "moderate"
+    },
+    {
+      "location": "Salar de Uyuni, Bolivia",
+      "estimated_size": {
+        "amount": 10.2,
+        "unit": "Mt"
+      },
+      "accessibility": "difficult"
+    }
+  ],
+  "tags": ["battery-material", "critical-mineral", "energy-storage"]
+}

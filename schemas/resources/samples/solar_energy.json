@@ -1,0 +1,154 @@
+{
+  "$schema": "https://dao.example.org/schemas/resources/energy_resource.schema.json",
+  "id": "res.solar-energy",
+  "type": "Resource",
+  "name": "Solar Photovoltaic Energy",
+  "resource_category": "energy",
+  "resource_type": "renewable_electricity",
+  "description": "Electricity generated from photovoltaic solar panels",
+  "unit_of_measure": "kW.h",
+  "supply_chain": {
+    "origin": {
+      "geographic_source": [
+        {
+          "region": "Arizona Solar Farm, USA",
+          "percentage": 100,
+          "coordinates": {
+            "latitude": 33.45,
+            "longitude": -111.94
+          }
+        }
+      ]
+    },
+    "transformation_stages": [
+      {
+        "stage": "Generation",
+        "process": "Photovoltaic conversion",
+        "location": "Arizona Solar Farm",
+        "timestamp": "2023-09-15T12:00:00Z",
+        "emissions": {
+          "co2_equivalent_kg": 0
+        }
+      },
+      {
+        "stage": "Transmission",
+        "process": "Grid distribution",
+        "location": "Western Power Grid",
+        "timestamp": "2023-09-15T12:01:00Z",
+        "energy_used": {
+          "quantity_kind": "Energy",
+          "value": 0.05,
+          "unit": "kW.h"
+        },
+        "emissions": {
+          "co2_equivalent_kg": 0.01
+        }
+      }
+    ]
+  },
+  "sustainability": {
+    "carbon_footprint": {
+      "total_co2e_kg": 0.01,
+      "methodology": "ISO 14067:2018"
+    },
+    "energy_usage": {
+      "operational_energy_rate": {
+        "quantity_kind": "Power",
+        "value": 0,
+        "unit": "W"
+      }
+    },
+    "water_usage": {
+      "total_water_usage_l": 0.1,
+      "water_intensity": 0.0001
+    },
+    "lifecycle": {
+      "expected_lifetime": {
+        "value": 1,
+        "unit": "h"
+      }
+    }
+  },
+  "integration_points": {
+    "used_in_devices": ["dev.server-01", "dev.sensor-network"],
+    "required_for_tasks": ["task1", "task2"]
+  },
+  "availability": {
+    "scarcity_level": "abundant",
+    "renewable": true,
+    "replenishment_rate": {
+      "rate": 100,
+      "unit": "%",
+      "time_period": "daily"
+    }
+  },
+  "market_data": {
+    "price_history": [
+      {
+        "date": "2023-09-15",
+        "price": 0.08,
+        "currency": "USD",
+        "unit": "kW.h"
+      }
+    ],
+    "volatility": "low",
+    "price_trend": "decreasing"
+  },
+  "energy_type": "electrical",
+  "energy_source": "solar",
+  "generation_properties": {
+    "capacity_factor": 0.25,
+    "peak_capacity": {
+      "quantity_kind": "Power",
+      "value": 100,
+      "unit": "MW"
+    },
+    "response_time": {
+      "value": 0.001,
+      "unit": "s"
+    },
+    "intermittency": "high",
+    "dispatchability": "non_dispatchable"
+  },
+  "energy_conversion": {
+    "input_energy_type": "solar_radiation",
+    "output_energy_type": "electricity",
+    "conversion_efficiency": 22,
+    "energy_density": {
+      "value": 0,
+      "unit": "kW.h/kg"
+    }
+  },
+  "grid_integration": {
+    "transmission_losses": 3,
+    "grid_compatibility": "high",
+    "requires_conversion": false,
+    "balancing_requirements": "Requires battery storage or other dispatchable generation for stability"
+  },
+  "lifecycle_emissions": {
+    "construction_emissions_co2e_per_kWh": 40,
+    "operational_emissions_co2e_per_kWh": 0,
+    "decommissioning_emissions_co2e_per_kWh": 5,
+    "lifecycle_emissions_methodology": "IPCC AR5 100-year GWP"
+  },
+  "land_requirements": {
+    "area_per_MW": {
+      "quantity_kind": "Area",
+      "value": 8,
+      "unit": "ha"
+    },
+    "land_type": ["desert", "brownfield", "rooftop"],
+    "competitive_land_uses": ["agriculture", "development"]
+  },
+  "water_usage": {
+    "consumption_l_per_MWh": 20,
+    "withdrawal_l_per_MWh": 20,
+    "water_type": "reclaimed"
+  },
+  "weather_dependency": {
+    "dependent_factor": "sunlight",
+    "sensitivity": "high",
+    "seasonal_variation": "medium"
+  },
+  "tags": ["renewable", "zero-emission", "photovoltaic"]
+}

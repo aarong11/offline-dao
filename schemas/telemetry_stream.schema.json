@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/telemetry_stream.schema.json",
+  "title": "Telemetry Stream",
+  "description": "Schema for streaming or batched measurement data from devices or processes, supporting real-time monitoring and historical analysis.",
+  "type": "object",
+  "required": ["stream_id", "device_id", "timestamp", "measurements"],
+  "properties": {
+    "stream_id": {
+      "type": "string",
+      "description": "Unique identifier for this telemetry stream",
+      "pattern": "^ts\\.[a-z0-9_-]{3,64}$"
+    },
+    "device_id": {
+      "type": "string",
+      "description": "ID of the device or entity producing this telemetry"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this telemetry batch was collected or transmitted"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Optional session identifier for grouping related telemetry data"
+    },
+    "sequence_number": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional monotonically increasing sequence number to detect missing data"
+    },
+    "batch_complete": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this is a complete measurements batch or a partial update"
+    },
+    "measurements": {
+      "type": "array",
+      "description": "Array of measurements in this telemetry packet",
+      "minItems": 1,
+      "items": {
+        "$ref": "measurement.schema.json"
+      }
+    },
+    "measurements_by_kind": {
+      "type": "object",
+      "description": "Alternative organization of measurements grouped by quantity_kind",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "measurement.schema.json"
+        }
+      }
+    },
+    "sampling_metadata": {
+      "type": "object",
+      "description": "Information about how measurements were sampled and collected",
+      "properties": {
+        "sampling_rate_hz": {
+          "type": "number",
+          "description": "Frequency at which measurements were taken (Unit: Hz, UCUM code for hertz)",
+          "minimum": 0
+        },
+        "collection_method": {
+          "type": "string",
+          "enum": ["periodic", "event-driven", "threshold-triggered", "manual", "adaptive"],
+          "description": "How the data was collected"
+        },
+        "aggregation": {
+          "type": "string",
+          "enum": ["none", "mean", "min", "max", "sum", "median"],
+          "default": "none",
+          "description": "If data was aggregated before transmission, which method was used"
+        },
+        "aggregation_period_s": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Time period over which data was aggregated (Unit: s, UCUM code for seconds)"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Context information about the environment or state when measurements were taken",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "description": "ID of task being performed during measurement collection"
+        },
+        "experiment_id": {
+          "type": "string",
+          "description": "ID of experiment these measurements are part of"
+        },
+        "location": {
+          "type": "string",
+          "description": "Location identifier where measurements were taken"
+        },
+        "environment": {
+          "type": "object",
+          "description": "Environmental conditions during measurement",
+          "additionalProperties": true
+        },
+        "network_conditions": {
+          "type": "object",
+          "description": "Network status during measurement",
+          "additionalProperties": true
+        }
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "description": "Quality metrics for the contained measurements",
+      "properties": {
+        "completeness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of expected measurements that were actually collected"
+        },
+        "error_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of measurement errors encountered"
+        },
+        "suspect_readings": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Indices of measurements that appear suspect or anomalous"
+        },
+        "calibration_status": {
+          "type": "string",
+          "enum": ["calibrated", "needs_calibration", "uncalibrated", "unknown"],
+          "description": "Status of sensor calibration during data collection"
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "description": "Data retention policies for this telemetry",
+      "properties": {
+        "priority": {
+          "type": "string",
+          "enum": ["essential", "high", "normal", "low", "transient"],
+          "default": "normal",
+          "description": "Priority level for storage retention"
+        },
+        "retention_period_days": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How long to retain this data (Unit: d, UCUM code for days)"
+        },
+        "archival_policy": {
+          "type": "string",
+          "enum": ["compress", "downsample", "summarize", "discard", "full"],
+          "description": "What to do with this data after retention period"
+        }
+      }
+    },
+    "compressed_readings": {
+      "type": "object",
+      "description": "For high-frequency telemetry, a more efficient representation than individual measurements",
+      "properties": {
+        "quantity_kind": {
+          "type": "string",
+          "description": "QUDT quantity kind for all readings in this array"
+        },
+        "unit": {
+          "type": "string",
+          "description": "UCUM or QUDT unit code for all values"
+        },
+        "timestamps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Array of timestamps corresponding to each value"
+        },
+        "timestamp_start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Start time for evenly-spaced time series"
+        },
+        "timestamp_interval_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Milliseconds between readings for evenly-spaced time series"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Array of measurement values"
+        },
+        "observed_by": {
+          "type": "string",
+          "description": "ID of device that made these observations"
+        },
+        "feature_of_interest": {
+          "type": "string",
+          "description": "ID of the entity being measured"
+        }
+      },
+      "required": ["quantity_kind", "unit", "values"],
+      "oneOf": [
+        {
+          "required": ["timestamps"]
+        },
+        {
+          "required": ["timestamp_start", "timestamp_interval_ms"]
+        }
+      ]
+    },
+    "signature": {
+      "type": "object",
+      "description": "Optional cryptographic signature for data integrity verification",
+      "required": ["value", "algorithm", "public_key"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Base64-encoded signature value"
+        },
+        "algorithm": {
+          "type": "string",
+          "description": "Signature algorithm used (e.g., 'ed25519', 'sha256-ecdsa')"
+        },
+        "public_key": {
+          "type": "string",
+          "description": "Public key or key identifier to use for verification"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the signature was created"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "required": ["measurements"]
+    },
+    {
+      "required": ["measurements_by_kind"]
+    },
+    {
+      "required": ["compressed_readings"]
+    }
+  ],
+  "examples": [
+    {
+      "stream_id": "ts.server-health-metrics",
+      "device_id": "dev.server-001",
+      "timestamp": "2025-05-13T15:45:00Z",
+      "sequence_number": 12345,
+      "measurements": [
+        {
+          "quantity_kind": "Temperature",
+          "value": 45.2,
+          "unit": "Cel",
+          "timestamp": "2025-05-13T15:44:50Z",
+          "observed_by": "dev.sensor-cpu",
+          "feature_of_interest": "dev.server-001.cpu"
+        },
+        {
+          "quantity_kind": "Power",
+          "value": 120.5,
+          "unit": "W",
+          "timestamp": "2025-05-13T15:44:55Z",
+          "observed_by": "dev.power-meter",
+          "feature_of_interest": "dev.server-001.psu"
+        }
+      ],
+      "sampling_metadata": {
+        "sampling_rate_hz": 0.2,
+        "collection_method": "periodic"
+      },
+      "context": {
+        "location": "dc.ams1.rack-b4",
+        "task_id": "task.network-stress-test"
+      }
+    },
+    {
+      "stream_id": "ts.wifi-signal-monitoring",
+      "device_id": "dev.wifi-scanner-001",
+      "timestamp": "2025-05-13T15:46:00Z",
+      "compressed_readings": {
+        "quantity_kind": "SignalStrength",
+        "unit": "dB[mW]",
+        "timestamp_start": "2025-05-13T15:45:00Z",
+        "timestamp_interval_ms": 100,
+        "values": [-67.5, -68.2, -67.9, -68.0, -67.3, -67.8, -68.4, -68.9, -69.0, -68.5],
+        "observed_by": "dev.wifi-scanner-001",
+        "feature_of_interest": "tm.wifi-channel-5"
+      },
+      "sampling_metadata": {
+        "sampling_rate_hz": 10,
+        "collection_method": "periodic"
+      }
+    }
+  ]
+}

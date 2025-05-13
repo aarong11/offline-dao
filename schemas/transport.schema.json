@@ -1,0 +1,152 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/transport.schema.json",
+    "title": "DAO Micro‑Transport Schema",
+    "description": "Canonical definition for any logical transport (TCP‑like, UDP‑like, FEC, DTN, etc.) that prepares DAO packets before they reach a ChannelTransport adapter.",
+    "type": "object",
+    "required": ["id", "type", "kind", "max_payload_b"],
+  
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^tr\\.[a-z0-9_-]+$",
+        "description": "Unique slug for the transport implementation, e.g., `tr.mctcp` or `tr.fountain`"
+      },
+      "type": {
+        "const": "Transport",
+        "description": "Fixed discriminator so graph loaders recognise this node‑class."
+      },
+      "label": {
+        "type": "string",
+        "description": "Human‑readable name (\"MC‑TCP reliable stream\")."
+      },
+  
+      "kind": {
+        "type": "string",
+        "enum": ["reliable", "datagram", "fec", "dtn"],
+        "description": "Behavioural family of the transport.  `reliable` = ordered with ACK, `datagram` = fire‑and‑forget, `fec` = forward‑error‑correction shards, `dtn` = store‑and‑forward bundles."
+      },
+  
+      "version": {
+        "type": "string",
+        "pattern": "^v[0-9]+(\\.[0-9]+)*$",
+        "description": "Semantic version of the transport spec/implementation (e.g., v1.0)."
+      },
+  
+      "max_payload_b": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Maximum plaintext bytes the transport puts in a single DAO packet (Unit: By, UCUM code for bytes)."
+      },
+  
+      "window": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Sliding‑window size for reliable/FEC transports.  Omit for datagram kind."
+      },
+  
+      "timeout_s": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Retransmission or acknowledgement timeout (Unit: s, UCUM code for seconds)."
+      },
+  
+      "throughput": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Expected throughput (Unit: bit/s, UCUM code for bits per second)."
+      },
+      
+      "latency_ms": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Expected end-to-end latency (Unit: ms, UCUM code for milliseconds)."
+      },
+      
+      "jitter_ms": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Expected variation in latency (Unit: ms, UCUM code for milliseconds)."
+      },
+      
+      "fec": {
+        "$ref": "#/definitions/FECConfig"
+      },
+  
+      "dtn": {
+        "$ref": "#/definitions/DTNConfig"
+      },
+  
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true,
+        "description": "Taxonomy strings (e.g., protocol:stop‑and‑wait, feature:acks)."
+      },
+  
+      "meta": {
+        "type": "object",
+        "description": "Open container for implementation‑specific details (Git repo, proof‑vector links…)."
+      }
+    },
+  
+    "allOf": [
+      {
+        "if": { "properties": { "kind": { "const": "fec" } } },
+        "then": { "required": ["fec"] }
+      },
+      {
+        "if": { "properties": { "kind": { "const": "dtn" } } },
+        "then": { "required": ["dtn"] }
+      }
+    ],
+  
+    "definitions": {
+      "FECConfig": {
+        "type": "object",
+        "required": ["symbol_size", "redundancy_ratio"],
+        "properties": {
+          "symbol_size": { 
+            "type": "integer", 
+            "minimum": 8, 
+            "description": "Bytes per FEC symbol (Unit: By, UCUM code for bytes)." 
+          },
+          "redundancy_ratio": { 
+            "type": "number", 
+            "minimum": 0, 
+            "maximum": 1, 
+            "description": "k_extra / k_data (0.2 means 20% redundancy)." 
+          },
+          "coding_rate": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Coding rate (Unit: bit/s, UCUM code for bits per second)."
+          }
+        }
+      },
+  
+      "DTNConfig": {
+        "type": "object",
+        "required": ["ttl_s"],
+        "properties": {
+          "ttl_s": { 
+            "type": "integer", 
+            "minimum": 60, 
+            "description": "Bundle's time‑to‑live (Unit: s, UCUM code for seconds)." 
+          },
+          "custody_required": { 
+            "type": "boolean", 
+            "default": false 
+          },
+          "bundle_size_limit": {
+            "type": "integer",
+            "description": "Maximum bundle size (Unit: By, UCUM code for bytes)."
+          },
+          "storage_quota": {
+            "type": "integer",
+            "description": "Maximum storage allocated for bundles (Unit: By, UCUM code for bytes)."
+          }
+        }
+      }
+    }
+  }

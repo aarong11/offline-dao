@@ -1,0 +1,57 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/attachment.schema.json",
+    "title": "DAO Attachment / Blob",
+    "description": "References an external file or large payload stored off‑graph (IPFS, local file, S3, etc.). Can be linked from experiments, tasks, or deltas via content‑ID hash.",
+    "type": "object",
+    "required": ["cid", "media_type", "size_bytes"],
+    "properties": {
+      "cid": {
+        "type": "string",
+        "description": "Content identifier. Recommended formats: `sha256:<hex>`, `ipfs://<CIDv1>`, `b3sum:<base64>`.",
+        "pattern": "^(sha256|ipfs|b3sum):.+$"
+      },
+      "media_type": {
+        "type": "string",
+        "description": "IANA media type or custom label (e.g., `text/csv`, `application/zip`, `image/png`).",
+        "minLength": 3
+      },
+      "size_bytes": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Uncompressed byte length of the attachment."
+      },
+      "encoding": {
+        "type": "string",
+        "description": "If stored as base64, gzip, etc., specify encoding chain (e.g., `gzip+base64`).",
+        "minLength": 1
+      },
+      "description": {
+        "type": "string",
+        "description": "Human description of the blob (\"model weights v1\", \"raw sensor CSV\").",
+        "maxLength": 256
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "ISO‑8601 timestamp when blob was first referenced."
+      },
+      "meta": {
+        "type": "object",
+        "description": "Free‑form implementation details (e.g., storage URL, encryption scheme).",
+        "additionalProperties": true
+      }
+    },
+    "additionalProperties": false,
+    "examples": [
+      {
+        "cid": "ipfs://b43t2g245365",
+        "media_type": "application/gzip",
+        "size_bytes": 24576,
+        "encoding": "gzip",
+        "description": "Compressed model checkpoint",
+        "created_at": "2025-05-13T14:05:22Z"
+      }
+    ]
+  }
+  

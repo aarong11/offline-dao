@@ -1,0 +1,172 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/transmission_medium.schema.json",
+    "title": "Transmission Medium",
+    "description": "Schema for a carrier that can ferry DAO micro‑transport packets (blockchain mempool, BLE beacon name, Wi‑Fi SSID, etc.). Used for capability matching and routing decisions in the offline‑first DAO graph.",
+    "type": "object",
+    "allOf": [ { "$ref": "graph_node.meta.schema.json" } ],
+  
+    "required": ["id", "type", "category", "caps"],
+  
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^tm\\.[a-z0-9_-]{3,64}$",
+        "description": "Unique slug prefixed with 'tm.' (e.g., tm.bitcoin-mempool)."
+      },
+      "type": {
+        "const": "TransmissionMedium"
+      },
+      "label": {
+        "type": "string",
+        "description": "Human‑readable name."
+      },
+      "category": {
+        "type": "string",
+        "enum": [
+          "blockchain", "proximity-ble", "local-wifi", "p2p", "analog", "optical", "audio", "other"
+        ]
+      },
+  
+      "caps": {
+        "type": "object",
+        "description": "Quantitative and qualitative capabilities of the medium.",
+        "required": ["max_payload_b", "typical_latency_s", "retention_s", "cost_model", "loss_profile", "privacy", "bidirectional"],
+        "properties": {
+          "max_payload": {
+            "$ref": "measurements/data_measurement.schema.json",
+            "description": "Maximum payload size measurement"
+          },
+          "max_payload_b": { 
+            "type": "integer", 
+            "minimum": 1,
+            "description": "Maximum payload size (Unit: By, UCUM code for bytes)" 
+          },
+          "latency": {
+            "$ref": "measurements/data_measurement.schema.json",
+            "description": "Typical transmission latency measurement"
+          },
+          "typical_latency_s": { 
+            "type": "number", 
+            "minimum": 0,
+            "description": "Typical transmission latency (Unit: s, UCUM code for seconds)" 
+          },
+          "retention": {
+            "$ref": "measurements/data_measurement.schema.json",
+            "description": "Data retention time measurement"
+          },
+          "retention_s": { 
+            "type": "number", 
+            "minimum": 0,
+            "description": "Data retention time (Unit: s, UCUM code for seconds)" 
+          },
+          "cost_model": {
+            "type": "string",
+            "enum": ["free", "zero-fee", "per-byte", "per-tx", "subscription", "other"]
+          },
+          "loss_profile": { "type": "string" },
+          "privacy": {
+            "type": "string",
+            "enum": ["broadcast", "pseudo-anon", "private-icloud", "end-to-end", "none", "other"]
+          },
+          "bidirectional": { "type": "boolean" },
+  
+          "range": {
+            "$ref": "measurements/spatial_measurement.schema.json",
+            "description": "Physical range measurement if applicable"
+          },
+          "range_m": { 
+            "type": "number", 
+            "minimum": 0, 
+            "description": "Physical range if applicable (Unit: m, UCUM code for meters)." 
+          },
+          "bandwidth_measurement": {
+            "$ref": "measurements/data_measurement.schema.json",
+            "description": "Bandwidth capacity measurement"
+          },
+          "bandwidth": { 
+            "type": "number", 
+            "minimum": 0,
+            "description": "Bandwidth capacity (Unit: bit/s, UCUM code for bits per second)"
+          },
+          "max_bandwidth": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum bandwidth capacity (Unit: bit/s, UCUM code for bits per second)"
+          },
+          "frequency_measurement": {
+            "$ref": "measurements/signal_measurement.schema.json",
+            "description": "Carrier frequency measurement"
+          },
+          "frequency": {
+            "type": "number",
+            "description": "Carrier frequency if applicable (Unit: Hz, UCUM code for hertz)"
+          },
+          "frequency_band": {
+            "type": "string",
+            "description": "e.g., '2.4GHz', '5GHz', 'UHF'"
+          },
+          "signal_strength_measurement": {
+            "$ref": "measurements/signal_measurement.schema.json",
+            "description": "Signal strength measurement"
+          },
+          "signal_strength": {
+            "type": "number",
+            "description": "Signal strength (Unit: dB[mW], UCUM code for decibel-milliwatts)"
+          },
+          "packet_loss_measurement": {
+            "$ref": "measurements/data_measurement.schema.json",
+            "description": "Packet loss rate measurement"
+          },
+          "packet_loss_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Average packet loss rate (Unit: %, UCUM code for percent)"
+          },
+          "power_measurement": {
+            "$ref": "measurements/power_measurement.schema.json",
+            "description": "Power consumption measurement"
+          },
+          "power_consumption": {
+            "type": "number",
+            "description": "Power consumption during transmission (Unit: W, UCUM code for watts)"
+          },
+          "network": { 
+            "type": "string", 
+            "description": "e.g., 'mainnet', 'testnet', '2.4GHz'." 
+          },
+          "relay_port": { 
+            "type": "integer", 
+            "minimum": 1, 
+            "maximum": 65535 
+          },
+          "spec_ref": { 
+            "type": "string", 
+            "format": "uri" 
+          }
+        },
+        "additionalProperties": true
+      },
+
+      "measurements": {
+        "type": "array",
+        "description": "Collection of measurements related to this transmission medium",
+        "items": {
+          "$ref": "measurement.schema.json"
+        }
+      },
+  
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+  
+      "meta": {
+        "type": "object",
+        "description": "Free‑form vendor or implementation notes.",
+        "additionalProperties": true
+      }
+    },
+    "additionalProperties": false
+  }

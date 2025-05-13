@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurements/base_measurement.schema.json",
+  "title": "Base Measurement",
+  "description": "Base schema for all physical measurements with unit, context and provenance.",
+  "type": "object",
+  "required": ["quantity_kind", "value", "unit"],
+  "properties": {
+    "quantity_kind": {
+      "type": "string",
+      "description": "QUDT quantity kind IRI or slug (e.g., 'Temperature', 'Length', 'MassFlowRate').",
+      "pattern": "^[A-Z][A-Za-z0-9_:/.-]+$"
+    },
+    "value": {
+      "type": "number",
+      "description": "Numeric value in the given unit."
+    },
+    "unit": {
+      "type": "string",
+      "description": "UCUM or QUDT unit code (e.g., 'Cel', 'm/s', 'Np').",
+      "pattern": "^[A-Za-z0-9*^/.%\\[\\]_-]+$"
+    },
+    "uncertainty": {
+      "type": "number",
+      "minimum": 0,
+      "description": "± half‑width of 95% confidence interval in the same unit."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 time when the measurement was taken."
+    },
+    "observed_by": {
+      "type": "string",
+      "description": "ID of Device or Contributor that made the observation."
+    },
+    "feature_of_interest": {
+      "type": "string",
+      "description": "ID of the physical or logical entity being measured (e.g., storage_medium, antenna)."
+    },
+    "location": {
+      "type": "string",
+      "description": "Optional location hint (geohash, room slug, etc.)."
+    },
+    "meta": {
+      "type": "object",
+      "description": "Open extensions (method, calibration cert, etc.).",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

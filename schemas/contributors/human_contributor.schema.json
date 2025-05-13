@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/contributors/human_contributor.schema.json",
+  "title": "Human Contributor",
+  "description": "Schema for human individuals that contribute to projects with support for internal state tracking and cryptographic verification",
+  "allOf": [
+    { "$ref": "./contributor_base.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "type": { 
+          "type": "string", 
+          "const": "Human", 
+          "description": "Type discriminator for Human contributor" 
+        },
+        "pseudonym": {
+          "type": "string",
+          "description": "Chosen pseudonym for identity protection",
+          "pattern": "^[a-zA-Z0-9._-]{3,64}$"
+        },
+        "skills": { 
+          "type": "array", 
+          "items": { "type": "string" },
+          "description": "List of self-reported skills and capabilities"
+        },
+        "region": { 
+          "type": "string",
+          "description": "General geographic region, not precise location"
+        },
+        "current_state": {
+          "description": "References to the most recent psychological and emotional states",
+          "type": "object",
+          "properties": {
+            "psychological_state_cid": {
+              "type": "string",
+              "description": "CID reference to the most recent psychological state record",
+              "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+            },
+            "emotional_state_cid": {
+              "type": "string",
+              "description": "CID reference to the most recent emotional state record",
+              "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the state references were last updated"
+            }
+          }
+        },
+        "memory_anchor": {
+          "type": "string",
+          "description": "CID of the most recent memory record, forming a verifiable chain",
+          "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+        },
+        "cryptographic_identifiers": {
+          "type": "array",
+          "description": "List of alternative cryptographic identifiers for this human",
+          "items": {
+            "type": "object",
+            "required": ["type", "identifier"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["pgp", "eth_address", "did", "ssh", "x509", "other"],
+                "description": "Type of cryptographic identifier" 
+              },
+              "identifier": {
+                "type": "string",
+                "description": "The actual identifier value"
+              },
+              "proof": {
+                "type": "string",
+                "description": "Optional proof linking this identifier to the primary identity"
+              }
+            }
+          }
+        },
+        "signature": {
+          "type": "object",
+          "required": ["value", "algorithm", "public_key"],
+          "properties": {
+            "value": {
+              "type": "string",
+              "description": "Base64-encoded signature value"
+            },
+            "algorithm": {
+              "type": "string", 
+              "description": "Signature algorithm used (e.g., 'ed25519', 'sha256-ecdsa')",
+              "enum": ["ed25519", "sha256-ecdsa", "secp256k1", "rsa-sha256"]
+            },
+            "public_key": {
+              "type": "string",
+              "description": "Public key or key identifier to use for verification"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the signature was created"
+            }
+          },
+          "description": "Cryptographic signature for this record"
+        }
+      },
+      "required": ["type", "pseudonym", "signature"]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurements/data_measurement.schema.json",
+  "title": "Data Measurement",
+  "description": "Schema for data rate, storage size, and other data-related measurements.",
+  "allOf": [
+    { "$ref": "base_measurement.schema.json" },
+    {
+      "properties": {
+        "quantity_kind": {
+          "enum": [
+            "DataRate", 
+            "DataAmount",
+            "Throughput",
+            "PacketLossRate",
+            "Latency",
+            "Jitter"
+          ]
+        },
+        "unit": {
+          "oneOf": [
+            {
+              "title": "Data Rate Units",
+              "enum": ["bit/s", "kbit/s", "Mbit/s", "Gbit/s"]
+            },
+            {
+              "title": "Data Amount Units",
+              "enum": ["By", "kBy", "MBy", "GBy", "TBy"]
+            },
+            {
+              "title": "Time Units",
+              "enum": ["s", "ms", "us", "ns"]
+            },
+            {
+              "title": "Rate Units",
+              "enum": ["%", "1"]
+            }
+          ]
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Network protocol related to the measurement (e.g., 'TCP', 'UDP', 'HTTP')."
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["upload", "download", "bidirectional"],
+          "description": "Direction of data transfer."
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Source or destination endpoint for the data transfer."
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "quantity_kind": "DataRate",
+      "value": 867.3,
+      "unit": "Mbit/s",
+      "observed_by": "dev.network-monitor-001",
+      "feature_of_interest": "tm.wifi-channel-5",
+      "protocol": "TCP",
+      "direction": "download"
+    },
+    {
+      "quantity_kind": "Latency",
+      "value": 23.4,
+      "unit": "ms",
+      "observed_by": "dev.network-monitor-001",
+      "feature_of_interest": "tm.server-001",
+      "protocol": "ICMP"
+    }
+  ]
+}

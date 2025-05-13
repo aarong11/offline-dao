@@ -1,0 +1,27 @@
+[
+  {
+    "source": "ClaimTaskContract",
+    "target": "task-thermal-mapping",
+    "type": "acts_on"
+  },
+  {
+    "source": "ClaimTaskContract",
+    "target": "fact-task-open",
+    "type": "requires"
+  },
+  {
+    "source": "ClaimTaskContract",
+    "target": "fact-task-claimed",
+    "type": "emits"
+  },
+  {
+    "source": "DeviceAccessGrant",
+    "target": "device-thermal-001",
+    "type": "acts_on"
+  },
+  {
+    "source": "DeviceAccessGrant",
+    "target": "fact-device-access",
+    "type": "emits"
+  }
+]

@@ -1,0 +1,49 @@
+[
+  {
+    "id": "ClaimTaskContract",
+    "type": "contract",
+    "inputs": [
+      "identity",
+      "task"
+    ],
+    "requires": [
+      "task.status=open",
+      "identity.skills match task.inputs"
+    ],
+    "produces": [
+      "task.status=claimed",
+      "task.claimed_by=identity"
+    ],
+    "emits": [
+      "fact-task-claimed"
+    ],
+    "signature_required": [
+      "identity"
+    ],
+    "confidence": 1.0
+  },
+  {
+    "id": "DeviceAccessGrant",
+    "type": "contract",
+    "inputs": [
+      "device_id",
+      "identity",
+      "scope",
+      "epoch_limit"
+    ],
+    "requires": [
+      "device.valid",
+      "not already granted"
+    ],
+    "produces": [
+      "identity.device_access"
+    ],
+    "emits": [
+      "fact-device-access"
+    ],
+    "signature_required": [
+      "device_owner"
+    ],
+    "confidence": 1.0
+  }
+]

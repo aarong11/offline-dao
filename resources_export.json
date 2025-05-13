@@ -1,0 +1,768 @@
+[
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resources/computational_resource.schema.json",
+  "title": "Computational Resource",
+  "description": "Schema for abstract computational resources such as compute time, bandwidth, storage capacity, and tokens",
+  "allOf": [
+    {
+      "$ref": "../resource.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "computational_type": {
+          "type": "string",
+          "enum": [
+            "compute",
+            "bandwidth",
+            "storage",
+            "memory",
+            "token",
+            "api_access",
+            "data",
+            "license"
+          ],
+          "description": "Type of computational or abstract resource"
+        },
+        "allocation_model": {
+          "type": "string",
+          "enum": [
+            "shared",
+            "dedicated",
+            "on_demand",
+            "reserved",
+            "spot",
+            "token_based"
+          ],
+          "description": "How the resource is allocated or distributed"
+        },
+        "compute_properties": {
+          "type": "object",
+          "description": "Properties specific to computational resources",
+          "properties": {
+            "performance_metric": {
+              "type": "string",
+              "enum": [
+                "flops",
+                "iops",
+                "throughput",
+                "latency",
+                "requests_per_second",
+                "inference_time"
+              ],
+              "description": "Primary metric used to measure performance"
+            },
+            "performance_value": {
+              "type": "number",
+              "description": "Numerical performance value"
+            },
+            "performance_unit": {
+              "type": "string",
+              "description": "Unit for the performance metric (e.g., 'GFLOP/s', 'ms')"
+            },
+            "architecture": {
+              "type": "string",
+              "description": "Underlying hardware or software architecture"
+            },
+            "acceleration": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Acceleration technologies used (e.g., 'GPU', 'TPU', 'FPGA')"
+            },
+            "virtualization": {
+              "type": "boolean",
+              "description": "Whether the resource is virtualized"
+            }
+          }
+        },
+        "network_properties": {
+          "type": "object",
+          "description": "Properties specific to network/bandwidth resources",
+          "properties": {
+            "bandwidth": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Available bandwidth measurement"
+            },
+            "latency": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Latency measurement"
+            },
+            "protocol": {
+              "type": "string",
+              "description": "Network protocol used"
+            },
+            "reliability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Network reliability percentage (Unit: %, UCUM code for percent)"
+            },
+            "packet_loss": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Average packet loss percentage (Unit: %, UCUM code for percent)"
+            }
+          }
+        },
+        "storage_properties": {
+          "type": "object",
+          "description": "Properties specific to storage resources",
+          "properties": {
+            "capacity": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Storage capacity measurement"
+            },
+            "read_speed": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Read speed measurement"
+            },
+            "write_speed": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Write speed measurement"
+            },
+            "durability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Annual durability percentage (Unit: %, UCUM code for percent)"
+            },
+            "replication_factor": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of data replicas maintained"
+            }
+          }
+        },
+        "token_properties": {
+          "type": "object",
+          "description": "Properties specific to token or access-based resources",
+          "properties": {
+            "token_type": {
+              "type": "string",
+              "description": "Type of token or access unit"
+            },
+            "access_scope": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Scope of access provided by the token"
+            },
+            "rate_limits": {
+              "type": "object",
+              "properties": {
+                "requests_per_unit": {
+                  "type": "number"
+                },
+                "time_unit": {
+                  "type": "string",
+                  "enum": [
+                    "second",
+                    "minute",
+                    "hour",
+                    "day",
+                    "month"
+                  ]
+                },
+                "concurrent_requests": {
+                  "type": "integer"
+                }
+              },
+              "description": "Rate limiting parameters"
+            },
+            "expiration": {
+              "type": "boolean",
+              "description": "Whether the token expires"
+            },
+            "validity_period": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "s",
+                    "min",
+                    "h",
+                    "d",
+                    "mo",
+                    "a"
+                  ],
+                  "description": "UCUM code: s=seconds, min=minutes, h=hours, d=days, mo=months, a=years"
+                }
+              },
+              "description": "How long the token remains valid"
+            }
+          }
+        },
+        "security_properties": {
+          "type": "object",
+          "description": "Security-related properties of the resource",
+          "properties": {
+            "encryption": {
+              "type": "string",
+              "enum": [
+                "none",
+                "in_transit",
+                "at_rest",
+                "end_to_end"
+              ],
+              "description": "Type of encryption applied"
+            },
+            "authentication": {
+              "type": "string",
+              "enum": [
+                "none",
+                "basic",
+                "oauth",
+                "mfa",
+                "certificate",
+                "other"
+              ],
+              "description": "Authentication method required"
+            },
+            "compliance_frameworks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Compliance certifications (e.g., 'SOC2', 'GDPR', 'HIPAA')"
+            },
+            "data_residency": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Regions where data is stored or processed"
+            }
+          }
+        },
+        "scaling_properties": {
+          "type": "object",
+          "description": "How the resource scales to meet demands",
+          "properties": {
+            "scalability": {
+              "type": "string",
+              "enum": [
+                "fixed",
+                "vertical",
+                "horizontal",
+                "auto",
+                "elastic"
+              ],
+              "description": "Scaling capability of the resource"
+            },
+            "min_capacity": {
+              "type": "number",
+              "description": "Minimum resource capacity"
+            },
+            "max_capacity": {
+              "type": "number",
+              "description": "Maximum resource capacity"
+            },
+            "scaling_increment": {
+              "type": "number",
+              "description": "Granularity of scaling steps"
+            }
+          }
+        },
+        "service_level": {
+          "type": "object",
+          "properties": {
+            "availability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Guaranteed availability percentage (Unit: %, UCUM code for percent)"
+            },
+            "uptime_sla": {
+              "type": "string",
+              "description": "Uptime service level agreement (e.g., '99.99%')"
+            },
+            "response_time_sla": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "ms",
+                    "s",
+                    "min"
+                  ]
+                }
+              },
+              "description": "Response time service level agreement"
+            },
+            "support_level": {
+              "type": "string",
+              "enum": [
+                "none",
+                "basic",
+                "standard",
+                "premium",
+                "enterprise"
+              ],
+              "description": "Level of support provided"
+            }
+          }
+        }
+      },
+      "required": [
+        "computational_type"
+      ]
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/resources/computational_resource.schema.json",
+    "timestamp": "2025-05-13 13:00:35"
+  }
+}
+,
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resources/energy_resource.schema.json",
+  "title": "Energy Resource",
+  "description": "Schema for energy-related resources including renewable and non-renewable sources",
+  "allOf": [
+    {
+      "$ref": "../resource.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "energy_type": {
+          "type": "string",
+          "enum": [
+            "electrical",
+            "thermal",
+            "mechanical",
+            "chemical",
+            "nuclear",
+            "gravitational",
+            "electromagnetic"
+          ],
+          "description": "Physical form of energy this resource represents"
+        },
+        "energy_source": {
+          "type": "string",
+          "enum": [
+            "solar",
+            "wind",
+            "hydro",
+            "geothermal",
+            "biomass",
+            "fossil_fuel",
+            "nuclear",
+            "tidal",
+            "hydrogen",
+            "battery",
+            "other"
+          ],
+          "description": "Source of the energy"
+        },
+        "generation_properties": {
+          "type": "object",
+          "description": "Properties related to energy generation",
+          "properties": {
+            "capacity_factor": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Ratio of actual output to potential output at full capacity"
+            },
+            "peak_capacity": {
+              "$ref": "../measurements/power_measurement.schema.json",
+              "description": "Maximum power generation capacity"
+            },
+            "response_time": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "s",
+                    "min",
+                    "h"
+                  ]
+                }
+              },
+              "description": "Time required to reach full generation capacity"
+            },
+            "intermittency": {
+              "type": "string",
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high",
+                "variable"
+              ],
+              "description": "Degree of variability in energy production"
+            },
+            "dispatchability": {
+              "type": "string",
+              "enum": [
+                "non_dispatchable",
+                "partially_dispatchable",
+                "fully_dispatchable"
+              ],
+              "description": "Ability to control energy output on demand"
+            },
+            "storage_capacity": {
+              "$ref": "../measurements/power_measurement.schema.json",
+              "description": "Energy storage capacity if applicable"
+            }
+          }
+        },
+        "energy_conversion": {
+          "type": "object",
+          "description": "Energy transformation and conversion properties",
+          "properties": {
+            "input_energy_type": {
+              "type": "string",
+              "description": "Type of energy used as input if applicable"
+            },
+            "output_energy_type": {
+              "type": "string",
+              "description": "Type of energy produced as output"
+            },
+            "conversion_efficiency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Efficiency of energy conversion (Unit: %, UCUM code for percent)"
+            },
+            "energy_density": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "UCUM code for energy per volume or mass (e.g., J/kg, W.h/l)"
+                }
+              },
+              "description": "Energy content per unit volume or mass"
+            }
+          }
+        },
+        "grid_integration": {
+          "type": "object",
+          "description": "Characteristics related to integration with energy distribution systems",
+          "properties": {
+            "transmission_losses": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Typical energy loss during transmission (Unit: %, UCUM code for percent)"
+            },
+            "grid_compatibility": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Ease of integration with existing power grids"
+            },
+            "requires_conversion": {
+              "type": "boolean",
+              "description": "Whether energy requires conversion before grid integration"
+            },
+            "balancing_requirements": {
+              "type": "string",
+              "description": "Grid balancing needs for this energy type"
+            }
+          }
+        },
+        "lifecycle_emissions": {
+          "type": "object",
+          "description": "Emissions throughout the lifecycle of energy production",
+          "properties": {
+            "construction_emissions_co2e_per_kWh": {
+              "type": "number",
+              "description": "CO2 equivalent from construction/manufacturing (Unit: g/kW.h)"
+            },
+            "operational_emissions_co2e_per_kWh": {
+              "type": "number",
+              "description": "CO2 equivalent from operational phase (Unit: g/kW.h)"
+            },
+            "decommissioning_emissions_co2e_per_kWh": {
+              "type": "number",
+              "description": "CO2 equivalent from decommissioning (Unit: g/kW.h)"
+            },
+            "lifecycle_emissions_methodology": {
+              "type": "string",
+              "description": "Standard or methodology used to calculate lifecycle emissions"
+            }
+          }
+        },
+        "land_requirements": {
+          "type": "object",
+          "properties": {
+            "area_per_MW": {
+              "$ref": "../measurements/spatial_measurement.schema.json",
+              "description": "Land area required per megawatt of capacity"
+            },
+            "land_type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Types of land suitable for energy production"
+            },
+            "competitive_land_uses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Alternative uses for the same land type"
+            }
+          }
+        },
+        "water_usage": {
+          "type": "object",
+          "properties": {
+            "consumption_l_per_MWh": {
+              "type": "number",
+              "description": "Water consumed per megawatt-hour (Unit: l/MW.h)"
+            },
+            "withdrawal_l_per_MWh": {
+              "type": "number",
+              "description": "Water withdrawn per megawatt-hour (Unit: l/MW.h)"
+            },
+            "water_type": {
+              "type": "string",
+              "enum": [
+                "freshwater",
+                "saltwater",
+                "reclaimed",
+                "none"
+              ],
+              "description": "Type of water required"
+            }
+          }
+        },
+        "weather_dependency": {
+          "type": "object",
+          "properties": {
+            "dependent_factor": {
+              "type": "string",
+              "enum": [
+                "sunlight",
+                "wind",
+                "precipitation",
+                "temperature",
+                "none"
+              ],
+              "description": "Primary weather factor affecting energy production"
+            },
+            "sensitivity": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Degree of sensitivity to weather conditions"
+            },
+            "seasonal_variation": {
+              "type": "string",
+              "enum": [
+                "none",
+                "low",
+                "medium",
+                "high"
+              ],
+              "description": "Degree of seasonal variation in output"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/resources/energy_resource.schema.json",
+    "timestamp": "2025-05-13 13:00:50"
+  }
+}
+,
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resources/material_resource.schema.json",
+  "title": "Material Resource",
+  "description": "Schema for physical material resources like raw minerals, metals, and manufactured components with detailed physical properties",
+  "allOf": [
+    {
+      "$ref": "../resource.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "material_properties": {
+          "type": "object",
+          "description": "Detailed physical properties specific to materials",
+          "properties": {
+            "state_of_matter": {
+              "type": "string",
+              "enum": [
+                "solid",
+                "liquid",
+                "gas",
+                "plasma"
+              ],
+              "description": "Physical state of the material"
+            },
+            "melting_point": {
+              "$ref": "../measurements/thermal_measurement.schema.json",
+              "description": "Temperature at which material changes from solid to liquid state"
+            },
+            "boiling_point": {
+              "$ref": "../measurements/thermal_measurement.schema.json",
+              "description": "Temperature at which material changes from liquid to gas state"
+            },
+            "thermal_conductivity": {
+              "type": "number",
+              "description": "Thermal conductivity (Unit: W/(m.K), UCUM code for watts per meter-kelvin)"
+            },
+            "electrical_conductivity": {
+              "type": "number",
+              "description": "Electrical conductivity (Unit: S/m, UCUM code for siemens per meter)"
+            },
+            "magnetic_properties": {
+              "type": "string",
+              "enum": [
+                "diamagnetic",
+                "paramagnetic",
+                "ferromagnetic",
+                "antiferromagnetic",
+                "ferrimagnetic",
+                "none"
+              ],
+              "description": "Magnetic characteristics of the material"
+            },
+            "hardness": {
+              "type": "object",
+              "properties": {
+                "scale": {
+                  "type": "string",
+                  "enum": [
+                    "mohs",
+                    "brinell",
+                    "rockwell",
+                    "vickers",
+                    "shore"
+                  ]
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "description": "Hardness measurement on specified scale"
+            },
+            "corrosion_resistance": {
+              "type": "string",
+              "enum": [
+                "poor",
+                "fair",
+                "good",
+                "excellent"
+              ],
+              "description": "Resistance to environmental degradation"
+            }
+          }
+        },
+        "extraction_method": {
+          "type": "string",
+          "description": "Primary method used to obtain the raw material"
+        },
+        "strategic_importance": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "description": "Level of strategic importance in global supply chains"
+        },
+        "alternative_materials": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "resource_id": {
+                "type": "string"
+              },
+              "compatibility": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Compatibility percentage (Unit: %, UCUM code for percent)"
+              },
+              "trade_offs": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Potential material substitutes with compatibility scores"
+        },
+        "grade_classification": {
+          "type": "string",
+          "description": "Quality or purity grade classification"
+        },
+        "known_deposits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              },
+              "estimated_size": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "type": "number"
+                  },
+                  "unit": {
+                    "type": "string"
+                  }
+                }
+              },
+              "accessibility": {
+                "type": "string",
+                "enum": [
+                  "easy",
+                  "moderate",
+                  "difficult",
+                  "inaccessible"
+                ]
+              }
+            }
+          },
+          "description": "Known geographical deposits for raw materials"
+        }
+      }
+    }
+  ],
+  "__meta": {
+    "file": "/Users/a/Documents/schemas/resources/material_resource.schema.json",
+    "timestamp": "2025-05-13 12:56:45"
+  }
+}
+
+]

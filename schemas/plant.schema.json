@@ -1,0 +1,520 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/plant.schema.json",
+  "title": "Plant",
+  "description": "Schema for plant biological entities, extending the base biological entity schema",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "biological_entity.schema.json"
+    },
+    {
+      "properties": {
+        "classification": {
+          "properties": {
+            "entity_type": {
+              "const": "plant",
+              "description": "Must be 'plant' for this schema"
+            }
+          }
+        },
+        "growth_form": {
+          "type": "object",
+          "description": "Growth characteristics of the plant",
+          "properties": {
+            "habit": {
+              "type": "string",
+              "enum": ["tree", "shrub", "herb", "grass", "vine", "epiphyte", "succulent", "aquatic", "other"],
+              "description": "General growth habit of the plant"
+            },
+            "lifespan": {
+              "type": "string",
+              "enum": ["annual", "biennial", "perennial", "ephemeral"],
+              "description": "Length of life cycle"
+            },
+            "growth_rate": {
+              "type": "string",
+              "enum": ["slow", "moderate", "fast", "variable"],
+              "description": "Typical speed of growth"
+            },
+            "mature_height": {
+              "$ref": "measurements/spatial_measurement.schema.json",
+              "description": "Typical height at maturity"
+            },
+            "mature_spread": {
+              "$ref": "measurements/spatial_measurement.schema.json",
+              "description": "Typical spread or width at maturity"
+            },
+            "canopy_shape": {
+              "type": "string",
+              "description": "Shape of the mature plant canopy"
+            },
+            "root_system": {
+              "type": "string",
+              "enum": ["taproot", "fibrous", "adventitious", "aerial", "rhizomatous", "bulbous", "tuberous"],
+              "description": "Type of root system"
+            }
+          }
+        },
+        "flowering_and_reproduction": {
+          "type": "object",
+          "description": "Flowering and reproductive characteristics",
+          "properties": {
+            "flowering_period": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Times of year when flowering occurs"
+            },
+            "flower_color": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Colors of flowers"
+            },
+            "flower_structure": {
+              "type": "string",
+              "description": "Description of flower morphology"
+            },
+            "pollination_method": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["wind", "insect", "bird", "bat", "water", "self", "other"]
+              },
+              "description": "How the plant is pollinated"
+            },
+            "fruit_type": {
+              "type": "string",
+              "description": "Type of fruit produced if applicable"
+            },
+            "seed_dispersal": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["wind", "animal", "water", "explosion", "gravity", "self", "other"]
+              },
+              "description": "How seeds are dispersed"
+            },
+            "reproductive_strategy": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["sexual", "asexual", "vegetative", "spores", "other"]
+              },
+              "description": "Methods of reproduction"
+            }
+          }
+        },
+        "photosynthesis_and_physiology": {
+          "type": "object",
+          "description": "Physiological characteristics related to growth and metabolism",
+          "properties": {
+            "photosynthesis_type": {
+              "type": "string",
+              "enum": ["C3", "C4", "CAM", "variable"],
+              "description": "Type of photosynthetic pathway"
+            },
+            "leaf_type": {
+              "type": "string",
+              "description": "Description of leaf morphology"
+            },
+            "leaf_arrangement": {
+              "type": "string",
+              "enum": ["alternate", "opposite", "whorled", "rosette", "basal", "other"],
+              "description": "How leaves are arranged on stems"
+            },
+            "deciduous_or_evergreen": {
+              "type": "string",
+              "enum": ["deciduous", "evergreen", "semi-evergreen"],
+              "description": "Leaf retention pattern"
+            },
+            "drought_tolerance": {
+              "type": "string",
+              "enum": ["low", "moderate", "high"],
+              "description": "Ability to withstand drought conditions"
+            },
+            "cold_hardiness": {
+              "type": "object",
+              "properties": {
+                "usda_zone_min": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 13,
+                  "description": "Minimum USDA plant hardiness zone"
+                },
+                "usda_zone_max": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 13,
+                  "description": "Maximum USDA plant hardiness zone"
+                },
+                "temperature_minimum": {
+                  "$ref": "measurements/thermal_measurement.schema.json",
+                  "description": "Minimum temperature tolerated"
+                }
+              }
+            },
+            "water_requirements": {
+              "type": "string",
+              "enum": ["low", "medium", "high"],
+              "description": "Typical water needs"
+            }
+          }
+        },
+        "edibility_and_use": {
+          "type": "object",
+          "description": "Information about human uses of the plant",
+          "properties": {
+            "edible_parts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["fruit", "leaf", "stem", "root", "flower", "seed", "tuber", "sap", "bark", "none"]
+              },
+              "description": "Parts of plant that are edible"
+            },
+            "toxicity": {
+              "type": "object",
+              "properties": {
+                "is_toxic": {
+                  "type": "boolean",
+                  "description": "Whether any part of the plant is toxic"
+                },
+                "toxic_parts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Parts that are toxic"
+                },
+                "toxicity_to": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["humans", "pets", "livestock", "wildlife", "aquatic_life"]
+                  },
+                  "description": "What organisms are affected by toxicity"
+                },
+                "toxicity_level": {
+                  "type": "string",
+                  "enum": ["mild", "moderate", "severe", "lethal"],
+                  "description": "Severity of toxic effects"
+                }
+              }
+            },
+            "ethnobotanical_uses": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["medicinal", "food", "fiber", "dye", "construction", "fuel", "ornamental", "ritual", "other"]
+              },
+              "description": "Traditional or cultural uses"
+            },
+            "medicinal_properties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Medicinal compounds or properties"
+            },
+            "commercial_uses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Modern commercial applications"
+            }
+          }
+        },
+        "ecological_relationships": {
+          "type": "object",
+          "description": "Interactions with the environment and other organisms",
+          "properties": {
+            "native_regions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Geographic regions where the plant is native"
+            },
+            "habitat_preference": {
+              "type": "object",
+              "properties": {
+                "light": {
+                  "type": "string",
+                  "enum": ["full_sun", "partial_shade", "shade", "variable"],
+                  "description": "Light requirements"
+                },
+                "moisture": {
+                  "type": "string",
+                  "enum": ["dry", "mesic", "wet", "aquatic", "variable"],
+                  "description": "Soil moisture preference"
+                },
+                "soil_type": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["sandy", "loamy", "clay", "silty", "peaty", "chalky", "variable"]
+                  },
+                  "description": "Preferred soil textures"
+                },
+                "soil_ph": {
+                  "type": "string",
+                  "enum": ["acidic", "neutral", "alkaline", "variable"],
+                  "description": "Soil pH preference"
+                }
+              }
+            },
+            "symbiotic_relations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "relationship_type": {
+                    "type": "string",
+                    "enum": ["mycorrhizal", "nitrogen_fixing", "parasitic", "epiphytic", "commensal", "mutualistic", "other"],
+                    "description": "Type of symbiotic relationship"
+                  },
+                  "partner_organism": {
+                    "type": "string",
+                    "description": "Name or description of symbiotic partner"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Details about the symbiotic relationship"
+                  }
+                },
+                "required": ["relationship_type"]
+              },
+              "description": "Symbiotic relationships with other organisms"
+            },
+            "interactions": {
+              "type": "object",
+              "properties": {
+                "pollinators": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Organisms that pollinate the plant"
+                },
+                "herbivores": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Animals that feed on the plant"
+                },
+                "seed_dispersers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Organisms that disperse seeds"
+                },
+                "allelopathy": {
+                  "type": "boolean",
+                  "description": "Whether the plant produces compounds that affect other plants"
+                }
+              }
+            },
+            "invasion_potential": {
+              "type": "object",
+              "properties": {
+                "is_invasive": {
+                  "type": "boolean",
+                  "description": "Whether the plant is considered invasive"
+                },
+                "invasive_regions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Regions where the plant is invasive"
+                },
+                "control_methods": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Methods to control invasive growth"
+                }
+              }
+            }
+          }
+        },
+        "cultivation": {
+          "type": "object",
+          "description": "Information related to growing and managing the plant",
+          "properties": {
+            "propagation_methods": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["seed", "cutting", "division", "grafting", "layering", "tissue_culture", "other"]
+              },
+              "description": "Methods for propagating the plant"
+            },
+            "planting_season": {
+              "type": "string",
+              "description": "Recommended planting time"
+            },
+            "growth_requirements": {
+              "type": "object",
+              "properties": {
+                "fertilizer_needs": {
+                  "type": "string",
+                  "enum": ["low", "medium", "high"],
+                  "description": "Level of fertilizer required"
+                },
+                "pruning_needs": {
+                  "type": "string",
+                  "enum": ["none", "light", "moderate", "heavy"],
+                  "description": "Level of pruning maintenance"
+                },
+                "spacing": {
+                  "$ref": "measurements/spatial_measurement.schema.json",
+                  "description": "Recommended spacing between plants"
+                }
+              }
+            },
+            "common_diseases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Diseases the plant is susceptible to"
+            },
+            "common_pests": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Pests that commonly affect the plant"
+            },
+            "cultivars": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the cultivar"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Notable characteristics"
+                  },
+                  "registered": {
+                    "type": "boolean",
+                    "description": "Whether the cultivar is officially registered"
+                  }
+                },
+                "required": ["name"]
+              },
+              "description": "Cultivated varieties of the plant"
+            }
+          }
+        },
+        "phenology": {
+          "type": "object",
+          "description": "Timing of life cycle events",
+          "properties": {
+            "leaf_out_period": {
+              "type": "string",
+              "description": "When new leaves emerge"
+            },
+            "dormancy_period": {
+              "type": "string",
+              "description": "When plant is dormant"
+            },
+            "fruit_ripening_period": {
+              "type": "string",
+              "description": "When fruits mature"
+            },
+            "senescence_period": {
+              "type": "string",
+              "description": "When leaves drop or plant dies back"
+            },
+            "phenological_indicators": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "event": {
+                    "type": "string",
+                    "description": "Phenological event"
+                  },
+                  "timing": {
+                    "type": "string",
+                    "description": "Typical timing"
+                  },
+                  "climate_triggers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Environmental factors that trigger the event"
+                  }
+                },
+                "required": ["event"]
+              }
+            }
+          }
+        },
+        "conservation": {
+          "type": "object",
+          "description": "Conservation-specific information",
+          "properties": {
+            "threats": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Known threats to the species"
+            },
+            "conservation_efforts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Current conservation initiatives"
+            },
+            "population_trend": {
+              "type": "string",
+              "enum": ["increasing", "stable", "decreasing", "unknown"],
+              "description": "Overall population trend"
+            },
+            "estimated_population": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "year": {
+                  "type": "integer"
+                },
+                "confidence": {
+                  "type": "string",
+                  "enum": ["high", "medium", "low"]
+                }
+              }
+            },
+            "ex_situ_conservation": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Seed banks or botanical gardens preserving the species"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "required": ["growth_form"],
+  "additionalProperties": false
+}

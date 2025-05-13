@@ -1,0 +1,66 @@
+[
+  {
+    "id": "tm.bitcoin-mempool",
+    "type": "TransmissionMedium",
+    "properties": {
+      "category": "blockchain",
+      "max_payload_b": 80,
+      "typical_latency_s": 4,
+      "retention_s": 7200,
+      "cost_model": "zero-fee",
+      "loss_profile": "10-30% random drop",
+      "privacy": "pseudo-anon",
+      "bidirectional": false,
+      "network": "mainnet",
+      "relay_port": 8333,
+      "spec_ref": "https://github.com/bitcoin/bitcoin/blob/master/doc/bips.md#bip-330"
+    },
+    "tags": [
+      "suitable_for:urgent-alert",
+      "suitable_for:low-volume",
+      "protocol:bitcoin",
+      "layer:mempool"
+    ]
+  },
+  {
+    "id": "tm.airtag-rename",
+    "type": "TransmissionMedium",
+    "properties": {
+      "category": "proximity-ble",
+      "max_payload_b": 26,
+      "typical_latency_s": 8,
+      "retention_s": 30,
+      "cost_model": "free",
+      "loss_profile": "low loss owner-only",
+      "privacy": "private-iCloud",
+      "bidirectional": true
+    },
+    "tags": [
+      "suitable_for:urgent-alert",
+      "suitable_for:low-volume",
+      "protocol:findmy",
+      "layer:icloud-metadata"
+    ]
+  },
+  {
+    "id": "tm.wifi-ssid",
+    "type": "TransmissionMedium",
+    "properties": {
+      "category": "local-wifi",
+      "max_payload_b": 32,
+      "typical_latency_s": 0.1,
+      "retention_s": 0,
+      "cost_model": "free",
+      "loss_profile": "high collision",
+      "privacy": "broadcast",
+      "bidirectional": false,
+      "range_m": 80
+    },
+    "tags": [
+      "suitable_for:offline-sync",
+      "suitable_for:low-latency",
+      "protocol:802.11",
+      "layer:beacon"
+    ]
+  }
+]

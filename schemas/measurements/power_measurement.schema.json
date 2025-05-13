@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurements/power_measurement.schema.json",
+  "title": "Power and Energy Measurement",
+  "description": "Schema for power consumption, energy usage, and related measurements.",
+  "allOf": [
+    { "$ref": "base_measurement.schema.json" },
+    {
+      "properties": {
+        "quantity_kind": {
+          "enum": [
+            "Power", 
+            "Energy",
+            "PowerDensity",
+            "EnergyDensity",
+            "Efficiency"
+          ]
+        },
+        "unit": {
+          "oneOf": [
+            {
+              "title": "Power Units",
+              "enum": ["W", "kW", "MW", "mW", "uW"]
+            },
+            {
+              "title": "Energy Units",
+              "enum": ["J", "kJ", "kW.h", "W.h"]
+            },
+            {
+              "title": "Power Density Units",
+              "enum": ["W/m2", "W/m3"]
+            },
+            {
+              "title": "Energy Density Units",
+              "enum": ["J/kg", "J/m3", "W.h/kg"]
+            },
+            {
+              "title": "Efficiency Units",
+              "enum": ["%", "1"]
+            }
+          ]
+        },
+        "operating_mode": {
+          "type": "string",
+          "description": "Operating mode of the device (e.g., 'idle', 'active', 'sleep')."
+        },
+        "load_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Load percentage of the device when measurement was taken."
+        },
+        "duration": {
+          "type": "number",
+          "description": "Duration over which energy was measured in seconds."
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "quantity_kind": "Power",
+      "value": 120.5,
+      "unit": "W",
+      "uncertainty": 2.3,
+      "observed_by": "dev.power-meter-001",
+      "feature_of_interest": "dev.server-rack-001",
+      "operating_mode": "active",
+      "load_percentage": 85
+    },
+    {
+      "quantity_kind": "Energy",
+      "value": 2.75,
+      "unit": "kW.h",
+      "observed_by": "dev.smart-meter-001",
+      "feature_of_interest": "building.section-a",
+      "duration": 3600
+    }
+  ]
+}

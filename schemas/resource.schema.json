@@ -1,0 +1,473 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resource.schema.json",
+  "title": "Resource",
+  "description": "Schema for modeling physical, renewable, and abstract resources with supply chain provenance, sustainability metrics, and lifecycle characteristics",
+  "type": "object",
+  "allOf": [{ "$ref": "graph_node.meta.schema.json" }],
+  "required": ["id", "type", "resource_category", "name"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^res\\.[a-z0-9_-]{3,64}$",
+      "description": "Unique slug prefixed with 'res.' (e.g., res.lithium-raw)"
+    },
+    "type": {
+      "const": "Resource"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of the resource"
+    },
+    "resource_category": {
+      "type": "string",
+      "enum": ["raw_material", "intermediate_good", "finished_good", "energy", "intangible"],
+      "description": "Primary categorization of the resource"
+    },
+    "resource_type": {
+      "type": "string",
+      "description": "Specific type within the category (e.g., 'mineral', 'metal', 'semiconductor', 'compute')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the resource"
+    },
+    "unit_of_measure": {
+      "type": "string",
+      "description": "UCUM unit code for resource quantity (e.g., kg, m3, W.h, FLOPs)"
+    },
+    "custody_log": {
+      "type": "array",
+      "description": "Chronological list of custody events for tamper-evident tracking",
+      "items": {
+        "$ref": "common/custody_event.schema.json"
+      }
+    },
+    "supply_chain": {
+      "type": "object",
+      "description": "Supply chain and provenance information",
+      "properties": {
+        "origin": {
+          "type": "object",
+          "properties": {
+            "geographic_source": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "region": { "type": "string" },
+                  "percentage": { 
+                    "type": "number", 
+                    "minimum": 0, 
+                    "maximum": 100,
+                    "description": "Percentage from this region (Unit: %, UCUM code for percent)"
+                  },
+                  "coordinates": {
+                    "type": "object",
+                    "properties": {
+                      "latitude": { "type": "number" },
+                      "longitude": { "type": "number" }
+                    }
+                  }
+                },
+                "required": ["region"]
+              }
+            },
+            "geopolitical_context": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "factor": { "type": "string" },
+                  "impact": { 
+                    "type": "string", 
+                    "enum": ["none", "low", "medium", "high", "critical"]
+                  },
+                  "description": { "type": "string" }
+                },
+                "required": ["factor", "impact"]
+              },
+              "description": "Geopolitical factors affecting resource availability"
+            }
+          }
+        },
+        "extraction_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the resource was originally extracted/harvested"
+        },
+        "transformation_stages": {
+          "type": "array",
+          "description": "Series of processing steps from raw extraction to final form",
+          "items": {
+            "type": "object",
+            "required": ["stage", "process"],
+            "properties": {
+              "stage": { "type": "string", "description": "Name of transformation stage" },
+              "process": { "type": "string", "description": "Description of the process" },
+              "location": { "type": "string", "description": "Where this transformation occurred" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "energy_used": {
+                "$ref": "measurements/power_measurement.schema.json",
+                "description": "Energy consumed in this transformation stage"
+              },
+              "emissions": {
+                "type": "object",
+                "properties": {
+                  "co2_equivalent_kg": {
+                    "type": "number",
+                    "description": "CO2 equivalent emissions (Unit: kg, UCUM code for kilograms)"
+                  },
+                  "specific_emissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["type", "value", "unit"],
+                      "properties": {
+                        "type": { "type": "string", "description": "Type of emission (e.g., CO2, CH4, N2O)" },
+                        "value": { "type": "number", "description": "Quantity emitted" },
+                        "unit": { "type": "string", "description": "UCUM unit code (e.g., kg, g)" }
+                      }
+                    }
+                  }
+                }
+              },
+              "ethical_flags": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["concern", "severity"],
+                  "properties": {
+                    "concern": { "type": "string", "description": "Description of ethical concern" },
+                    "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                    "certification": { "type": "string", "description": "Mitigation certification if applicable" }
+                  }
+                }
+              },
+              "input_resources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["resource_id", "quantity"],
+                  "properties": {
+                    "resource_id": { "type": "string" },
+                    "quantity": { "type": "number" },
+                    "unit": { "type": "string" }
+                  }
+                },
+                "description": "Other resources consumed in this transformation stage"
+              },
+              "output_byproducts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["byproduct", "quantity", "unit"],
+                  "properties": {
+                    "byproduct": { "type": "string" },
+                    "quantity": { "type": "number" },
+                    "unit": { "type": "string" },
+                    "handling": { "type": "string", "description": "How the byproduct was handled" }
+                  }
+                }
+              },
+              "verification": {
+                "$ref": "common/signature.schema.json",
+                "description": "Optional cryptographic signature verifying this stage"
+              }
+            }
+          }
+        },
+        "chain_of_custody": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["custodian", "timestamp"],
+            "properties": {
+              "custodian": { "type": "string", "description": "Entity ID that possessed the resource" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "location": { "type": "string" },
+              "verification": {
+                "$ref": "common/signature.schema.json",
+                "description": "Optional cryptographic verification"
+              }
+            }
+          }
+        }
+      }
+    },
+    "sustainability": {
+      "type": "object",
+      "description": "Environmental impact and lifecycle metrics",
+      "properties": {
+        "carbon_footprint": {
+          "type": "object",
+          "properties": {
+            "total_co2e_kg": {
+              "type": "number",
+              "description": "Total lifecycle CO2 equivalent (Unit: kg, UCUM code for kilograms)"
+            },
+            "methodology": { "type": "string", "description": "Carbon calculation methodology used" }
+          }
+        },
+        "energy_usage": {
+          "type": "object",
+          "properties": {
+            "embodied_energy": {
+              "$ref": "measurements/power_measurement.schema.json",
+              "description": "Total energy required for production"
+            },
+            "operational_energy_rate": {
+              "$ref": "measurements/power_measurement.schema.json",
+              "description": "Energy consumption during operation (if applicable)"
+            }
+          }
+        },
+        "water_usage": {
+          "type": "object",
+          "properties": {
+            "total_water_usage_l": {
+              "type": "number",
+              "description": "Water required for production (Unit: l, UCUM code for liters)"
+            },
+            "water_intensity": {
+              "type": "number",
+              "description": "Water usage per unit of production"
+            }
+          }
+        },
+        "recyclability": {
+          "type": "object",
+          "properties": {
+            "recyclable_percentage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Percentage that can be recycled (Unit: %, UCUM code for percent)"
+            },
+            "recycling_process": { "type": "string" },
+            "recycling_energy": {
+              "$ref": "measurements/power_measurement.schema.json",
+              "description": "Energy required for recycling"
+            }
+          }
+        },
+        "lifecycle": {
+          "type": "object",
+          "properties": {
+            "expected_lifetime": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "unit": { 
+                  "type": "string", 
+                  "enum": ["a", "mo", "d", "h"],
+                  "description": "UCUM code: a=years, mo=months, d=days, h=hours" 
+                }
+              }
+            },
+            "decay_rate": {
+              "type": "object",
+              "properties": {
+                "half_life": {
+                  "type": "number",
+                  "description": "Time for 50% degradation"
+                },
+                "unit": {
+                  "type": "string", 
+                  "enum": ["a", "mo", "d", "h"],
+                  "description": "UCUM code: a=years, mo=months, d=days, h=hours" 
+                }
+              }
+            },
+            "disposal_methods": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "hazardous_waste_classification": {
+              "type": "string",
+              "description": "Waste classification code if applicable"
+            }
+          }
+        },
+        "toxicity": {
+          "type": "object",
+          "properties": {
+            "toxicity_level": {
+              "type": "string",
+              "enum": ["none", "low", "medium", "high", "extreme"]
+            },
+            "exposure_risks": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "legal_constraints": {
+      "type": "array",
+      "description": "Legal or environmental regulations affecting this resource",
+      "items": {
+        "type": "object",
+        "required": ["region", "constraint_type"],
+        "properties": {
+          "region": { "type": "string" },
+          "constraint_type": { "type": "string" },
+          "description": { "type": "string" },
+          "regulation_id": { "type": "string", "description": "Specific law or regulation ID" },
+          "compliance_status": { 
+            "type": "string", 
+            "enum": ["compliant", "non_compliant", "exempted", "not_applicable"]
+          }
+        }
+      }
+    },
+    "physical_properties": {
+      "type": "object",
+      "description": "Physical characteristics of the resource",
+      "properties": {
+        "measurements": {
+          "type": "array",
+          "items": {
+            "$ref": "measurement.schema.json"
+          },
+          "description": "Associated physical measurements"
+        },
+        "composition": {
+          "type": "array",
+          "description": "Material components of the resource",
+          "items": {
+            "type": "object",
+            "required": ["component", "percentage"],
+            "properties": {
+              "component": { "type": "string" },
+              "percentage": { 
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Percentage of the whole (Unit: %, UCUM code for percent)"
+              },
+              "resource_id": { "type": "string", "description": "Optional reference to another resource" }
+            }
+          }
+        },
+        "purity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Purity level (Unit: %, UCUM code for percent)"
+        },
+        "density": {
+          "type": "number",
+          "description": "Density (Unit: kg/m3, UCUM code for kilograms per cubic meter)"
+        }
+      }
+    },
+    "integration_points": {
+      "type": "object",
+      "description": "How this resource integrates with other schemas",
+      "properties": {
+        "used_in_devices": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Device IDs that use this resource"
+        },
+        "required_for_tasks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Task IDs that require this resource"
+        },
+        "used_in_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tool IDs that use this resource"
+        },
+        "contained_in_storage": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Storage medium IDs containing this resource"
+        },
+        "associated_measurements": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Measurement IDs associated with this resource"
+        }
+      }
+    },
+    "availability": {
+      "type": "object",
+      "properties": {
+        "scarcity_level": {
+          "type": "string",
+          "enum": ["abundant", "common", "limited", "rare", "critical"],
+          "description": "General availability classification"
+        },
+        "estimated_reserves": {
+          "type": "object",
+          "properties": {
+            "amount": { "type": "number" },
+            "unit": { "type": "string" },
+            "year": { "type": "integer" }
+          },
+          "description": "Estimated remaining global reserves"
+        },
+        "production_rate": {
+          "type": "object",
+          "properties": {
+            "amount": { "type": "number" },
+            "unit": { "type": "string" },
+            "time_period": { "type": "string", "enum": ["daily", "monthly", "yearly"] }
+          },
+          "description": "Global production rate"
+        },
+        "renewable": {
+          "type": "boolean",
+          "description": "Whether the resource is renewable"
+        },
+        "replenishment_rate": {
+          "type": "object",
+          "properties": {
+            "rate": { "type": "number" },
+            "unit": { "type": "string" },
+            "time_period": { "type": "string" }
+          },
+          "description": "Rate of natural replenishment if renewable"
+        }
+      }
+    },
+    "market_data": {
+      "type": "object",
+      "properties": {
+        "price_history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "price": { "type": "number" },
+              "currency": { "type": "string" },
+              "unit": { "type": "string" }
+            }
+          }
+        },
+        "volatility": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "price_trend": {
+          "type": "string",
+          "enum": ["decreasing", "stable", "increasing", "volatile"]
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "meta": {
+      "type": "object",
+      "description": "Open container for implementation-specific extensions"
+    }
+  },
+  "additionalProperties": false
+}

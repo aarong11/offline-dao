@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurements/electromagnetic_measurement.schema.json",
+  "title": "Electromagnetic Measurement",
+  "description": "Schema for electrical and magnetic property measurements.",
+  "allOf": [
+    { "$ref": "base_measurement.schema.json" },
+    {
+      "properties": {
+        "quantity_kind": {
+          "enum": [
+            "ElectricCurrent", 
+            "ElectricPotential", 
+            "ElectricResistance", 
+            "ElectricCapacitance", 
+            "ElectricInductance", 
+            "ElectricConductance",
+            "MagneticFieldStrength",
+            "MagneticFluxDensity"
+          ]
+        },
+        "unit": {
+          "oneOf": [
+            {
+              "title": "Electric Current Units",
+              "enum": ["A", "mA", "uA"]
+            },
+            {
+              "title": "Electric Potential Units",
+              "enum": ["V", "mV", "kV"]
+            },
+            {
+              "title": "Electric Resistance Units",
+              "enum": ["Ohm", "kOhm", "MOhm"]
+            },
+            {
+              "title": "Electric Capacitance Units",
+              "enum": ["F", "mF", "uF", "nF", "pF"]
+            },
+            {
+              "title": "Electric Inductance Units",
+              "enum": ["H", "mH", "uH"]
+            },
+            {
+              "title": "Electric Conductance Units",
+              "enum": ["S", "mS", "uS"]
+            },
+            {
+              "title": "Magnetic Field Units",
+              "enum": ["A/m", "T", "mT"]
+            }
+          ]
+        },
+        "circuit_point": {
+          "type": "string",
+          "description": "Optional identifier for the measurement point in a circuit."
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "quantity_kind": "ElectricCurrent",
+      "value": 2.3,
+      "unit": "A",
+      "uncertainty": 0.1,
+      "feature_of_interest": "dev.power-supply-001",
+      "timestamp": "2025-05-13T12:30:15Z"
+    },
+    {
+      "quantity_kind": "ElectricPotential",
+      "value": 3.3,
+      "unit": "V",
+      "feature_of_interest": "dev.sensor-node-gpio",
+      "circuit_point": "VCC"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://dao.example.org/schemas/resources/computational_resource.schema.json",
+  "id": "res.cloud-compute-gpu",
+  "type": "Resource",
+  "name": "GPU Cloud Compute",
+  "resource_category": "intangible",
+  "resource_type": "compute",
+  "description": "High-performance GPU compute resources for machine learning and data processing",
+  "unit_of_measure": "GPU.h",
+  "supply_chain": {
+    "origin": {
+      "geographic_source": [
+        {
+          "region": "US-East Data Center",
+          "percentage": 75,
+          "coordinates": {
+            "latitude": 39.01,
+            "longitude": -77.5
+          }
+        },
+        {
+          "region": "EU-Central Data Center",
+          "percentage": 25,
+          "coordinates": {
+            "latitude": 50.11,
+            "longitude": 8.68
+          }
+        }
+      ],
+      "geopolitical_context": [
+        {
+          "factor": "Data sovereignty laws",
+          "impact": "medium",
+          "description": "EU GDPR and US data regulations impact compute resource availability"
+        }
+      ]
+    },
+    "transformation_stages": [
+      {
+        "stage": "Infrastructure provisioning",
+        "process": "Data center power and cooling allocation",
+        "location": "US-East Data Center",
+        "timestamp": "2023-09-01T00:00:00Z",
+        "energy_used": {
+          "quantity_kind": "Energy",
+          "value": 45000,
+          "unit": "kW.h"
+        },
+        "emissions": {
+          "co2_equivalent_kg": 18000
+        }
+      },
+      {
+        "stage": "Virtualization",
+        "process": "GPU resource pooling and allocation",
+        "location": "US-East Data Center",
+        "timestamp": "2023-09-02T00:00:00Z"
+      }
+    ]
+  },
+  "sustainability": {
+    "carbon_footprint": {
+      "total_co2e_kg": 0.4,
+      "methodology": "Cloud Carbon Footprint Standard 1.0"
+    },
+    "energy_usage": {
+      "operational_energy_rate": {
+        "quantity_kind": "Power",
+        "value": 0.25,
+        "unit": "kW"
+      }
+    }
+  },
+  "legal_constraints": [
+    {
+      "region": "European Union",
+      "constraint_type": "Data processing regulation",
+      "description": "GDPR compliance for workloads processing EU citizen data",
+      "regulation_id": "EU GDPR 2016/679",
+      "compliance_status": "compliant"
+    }
+  ],
+  "integration_points": {
+    "required_for_tasks": ["ai-training-task-01", "data-processing-task-03"],
+    "contained_in_storage": ["storage-medium-01"]
+  },
+  "availability": {
+    "scarcity_level": "limited",
+    "production_rate": {
+      "amount": 24000,
+      "unit": "GPU.h",
+      "time_period": "daily"
+    },
+    "renewable": false
+  },
+  "market_data": {
+    "price_history": [
+      {
+        "date": "2023-06-01",
+        "price": 2.50,
+        "currency": "USD",
+        "unit": "GPU.h"
+      },
+      {
+        "date": "2023-09-01",
+        "price": 2.25,
+        "currency": "USD",
+        "unit": "GPU.h"
+      }
+    ],
+    "volatility": "low",
+    "price_trend": "stable"
+  },
+  "computational_type": "compute",
+  "allocation_model": "on_demand",
+  "compute_properties": {
+    "performance_metric": "flops",
+    "performance_value": 16,
+    "performance_unit": "TFLOP/s",
+    "architecture": "CUDA",
+    "acceleration": ["GPU", "Tensor Cores"],
+    "virtualization": true
+  },
+  "network_properties": {
+    "bandwidth": {
+      "quantity_kind": "DataRate",
+      "value": 25,
+      "unit": "Gbit/s"
+    },
+    "latency": {
+      "quantity_kind": "Latency",
+      "value": 2,
+      "unit": "ms"
+    },
+    "reliability": 99.95,
+    "packet_loss": 0.001
+  },
+  "security_properties": {
+    "encryption": "at_rest",
+    "authentication": "oauth",
+    "compliance_frameworks": ["SOC2", "ISO27001", "HIPAA"],
+    "data_residency": ["US", "EU"]
+  },
+  "scaling_properties": {
+    "scalability": "horizontal",
+    "min_capacity": 1,
+    "max_capacity": 128,
+    "scaling_increment": 1
+  },
+  "service_level": {
+    "availability": 99.95,
+    "uptime_sla": "99.9%",
+    "response_time_sla": {
+      "value": 100,
+      "unit": "ms"
+    },
+    "support_level": "standard"
+  },
+  "tags": ["gpu-compute", "ml", "high-performance", "cloud"]
+}

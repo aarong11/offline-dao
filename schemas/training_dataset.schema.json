@@ -1,0 +1,190 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/training_dataset.schema.json",
+    "title": "Training Dataset",
+    "description": "Schema for representing datasets used to train or fine-tune models, including provenance, licensing, contributor influence, access control, and ethical metadata.",
+    "type": "object",
+    "required": ["id", "title", "source_type", "data_types", "created_at"],
+    "properties": {
+      "id": { "type": "string", "description": "Unique dataset identifier (slug or UUID)" },
+      "title": { "type": "string", "description": "Human-readable title of the dataset" },
+      "description": { "type": "string", "description": "Narrative explanation of what the dataset contains and how it was assembled" },
+      "source_type": {
+        "type": "string",
+        "enum": ["collected", "scraped", "synthetic", "simulated", "annotated", "blended"],
+        "description": "Primary method of dataset construction"
+      },
+      "custody_log": {
+        "type": "array",
+        "description": "Chronological list of custody events for tamper-evident tracking and chain of custody",
+        "items": {
+          "$ref": "common/custody_event.schema.json"
+        }
+      },
+      "data_types": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "High-level categories of data present (e.g., text, image, audio, sensor-fusion)",
+        "minItems": 1
+      },
+      "format": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Data file formats (e.g., CSV, JSON, TFRecord)"
+      },
+      "record_count": { "type": "integer", "description": "Approximate number of rows or records" },
+      "size_bytes": { "type": "integer", "description": "Total uncompressed size (Unit: By, UCUM code for bytes)" },
+      "created_at": { "type": "string", "format": "date-time", "description": "RFC 3339 timestamp when the dataset was first committed" },
+      "license": { "type": "string", "description": "Applicable usage license (e.g., CC-BY, MIT, proprietary)" },
+      "restricted_use": { "type": "array", "items": { "type": "string" }, "description": "Contexts in which use of the dataset is restricted or forbidden" },
+      "bias_notes": { "type": "array", "items": { "type": "string" }, "description": "Narrative or flagged notes on known biases" },
+      "alignment_risks": { "type": "array", "items": { "type": "string" }, "description": "Downstream risks related to model alignment or misuse" },
+      "influenced_by": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["contributor_id", "contribution_type", "weight"],
+          "properties": {
+            "contributor_id": { "type": "string" },
+            "contribution_type": {
+              "type": "string",
+              "enum": ["data_collection", "annotation", "synthetic_generation", "curation", "prompting"]
+            },
+            "weight": { "type": "number", "minimum": 0, "maximum": 1, "description": "Relative influence or credit share (0–1)" }
+          }
+        },
+        "description": "List of contributors or agents whose data influenced this dataset"
+      },
+      "attached_files": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["cid", "media_type"],
+          "properties": {
+            "cid": { "type": "string" },
+            "media_type": { "type": "string" },
+            "description": { "type": "string" },
+            "size_bytes": { "type": "integer", "description": "File size (Unit: By, UCUM code for bytes)" }
+          }
+        },
+        "description": "Optional list of files or hashes linked to this dataset"
+      },
+      "linked_tasks": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Tasks where this dataset was created or used"
+      },
+      "provenance": {
+        "type": "array",
+        "description": "Chain of custody or transformation steps",
+        "items": {
+          "type": "object",
+          "required": ["event", "actor", "timestamp"],
+          "properties": {
+            "event": { "type": "string" },
+            "actor": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "notes": { "type": "string" }
+          }
+        }
+      },
+      "access_control": {
+        "type": "array",
+        "description": "Who currently has access to this dataset",
+        "items": {
+          "type": "object",
+          "required": ["agent_id", "access_level"],
+          "properties": {
+            "agent_id": { "type": "string" },
+            "access_level": { "type": "string", "enum": ["read", "write", "admin"] },
+            "granted_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      },
+      "payments": {
+        "type": "array",
+        "description": "Who has been paid in relation to this dataset",
+        "items": {
+          "type": "object",
+          "required": ["recipient_id", "amount", "timestamp"],
+          "properties": {
+            "recipient_id": { "type": "string" },
+            "amount": { "type": "number" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "reason": { "type": "string" }
+          }
+        }
+      },
+      "copy_count": { "type": "integer", "description": "How many known instances or backups of the dataset exist" },
+      "derived_from": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of dataset IDs that this dataset was derived from"
+      },
+      "data_quality_metrics": {
+        "type": "object",
+        "description": "Quantitative measurements of data quality",
+        "properties": {
+          "completeness": { 
+            "type": "number", 
+            "minimum": 0, 
+            "maximum": 1, 
+            "description": "Data completeness ratio (Unit: 1, UCUM code for dimensionless unit)" 
+          },
+          "accuracy": { 
+            "type": "number", 
+            "minimum": 0, 
+            "maximum": 1, 
+            "description": "Data accuracy ratio (Unit: 1, UCUM code for dimensionless unit)" 
+          },
+          "noise_level": { 
+            "type": "number", 
+            "minimum": 0, 
+            "description": "Estimated noise level (Unit: %, UCUM code for percent)" 
+          }
+        }
+      },
+      "resource_requirements": {
+        "type": "object",
+        "description": "Computational resources required to process this dataset",
+        "properties": {
+          "memory_bytes": { 
+            "type": "integer", 
+            "description": "Estimated memory required (Unit: By, UCUM code for bytes)" 
+          },
+          "processing_time_s": { 
+            "type": "number", 
+            "description": "Estimated processing time (Unit: s, UCUM code for seconds)" 
+          },
+          "storage_bytes": { 
+            "type": "integer", 
+            "description": "Total storage requirement including indices (Unit: By, UCUM code for bytes)" 
+          }
+        }
+      },
+      "archival": {
+        "type": "object",
+        "properties": {
+          "checksum": { "type": "string" },
+          "checksum_algorithm": { "type": "string" },
+          "format_version": { "type": "string" },
+          "archive_status": { "type": "string", "enum": ["active", "frozen", "deprecated", "lost"] },
+          "last_verified_at": { "type": "string", "format": "date-time" },
+          "curator_id": { "type": "string" },
+          "retention_policy": { "type": "string" },
+          "language": { "type": "string" },
+          "rights_statement": { "type": "string" },
+          "retention_period_days": { 
+            "type": "integer", 
+            "description": "Planned retention period (Unit: d, UCUM code for days)" 
+          }
+        },
+        "description": "Archival metadata used to support long-term storage and data integrity"
+      },
+      "meta": {
+        "type": "object",
+        "description": "Freeform metadata for internal versioning, annotations, tags, etc.",
+        "additionalProperties": true
+      }
+    }
+  }

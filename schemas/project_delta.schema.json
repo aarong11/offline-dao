@@ -1,0 +1,90 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/project_delta.schema.json",
+    "title": "DAO Project Delta Bundle",
+    "description": "Portable, signed diff file (\".diff.json\") that contains all updates to a Project since the last exchange. Designed for offline sharing and cryptographic verification.",
+    "type": "object",
+    "required": [
+      "project_id",
+      "epoch",
+      "updated_tasks",
+      "new_tasks",
+      "metadata",
+      "signature",
+      "public_key",
+      "created_at"
+    ],
+    "properties": {
+      "project_id": {
+        "type": "string",
+        "description": "UUID v4 of the parent project."
+      },
+      "epoch": {
+        "$ref": "./epoch_log_entry.schema.json"
+      },
+      "updated_tasks": {
+        "type": "array",
+        "description": "Snapshot of tasks that existed before and have changed status/fields.",
+        "items": { "$ref": "./task.schema.json" }
+      },
+      "new_tasks": {
+        "type": "array",
+        "description": "Tasks that did not exist in the recipient's copy.",
+        "items": { "$ref": "./task.schema.json" }
+      },
+      "status_changes": {
+        "type": "array",
+        "description": "Optional list summarising project‑level status transitions (e.g., active→paused)",
+        "items": {
+          "type": "object",
+          "required": ["from", "to", "timestamp"],
+          "properties": {
+            "from": { "type": "string" },
+            "to":   { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "reason": { "type": "string" }
+          }
+        },
+        "default": []
+      },
+      "metadata": {
+        "type": "object",
+        "description": "High‑level project fields that changed during the epoch.",
+        "properties": {
+          "title":   { "type": "string" },
+          "summary": { "type": "string" },
+          "tags":    { "type": "array", "items": { "type": "string" } },
+          "status":  { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "signature": {
+        "type": "string",
+        "description": "Base64 Ed25519 signature of the delta sans this field."
+      },
+      "public_key": {
+        "type": "string",
+        "description": "Base64 public key matching the signing identity so peers can verify."
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "UTC timestamp when this delta was generated."
+      },
+      "attachments": {
+        "type": "array",
+        "description": "Optional external artefacts referenced by CID (content‑addressed).",
+        "items": {
+          "type": "object",
+          "required": ["cid", "media_type"],
+          "properties": {
+            "cid": { "type": "string", "description": "sha256:… or ipfs://…" },
+            "media_type": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        },
+        "default": []
+      }
+    },
+    "additionalProperties": false
+  }

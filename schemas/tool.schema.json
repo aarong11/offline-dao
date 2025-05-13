@@ -1,0 +1,144 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/tool.schema.json",
+    "title": "Tool",
+    "description": "A function-specific artifact used by a device or contributor to complete a task. Tools may be digital or physical, and are typically transient, modular, or purpose-limited.",
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique ID of the tool"
+      },
+      "name": {
+        "type": "string",
+        "description": "Human-readable name of the tool"
+      },
+      "tool_type": {
+        "type": "string",
+        "description": "General classification of the tool",
+        "enum": ["software", "hardware", "hybrid"]
+      },
+      "function": {
+        "type": "string",
+        "description": "Primary function or purpose of the tool"
+      },
+      "category": {
+        "type": "string",
+        "description": "Task domain or functional grouping",
+        "enum": ["debugging", "data_collection", "signal_encoding", "cryptographic", "networking", "diagnostics", "covert_channel", "other"]
+      },
+      "used_by_device": {
+        "type": "string",
+        "description": "ID of the device (node:Device) that uses this tool"
+      },
+      "used_in_task": {
+        "type": "string",
+        "description": "ID of the task (node:Task) in which the tool was applied"
+      },
+      "energy_cost_estimate_wh": {
+        "type": "number",
+        "description": "Estimated watt-hours required to use the tool per session"
+      },
+      "skill_required": {
+        "type": "string",
+        "description": "Minimum skill level or role needed to operate the tool",
+        "enum": ["basic", "intermediate", "advanced", "specialist"]
+      },
+      "risk_profile": {
+        "type": "string",
+        "description": "Operational or disclosure risk if misused",
+        "enum": ["low", "moderate", "high", "critical"]
+      },
+      "retired": {
+        "type": "boolean",
+        "description": "Whether this tool is obsolete or no longer in use",
+        "default": false
+      },
+      "notes": {
+        "type": "string",
+        "description": "Additional metadata or human notes"
+      },
+      "required_resources": {
+        "type": "array",
+        "description": "Resources needed to use or operate this tool",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "description": "Reference to a resource schema id"
+            },
+            "quantity": {
+              "type": "number",
+              "description": "Amount of the resource required"
+            },
+            "unit": {
+              "type": "string",
+              "description": "Unit of measure (should match resource's unit_of_measure)"
+            },
+            "critical": {
+              "type": "boolean",
+              "description": "Whether tool operation is impossible without this resource",
+              "default": true
+            }
+          }
+        }
+      },
+      "consumes_resources": {
+        "type": "array",
+        "description": "Resources consumed when using this tool",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "consumption_rate"],
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "description": "Reference to a resource schema id"
+            },
+            "consumption_rate": {
+              "type": "number",
+              "description": "Rate of consumption per time or use"
+            },
+            "rate_unit": {
+              "type": "string",
+              "description": "Unit of consumption rate (e.g., 'kW.h/h' for kilowatt-hours per hour)"
+            },
+            "per_use": {
+              "type": "boolean",
+              "description": "Whether consumption is per use rather than per time",
+              "default": false
+            }
+          }
+        }
+      },
+      "component_resources": {
+        "type": "array",
+        "description": "Resources used in the construction or composition of the tool",
+        "items": {
+          "type": "object",
+          "required": ["resource_id", "quantity"],
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "description": "Reference to a resource schema id"
+            },
+            "quantity": {
+              "type": "number",
+              "description": "Amount of the resource in the tool"
+            },
+            "unit": {
+              "type": "string",
+              "description": "Unit of measure (should match resource's unit_of_measure)"
+            },
+            "recyclable": {
+              "type": "boolean",
+              "description": "Whether the resource can be recovered when the tool is disposed",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "required": ["id", "name", "tool_type", "function"]
+  }

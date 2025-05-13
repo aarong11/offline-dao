@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/measurement.schema.json",
+  "title": "Physical Measurement",
+  "description": "Atomic numeric observation with unit, context and provenance. Compatible with UCUM and QUDT codes.",
+  "oneOf": [
+    { "$ref": "measurements/thermal_measurement.schema.json" },
+    { "$ref": "measurements/spatial_measurement.schema.json" },
+    { "$ref": "measurements/electromagnetic_measurement.schema.json" },
+    { "$ref": "measurements/signal_measurement.schema.json" },
+    { "$ref": "measurements/data_measurement.schema.json" },
+    { "$ref": "measurements/power_measurement.schema.json" },
+    { "$ref": "measurements/base_measurement.schema.json" }
+  ],
+  "examples": [
+    {
+      "quantity_kind": "Temperature",
+      "value": 22.6,
+      "unit": "Cel",
+      "uncertainty": 0.3,
+      "timestamp": "2025-05-13T11:59:27Z",
+      "observed_by": "dev.sensor‑roof001",
+      "feature_of_interest": "tm.wifi-ssid",
+      "location": "geo:-34.90,138.60"
+    },
+    {
+      "quantity_kind": "SignalStrength",
+      "value": -67.5,
+      "unit": "dB[mW]",
+      "timestamp": "2025-05-13T11:59:27Z",
+      "observed_by": "dev.wifi-scanner-001",
+      "feature_of_interest": "tm.wifi-channel-5",
+      "signal_type": "wifi",
+      "channel": "5GHz-40"
+    },
+    {
+      "quantity_kind": "DataRate",
+      "value": 867.3,
+      "unit": "Mbit/s",
+      "observed_by": "dev.network-monitor-001",
+      "feature_of_interest": "tm.wifi-channel-5",
+      "protocol": "TCP",
+      "direction": "download"
+    }
+  ]
+}

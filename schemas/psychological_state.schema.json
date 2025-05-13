@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/psychological_state.schema.json",
+  "title": "Psychological State",
+  "description": "Schema for tracking a person's internal cognitive load, stress, and focus over time with cryptographic verification",
+  "allOf": [
+    { "$ref": "./common/cognition/base_cognitive_state.schema.json" },
+    {
+      "type": "object",
+      "required": ["type", "cognitive_metrics"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "PsychologicalState",
+          "description": "Type discriminator for this schema"
+        },
+        "cognitive_metrics": {
+          "type": "object",
+          "description": "Quantified measures of cognitive state",
+          "required": ["cognitive_load", "stress_level", "focus_quality"],
+          "properties": {
+            "cognitive_load": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Subjective rating of mental effort (1-10)"
+            },
+            "stress_level": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Subjective rating of perceived stress (1-10)"
+            },
+            "focus_quality": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Subjective rating of ability to concentrate (1-10)"
+            },
+            "mental_clarity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Subjective rating of mental clarity and coherence (1-10)"
+            },
+            "energy_level": {
+              "type": "integer", 
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Subjective rating of available mental energy (1-10)"
+            }
+          }
+        },
+        "contextual_factors": {
+          "type": "object",
+          "description": "Environmental or situational factors potentially affecting psychological state",
+          "properties": {
+            "sleep_quality": {
+              "type": "integer",
+              "minimum": 1, 
+              "maximum": 10,
+              "description": "Subjective rating of recent sleep quality (1-10)"
+            },
+            "interruptions": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of interruptions in current work session"
+            },
+            "environment": {
+              "type": "string",
+              "enum": ["home", "office", "public", "transit", "nature", "other"],
+              "description": "General type of environment during assessment"
+            },
+            "social_context": {
+              "type": "string",
+              "enum": ["alone", "small_group", "large_group", "online", "mixed"],
+              "description": "Social setting during assessment"
+            }
+          }
+        },
+        "related_emotional_state_cid": {
+          "type": "string",
+          "description": "Optional CID reference to a related emotional state record",
+          "pattern": "^(sha256|sha3):[a-f0-9]{64}$"
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "type": "PsychologicalState",
+      "human_id": "h.jane_researcher",
+      "timestamp": "2023-11-15T14:22:31Z",
+      "epoch": "During weekly research meeting",
+      "cognitive_metrics": {
+        "cognitive_load": 7,
+        "stress_level": 6,
+        "focus_quality": 5,
+        "mental_clarity": 6,
+        "energy_level": 4
+      },
+      "contextual_factors": {
+        "sleep_quality": 6,
+        "interruptions": 3,
+        "environment": "office",
+        "social_context": "small_group"
+      },
+      "notes": "Struggling to focus due to upcoming deadline pressure",
+      "previous_state_cid": "sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+      "task_context": {
+        "project_id": "p.cognitive-modeling",
+        "task_id": "t.schema-design",
+        "phase": "design_review"
+      },
+      "signature": {
+        "value": "base64-signature-here",
+        "algorithm": "ed25519",
+        "public_key": "base64-public-key-here",
+        "timestamp": "2023-11-15T14:22:31Z"
+      }
+    }
+  ]
+}

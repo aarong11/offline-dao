@@ -1,0 +1,33 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dao.example.org/schemas/graph_edge.meta.schema.json",
+    "title": "DAO Graph Edge (Generic)",
+    "description": "Common schema for every edge record inside the DAO federated‑research graph export bundle.  An edge connects two node `id`s, names its semantic `type`, and may carry arbitrary key/value properties.",
+    "type": "object",
+    "required": ["id", "type", "source", "target"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique slug or UUID for this edge (e.g., 'edge.tm.bitmempool->ch.mcudp')."
+      },
+      "type": {
+        "type": "string",
+        "description": "Semantic relationship name. Examples: 'supports_transport', 'tests_medium', 'optimised_for', 'fallback_to', 'depends_on', 'part_of', etc."
+      },
+      "source": {
+        "type": "string",
+        "description": "`id` of the source node. Must exist as a node in the same graph package."
+      },
+      "target": {
+        "type": "string",
+        "description": "`id` of the target node. Must exist as a node in the same graph package."
+      },
+      "properties": {
+        "type": "object",
+        "description": "Optional edge‑specific properties (weight, max_packet_b, comment, etc.). Keys free‑form, values any JSON type.",
+        "additionalProperties": true
+      }
+    },
+    "additionalProperties": false
+  }
+  

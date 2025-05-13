@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dao.example.org/schemas/resources/computational_resource.schema.json",
+  "title": "Computational Resource",
+  "description": "Schema for abstract computational resources such as compute time, bandwidth, storage capacity, and tokens",
+  "allOf": [
+    { "$ref": "../resource.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "computational_type": {
+          "type": "string",
+          "enum": ["compute", "bandwidth", "storage", "memory", "token", "api_access", "data", "license"],
+          "description": "Type of computational or abstract resource"
+        },
+        "allocation_model": {
+          "type": "string",
+          "enum": ["shared", "dedicated", "on_demand", "reserved", "spot", "token_based"],
+          "description": "How the resource is allocated or distributed"
+        },
+        "compute_properties": {
+          "type": "object",
+          "description": "Properties specific to computational resources",
+          "properties": {
+            "performance_metric": {
+              "type": "string",
+              "enum": ["flops", "iops", "throughput", "latency", "requests_per_second", "inference_time"],
+              "description": "Primary metric used to measure performance"
+            },
+            "performance_value": {
+              "type": "number",
+              "description": "Numerical performance value"
+            },
+            "performance_unit": {
+              "type": "string",
+              "description": "Unit for the performance metric (e.g., 'GFLOP/s', 'ms')"
+            },
+            "architecture": {
+              "type": "string",
+              "description": "Underlying hardware or software architecture"
+            },
+            "acceleration": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Acceleration technologies used (e.g., 'GPU', 'TPU', 'FPGA')"
+            },
+            "virtualization": {
+              "type": "boolean",
+              "description": "Whether the resource is virtualized"
+            }
+          }
+        },
+        "network_properties": {
+          "type": "object",
+          "description": "Properties specific to network/bandwidth resources",
+          "properties": {
+            "bandwidth": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Available bandwidth measurement"
+            },
+            "latency": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Latency measurement"
+            },
+            "protocol": {
+              "type": "string",
+              "description": "Network protocol used"
+            },
+            "reliability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Network reliability percentage (Unit: %, UCUM code for percent)"
+            },
+            "packet_loss": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Average packet loss percentage (Unit: %, UCUM code for percent)"
+            }
+          }
+        },
+        "storage_properties": {
+          "type": "object",
+          "description": "Properties specific to storage resources",
+          "properties": {
+            "capacity": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Storage capacity measurement"
+            },
+            "read_speed": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Read speed measurement"
+            },
+            "write_speed": {
+              "$ref": "../measurements/data_measurement.schema.json",
+              "description": "Write speed measurement"
+            },
+            "durability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Annual durability percentage (Unit: %, UCUM code for percent)"
+            },
+            "replication_factor": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Number of data replicas maintained"
+            }
+          }
+        },
+        "token_properties": {
+          "type": "object",
+          "description": "Properties specific to token or access-based resources",
+          "properties": {
+            "token_type": {
+              "type": "string",
+              "description": "Type of token or access unit"
+            },
+            "access_scope": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Scope of access provided by the token"
+            },
+            "rate_limits": {
+              "type": "object",
+              "properties": {
+                "requests_per_unit": { "type": "number" },
+                "time_unit": { 
+                  "type": "string", 
+                  "enum": ["second", "minute", "hour", "day", "month"] 
+                },
+                "concurrent_requests": { "type": "integer" }
+              },
+              "description": "Rate limiting parameters"
+            },
+            "expiration": {
+              "type": "boolean",
+              "description": "Whether the token expires"
+            },
+            "validity_period": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "unit": { 
+                  "type": "string", 
+                  "enum": ["s", "min", "h", "d", "mo", "a"],
+                  "description": "UCUM code: s=seconds, min=minutes, h=hours, d=days, mo=months, a=years"
+                }
+              },
+              "description": "How long the token remains valid"
+            }
+          }
+        },
+        "security_properties": {
+          "type": "object",
+          "description": "Security-related properties of the resource",
+          "properties": {
+            "encryption": {
+              "type": "string",
+              "enum": ["none", "in_transit", "at_rest", "end_to_end"],
+              "description": "Type of encryption applied"
+            },
+            "authentication": {
+              "type": "string",
+              "enum": ["none", "basic", "oauth", "mfa", "certificate", "other"],
+              "description": "Authentication method required"
+            },
+            "compliance_frameworks": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Compliance certifications (e.g., 'SOC2', 'GDPR', 'HIPAA')"
+            },
+            "data_residency": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Regions where data is stored or processed"
+            }
+          }
+        },
+        "scaling_properties": {
+          "type": "object",
+          "description": "How the resource scales to meet demands",
+          "properties": {
+            "scalability": {
+              "type": "string",
+              "enum": ["fixed", "vertical", "horizontal", "auto", "elastic"],
+              "description": "Scaling capability of the resource"
+            },
+            "min_capacity": {
+              "type": "number",
+              "description": "Minimum resource capacity"
+            },
+            "max_capacity": {
+              "type": "number",
+              "description": "Maximum resource capacity"
+            },
+            "scaling_increment": {
+              "type": "number",
+              "description": "Granularity of scaling steps"
+            }
+          }
+        },
+        "service_level": {
+          "type": "object",
+          "properties": {
+            "availability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Guaranteed availability percentage (Unit: %, UCUM code for percent)"
+            },
+            "uptime_sla": {
+              "type": "string",
+              "description": "Uptime service level agreement (e.g., '99.99%')"
+            },
+            "response_time_sla": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "unit": { "type": "string", "enum": ["ms", "s", "min"] }
+              },
+              "description": "Response time service level agreement"
+            },
+            "support_level": {
+              "type": "string",
+              "enum": ["none", "basic", "standard", "premium", "enterprise"],
+              "description": "Level of support provided"
+            }
+          }
+        }
+      },
+      "required": ["computational_type"]
+    }
+  ]
+}
